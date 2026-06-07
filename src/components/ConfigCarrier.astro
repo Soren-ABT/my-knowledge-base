@@ -1,0 +1,9 @@
+---
+import { siteConfig } from "../config";
+---
+
+<script is:inline>
+  window.__siteConfig = {
+    hue: ${siteConfig.themeColor.hue},
+  };
+</script>

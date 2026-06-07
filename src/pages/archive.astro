@@ -1,0 +1,100 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import { formatDate } from "../utils/date";
+
+const allPosts = await getCollection("posts", ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.published.valueOf() - a.data.published.valueOf(),
+);
+
+const groupedByYear = new Map<number, typeof sortedPosts>();
+for (const post of sortedPosts) {
+  const year = post.data.published.getFullYear();
+  if (!groupedByYear.has(year)) groupedByYear.set(year, []);
+  groupedByYear.get(year)!.push(post);
+}
+
+const years = Array.from(groupedByYear.keys()).sort((a, b) => b - a);
+---
+
+<Layout title="归档">
+  <div class="mx-auto max-w-4xl">
+    <!-- Page header -->
+    <header class="mb-10">
+      <div class="flex items-end justify-between">
+        <div>
+          <h1 class="text-2xl font-bold">文章归档</h1>
+          <p class="mt-1 text-sm text-[var(--color-text-secondary)]">
+            共 {sortedPosts.length} 篇文章 · {years.length} 个年份
+          </p>
+        </div>
+      </div>
+      <div class="page-header-divider"></div>
+    </header>
+
+    <!-- Stats -->
+    <div class="stats-grid mb-10">
+      <div class="stat-card">
+        <span class="stat-number">{sortedPosts.length}</span>
+        <span class="stat-label">文章总数</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{years.length}</span>
+        <span class="stat-label">年份跨度</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{sortedPosts.length > 0 ? years[0] : '—'}</span>
+        <span class="stat-label">最近年份</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{groupedByYear.get(years[0])?.length || 0}</span>
+        <span class="stat-label">今年文章</span>
+      </div>
+    </div>
+
+    <!-- Year sections -->
+    <div class="space-y-10">
+      {years.map((year) => {
+        const yearPosts = groupedByYear.get(year)!;
+        return (
+          <section>
+            <h2 class="mb-4 flex items-center gap-3">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-primary)] to-[var(--progress-color-end)] text-sm font-bold text-white shadow-md">
+                {String(year).slice(2)}
+              </span>
+              <span class="text-lg font-semibold text-[var(--color-text)]">{year}</span>
+              <span class="text-xs text-[var(--color-text-muted)]">({yearPosts.length} 篇)</span>
+            </h2>
+            <div class="ml-12 space-y-1 border-l-2 border-[var(--color-border)] pl-6">
+              {yearPosts.map((post) => {
+                const slug = post.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+                return (
+                  <a
+                    href={`/posts/${slug}/`}
+                    class="flex items-center gap-4 rounded-lg border border-transparent px-3 py-2.5 no-underline transition-all hover:border-[var(--color-border)] hover:bg-[var(--color-bg-alt)]"
+                  >
+                    <time class="shrink-0 text-xs tabular-nums text-[var(--color-text-muted)]">
+                      {formatDate(post.data.published)}
+                    </time>
+                    <span class="min-w-0 truncate text-sm font-medium text-[var(--color-text)]">
+                      {post.data.title}
+                    </span>
+                    {post.data.category && (
+                      <span class="ml-auto hidden shrink-0 rounded-full bg-[var(--color-primary-light)] px-2 py-0.5 text-xs text-[var(--color-primary-dark)] sm:inline-block">
+                        {post.data.category}
+                      </span>
+                    )}
+                  </a>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  </div>
+</Layout>

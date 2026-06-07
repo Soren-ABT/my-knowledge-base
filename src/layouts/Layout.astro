@@ -1,0 +1,278 @@
+---
+import "../styles/global.css";
+import "katex/dist/katex.css";
+import { siteConfig } from "../config";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import FullscreenWallpaper from "../components/FullscreenWallpaper.astro";
+import FloatingTOC from "../components/FloatingTOC.astro";
+import SettingsPanel from "../components/SettingsPanel.astro";
+import MusicPlayer from "../components/MusicPlayer.astro";
+import ConfigCarrier from "../components/ConfigCarrier.astro";
+import ThemeScript from "../components/ThemeScript.astro";
+import CoreManager from "../components/CoreManager.astro";
+import { fullscreenWallpaperConfig } from "../config";
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  withProgressBar?: boolean;
+  withSidebar?: boolean;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  withProgressBar = true,
+  withSidebar = false,
+} = Astro.props;
+
+const pageTitle = title
+  ? `${title} - ${siteConfig.title}`
+  : siteConfig.subtitle
+    ? `${siteConfig.title} - ${siteConfig.subtitle}`
+    : siteConfig.title;
+
+const pageDescription = description || siteConfig.subtitle || "";
+
+const ogImageUrl = ogImage
+  ? ogImage.startsWith("http")
+    ? ogImage
+    : new URL(ogImage, Astro.site).toString()
+  : undefined;
+
+const hue = siteConfig.themeColor.hue;
+const navbarTransparentMode = siteConfig.banner?.navbar?.transparentMode || "semi";
+const shouldShowTopHighlight =
+  navbarTransparentMode === "full" || navbarTransparentMode === "semifull";
+---
+
+<!doctype html>
+<html lang={siteConfig.lang.replace("_", "-")}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteConfig.title} />
+    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+
+    <!-- Theme hue CSS variable -->
+    <style define:vars={{ hue }}></style>
+
+    <!-- Theme: centralized module (Mizuki pattern) — single source of truth -->
+    <ThemeScript />
+
+    <!-- CoreManager: centralized event delegation for all interactive UI -->
+    <CoreManager />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+
+    <!-- CDN hints for faster third-party loading -->
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="dns-prefetch" href="//unpkg.com" />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={siteConfig.title}
+      href={`${Astro.site}rss.xml`}
+    />
+
+    <!-- global.css imported via Astro frontmatter -->
+
+    <!-- Astro View Transitions for smooth page navigation -->
+    <ClientRouter />
+
+    <!-- MathJax config (synchronous, before any async load) -->
+    <script is:inline>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+          processEscapes: true
+        },
+        options: {
+          skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'mjx-container'],
+          ignoreHtmlClass: 'tex2jax_ignore'
+        }
+      };
+    </script>
+    <!-- MathJax async loader with CDN fallback -->
+    <script is:inline>
+      (function() {
+        var CDNS = [
+          'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
+          'https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js'
+        ];
+        function tryNext(i) {
+          if (i >= CDNS.length) return;
+          var s = document.createElement('script');
+          s.src = CDNS[i];
+          s.onload = function() { window._mathjaxReady = true; };
+          s.onerror = function() { tryNext(i + 1); };
+          document.head.appendChild(s);
+        }
+        tryNext(0);
+      })();
+    </script>
+  </head>
+  <body class="min-h-screen font-sans antialiased">
+    <!-- Critical: set wallpaper mode before paint to prevent FOUC -->
+    <script is:inline>
+      (function() {
+        var mode = localStorage.getItem('wallpaper-mode');
+        if (mode === 'banner' || mode === 'fullscreen' || mode === 'overlay') {
+          document.body.classList.add('wallpaper-transparent');
+        }
+        var s = document.documentElement.style;
+        var op = localStorage.getItem('overlay-opacity');
+        var bl = localStorage.getItem('overlay-blur');
+        var co = localStorage.getItem('overlay-card-opacity');
+        if (op) s.setProperty('--wallpaper-opacity', Number(op) / 100);
+        if (bl) s.setProperty('--wallpaper-blur', bl + 'px');
+        if (co) s.setProperty('--card-transparent-opacity', Number(co) / 100);
+      })();
+    </script>
+
+    <!-- Top gradient highlight for transparent navbar -->
+    {shouldShowTopHighlight && <div class="top-gradient-highlight"></div>}
+
+    <!-- Fullscreen wallpaper -->
+    {fullscreenWallpaperConfig.enable && (
+      <FullscreenWallpaper config={fullscreenWallpaperConfig} />
+    )}
+
+    <!-- Wave canvas for theme transitions -->
+    <canvas id="theme-wave-canvas"></canvas>
+
+    <!-- Sakura canvas -->
+    <canvas id="sakura-canvas"></canvas>
+
+    <!-- Music Player -->
+    <MusicPlayer />
+
+    {withProgressBar && siteConfig.pageProgressBar.enable && (
+      <div id="page-progress-bar"></div>
+    )}
+
+    <!-- Navbar -->
+    <div id="top-row" class="z-50 pointer-events-none relative transition-all duration-700 max-w-6xl px-0 md:px-4 mx-auto">
+      <div id="navbar-wrapper" class="pointer-events-auto sticky top-0 transition-all">
+        <Navbar transparentMode={navbarTransparentMode} />
+      </div>
+    </div>
+
+    <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6" transition:animate="fade" data-pagefind-body>
+      <slot />
+    </main>
+
+    <Footer />
+
+    <!-- Toast container -->
+    <div id="toast-container"></div>
+
+    <!-- Back to top -->
+    <button id="back-to-top" aria-label="回到顶部">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+    </button>
+
+    <!-- Floating TOC -->
+    <FloatingTOC />
+
+    <!-- Settings Panel -->
+    <SettingsPanel />
+
+    <!-- Search modal -->
+    <div class="search-modal-overlay" id="searchModalOverlay">
+      <div class="search-modal" role="search">
+        <div class="search-modal-header">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" class="search-modal-input" id="searchModalInput" placeholder="搜索… (Ctrl+K 或 /)" aria-label="搜索" />
+          <button class="search-modal-close" id="searchModalClose" aria-label="关闭搜索"><svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="search-hint" aria-live="polite">↑↓ 导航 · Enter 跳转 · Esc 关闭</div>
+        <div class="search-results" id="searchResults" role="listbox"></div>
+      </div>
+    </div>
+
+    <!-- Image lightbox -->
+    <div id="img-lightbox" role="dialog" aria-label="图片预览">
+      <button class="lb-close" aria-label="关闭">&times;</button>
+      <img src="" alt="preview" />
+    </div>
+
+    <!-- Link preview card -->
+    <div class="link-preview-card" id="linkPreviewCard">
+      <div class="lp-loader">Loading preview...</div>
+    </div>
+
+    <!-- Shortcuts panel -->
+    <div id="shortcuts-panel">
+      <div class="shortcuts-modal" role="dialog" aria-label="快捷键帮助">
+        <h3>键盘快捷键</h3>
+        <div class="kbd-row"><span>全局搜索</span><span><kbd>Ctrl</kbd>+<kbd>K</kbd></span></div>
+        <div class="kbd-row"><span>快速搜索</span><span><kbd>/</kbd></span></div>
+        <div class="kbd-row"><span>暗色模式</span><span><kbd>Ctrl</kbd>+<kbd>D</kbd></span></div>
+        <div class="kbd-row"><span>回到顶部</span><span><kbd>Ctrl</kbd>+<kbd>↑</kbd></span></div>
+        <div class="kbd-row"><span>关闭面板</span><span><kbd>Esc</kbd></span></div>
+        <div class="kbd-row"><span>帮助</span><span><kbd>?</kbd></span></div>
+      </div>
+    </div>
+
+    <!-- Client app logic: external for better caching -->
+    <script defer src="/js/app.js"></script>
+
+    <!-- MathJax re-typeset on client-side navigation -->
+    <script is:inline>
+      (function() {
+        var pending = false;
+        function retypeset() {
+          if (window.MathJax && window.MathJax.typesetPromise) {
+            pending = false;
+            MathJax.typesetPromise().catch(function(){});
+          } else {
+            pending = true;
+          }
+        }
+        document.addEventListener('astro:after-swap', retypeset);
+        var tid = setInterval(function() {
+          if (window._mathjaxReady && pending) { retypeset(); }
+          if (window._mathjaxReady && !pending) { clearInterval(tid); }
+        }, 300);
+      })();
+    </script>
+
+    <!-- Sakura particle effect: external for better caching -->
+    <script defer src="/js/sakura.js"></script>
+
+    <!-- Music player engine + modules -->
+    <script defer src="/js/music-player.js"></script>
+    <script defer src="/js/music-player-decoder.js"></script>
+    <script defer src="/js/music-player-library.js"></script>
+    <!-- Mermaid diagram renderer -->
+    <script defer src="/js/mermaid-render.js"></script>
+
+    <!-- Config carrier: passes server config to client-side scripts -->
+    <ConfigCarrier />
+  </body>
+</html>

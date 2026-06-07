@@ -1,0 +1,147 @@
+/* ============================================================
+   Code Block Wrapper
+   ============================================================ */
+.code-block-wrapper {
+  margin: 1.6rem 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  position: relative;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  contain: layout style;
+}
+.code-block-wrapper:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+.code-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1.2rem;
+  background: var(--codeblock-topbar-bg);
+  border-bottom: 1px solid var(--code-border);
+}
+.code-lang {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.4px;
+  font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+}
+.code-copy-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 4px 11px;
+  border-radius: 6px;
+  font-size: 0.73rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.code-copy-btn:hover { background: var(--btn-regular-bg-hover); border-color: var(--primary); color: var(--text-color); }
+.code-copy-btn.copied { background: #27ae60; border-color: #27ae60; color: #fff; }
+.code-block-wrapper pre {
+  margin: 0;
+  padding: 1.2rem 0;
+  overflow-x: auto;
+  background: transparent !important;
+  display: flex;
+}
+.code-block-wrapper pre code {
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  padding: 0 1.4rem;
+  flex: 1;
+  display: block;
+}
+.code-line-numbers {
+  flex-shrink: 0;
+  padding: 1.2rem 0;
+  -webkit-user-select: none;
+  user-select: none;
+  background: var(--line-number-bg);
+  border-right: 1px solid var(--code-border);
+}
+.code-line-numbers span {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: var(--line-number);
+  text-align: right;
+  padding: 0 12px 0 14px;
+  min-width: 3.5rem;
+}
+
+/* Token colors */
+.markdown-section .token.comment,
+.markdown-section .token.prolog,
+.markdown-section .token.doctype,
+.markdown-section .token.cdata { color: #6a737d; font-style: italic; }
+.markdown-section .token.punctuation { color: #393a34; }
+.markdown-section .token.property,
+.markdown-section .token.tag,
+.markdown-section .token.boolean,
+.markdown-section .token.number,
+.markdown-section .token.constant,
+.markdown-section .token.symbol,
+.markdown-section .token.deleted { color: #005cc5; }
+.markdown-section .token.selector,
+.markdown-section .token.attr-name,
+.markdown-section .token.string,
+.markdown-section .token.char,
+.markdown-section .token.builtin,
+.markdown-section .token.inserted { color: #032f62; }
+.markdown-section .token.operator,
+.markdown-section .token.entity,
+.markdown-section .token.url,
+.markdown-section .token.atrule,
+.markdown-section .token.attr-value,
+.markdown-section .token.keyword { color: #d73a49; }
+.markdown-section .token.function,
+.markdown-section .token.class-name { color: #6f42c1; }
+.markdown-section .token.regex,
+.markdown-section .token.important,
+.markdown-section .token.variable { color: #e36209; }
+.markdown-section .token.important,
+.markdown-section .token.bold { font-weight: 600; }
+.markdown-section .token.italic { font-style: italic; }
+
+.dark .markdown-section .token.comment,
+.dark .markdown-section .token.prolog,
+.dark .markdown-section .token.doctype,
+.dark .markdown-section .token.cdata { color: #8b949e; }
+.dark .markdown-section .token.punctuation { color: #c9d1d9; }
+.dark .markdown-section .token.property,
+.dark .markdown-section .token.tag,
+.dark .markdown-section .token.boolean,
+.dark .markdown-section .token.number,
+.dark .markdown-section .token.constant,
+.dark .markdown-section .token.symbol,
+.dark .markdown-section .token.deleted { color: #79c0ff; }
+.dark .markdown-section .token.selector,
+.dark .markdown-section .token.attr-name,
+.dark .markdown-section .token.string,
+.dark .markdown-section .token.char,
+.dark .markdown-section .token.builtin,
+.dark .markdown-section .token.inserted { color: #a5d6ff; }
+.dark .markdown-section .token.operator,
+.dark .markdown-section .token.entity,
+.dark .markdown-section .token.url,
+.dark .markdown-section .token.atrule,
+.dark .markdown-section .token.attr-value,
+.dark .markdown-section .token.keyword { color: #ff7b72; }
+.dark .markdown-section .token.function,
+.dark .markdown-section .token.class-name { color: #d2a8ff; }
+.dark .markdown-section .token.regex,
+.dark .markdown-section .token.important,
+.dark .markdown-section .token.variable { color: #ffa657; }
+

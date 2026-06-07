@@ -1,0 +1,25 @@
+---
+// Floating TOC — toggleable table of contents for prose content
+---
+
+<div class="floating-toc-wrapper" id="floating-toc-wrapper" style="display:none">
+  <button class="floating-toc-btn" id="floating-toc-btn" title="目录" aria-label="目录">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="8" y1="6" x2="21" y2="6"></line>
+      <line x1="8" y1="12" x2="21" y2="12"></line>
+      <line x1="8" y1="18" x2="21" y2="18"></line>
+      <line x1="3" y1="6" x2="3.01" y2="6"></line>
+      <line x1="3" y1="12" x2="3.01" y2="12"></line>
+      <line x1="3" y1="18" x2="3.01" y2="18"></line>
+    </svg>
+  </button>
+  <div class="floating-toc-panel" id="floating-toc-panel">
+    <div class="floating-toc-header">
+      <span>目录</span>
+      <button class="floating-toc-close" id="floating-toc-close" aria-label="关闭">&times;</button>
+    </div>
+    <div class="floating-toc-content" id="floating-toc-content"></div>
+  </div>
+</div>
+
+<!-- Event handling + TOC generation centralized in CoreManager.astro (head) — Mizuki event delegation pattern -->

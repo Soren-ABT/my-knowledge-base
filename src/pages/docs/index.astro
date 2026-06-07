@@ -1,0 +1,110 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+const docs = await getCollection("docs");
+
+// Group by category
+const categories = new Map<string, { title: string; items: { id: string; title: string; description: string }[] }>();
+
+for (const doc of docs) {
+  const parts = doc.id.split("/");
+  let category: string;
+  if (parts[0] === "files") {
+    category = parts[1] || "other";
+  } else if (doc.id === "README") {
+    continue;
+  } else {
+    category = parts[0] || "other";
+  }
+
+  const catName = category.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+  if (!categories.has(category)) {
+    categories.set(category, { title: catName, items: [] });
+  }
+
+  const title = doc.data.title || parts[parts.length - 1].replace(/\.(md|mdx)$/, "").replace(/-/g, " ");
+  categories.get(category)!.items.push({
+    id: doc.id,
+    title,
+    description: doc.data.description || "",
+  });
+}
+---
+
+<Layout title="知识库" description="个人知识库 · 学习笔记与资料整理">
+  <div class="mx-auto max-w-4xl">
+    <header class="mb-10">
+      <h1 class="text-2xl font-bold">知识库</h1>
+      <p class="mt-1 text-sm text-[var(--text-secondary)]">
+        共 {docs.length} 篇文档 · {categories.size} 个分类
+      </p>
+      <div class="page-header-divider"></div>
+    </header>
+
+    {/* Stats */}
+    <div class="stats-grid mb-10">
+      <div class="stat-card">
+        <span class="stat-number">{docs.length}</span>
+        <span class="stat-label">文档总数</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{categories.size}</span>
+        <span class="stat-label">分类数量</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">LaTeX</span>
+        <span class="stat-label">数学渲染</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">MD</span>
+        <span class="stat-label">文档格式</span>
+      </div>
+    </div>
+
+    {/* Category sections */}
+    <div class="space-y-10">
+      {
+        Array.from(categories.entries()).map(([catKey, cat]) => (
+          <section>
+            <h2 class="mb-4 flex items-center gap-3">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--progress-color-end)] text-sm font-bold text-white shadow-md">
+                {cat.title.charAt(0)}
+              </span>
+              <span class="text-lg font-semibold text-[var(--text-color)]">{cat.title}</span>
+              <span class="text-xs text-[var(--text-muted)]">({cat.items.length} 篇)</span>
+            </h2>
+            <div class="ml-12 space-y-2 border-l-2 border-[var(--border-color)] pl-6">
+              {cat.items.map((item) => {
+                const slug = item.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+                return (
+                  <a
+                    href={`/docs/${slug}/`}
+                    class="flex items-center gap-4 rounded-lg border border-transparent px-3 py-2.5 no-underline transition-all hover:border-[var(--border-color)] hover:bg-[var(--card-bg-alt)]"
+                  >
+                    <span class="min-w-0 truncate text-sm font-medium text-[var(--text-color)]">
+                      {item.title}
+                    </span>
+                    {item.description && (
+                      <span class="hidden text-xs text-[var(--text-muted)] sm:inline-block">
+                        {item.description}
+                      </span>
+                    )}
+                  </a>
+                );
+              })}
+            </div>
+          </section>
+        ))
+      }
+    </div>
+
+    {docs.length === 0 && (
+      <div class="py-20 text-center text-[var(--text-secondary)]">
+        <p class="text-lg">知识库暂未收录内容</p>
+        <p class="mt-2 text-sm">添加 Markdown 文件到 src/content/docs/ 即可在此查看</p>
+      </div>
+    )}
+  </div>
+</Layout>

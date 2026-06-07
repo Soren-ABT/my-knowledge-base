@@ -1,0 +1,11 @@
+site: dist
+exclude_selectors:
+  - "code"
+  - ".mermaid-diagram-container"
+  - "pre"
+  - "nav"
+  - "footer"
+  - ".search-modal-overlay"
+  - "#music-fab"
+  - "#music-panel"
+glob: "**/*.html"

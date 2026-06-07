@@ -1,0 +1,236 @@
+/* ============================================================
+   Design Tokens — Light & Dark (Mizuki-style OKLCH system)
+   Single source of truth for all colors, spacing, effects.
+   Controlled by --hue CSS variable.
+   ============================================================ */
+
+:root {
+  --hue: 250;
+  --radius-large: 1rem;
+  --content-delay: 150ms;
+  --wallpaper-opacity: 0.8;
+  --wallpaper-blur: 0px;
+  --card-transparent-opacity: 0.8;
+  --card-bg-transparent: var(--card-bg);
+
+  /* Primary accent */
+  --primary: oklch(0.65 0.18 var(--hue));
+  --primary-light: oklch(0.92 0.04 var(--hue));
+  --primary-dark: oklch(0.48 0.14 var(--hue));
+
+  /* Page background */
+  --page-bg: oklch(0.95 0.008 var(--hue));
+  --card-bg: #fff;
+  --card-bg-alt: oklch(0.96 0.005 var(--hue));
+
+  /* Text hierarchy */
+  --text-color: oklch(0.22 0.02 var(--hue));
+  --text-secondary: oklch(0.45 0.02 var(--hue));
+  --text-muted: oklch(0.58 0.01 var(--hue));
+
+  /* Borders */
+  --line-divider: rgba(0, 0, 0, 0.08);
+  --line-color: rgba(0, 0, 0, 0.1);
+  --border-color: oklch(0.88 0.01 var(--hue));
+
+  /* Buttons */
+  --btn-content: oklch(0.55 0.12 var(--hue));
+  --btn-regular-bg: oklch(0.95 0.025 var(--hue));
+  --btn-regular-bg-hover: oklch(0.9 0.05 var(--hue));
+  --btn-regular-bg-active: oklch(0.85 0.08 var(--hue));
+  --btn-plain-bg-hover: oklch(0.95 0.025 var(--hue));
+  --btn-plain-bg-active: oklch(0.98 0.01 var(--hue));
+
+  /* Code */
+  --code-bg: oklch(0.96 0.005 var(--hue));
+  --code-border: oklch(0.90 0.01 var(--hue));
+  --inline-code-bg: var(--btn-regular-bg);
+  --inline-code-color: var(--btn-content);
+  --codeblock-bg: oklch(0.97 0.005 var(--hue));
+  --codeblock-topbar-bg: oklch(0.94 0.01 var(--hue));
+
+  /* Blockquote */
+  --blockquote-border: var(--primary);
+  --blockquote-bg: oklch(0.96 0.01 var(--hue));
+
+  /* Table */
+  --table-stripe: oklch(0.96 0.005 var(--hue));
+  --table-border: oklch(0.88 0.01 var(--hue));
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.10);
+  --shadow-xl: 0 18px 45px rgba(0, 0, 0, 0.18);
+
+  /* Toast */
+  --toast-bg: oklch(0.25 0.02 var(--hue));
+  --toast-text: #fff;
+
+  /* Search */
+  --search-highlight: oklch(0.80 0.12 150 / 0.5);
+  --search-selected: oklch(0.92 0.04 var(--hue));
+
+  /* Line numbers */
+  --line-number: oklch(0.55 0.01 var(--hue));
+  --line-number-bg: oklch(0.97 0.003 var(--hue));
+
+  /* Lightbox */
+  --lightbox-bg: rgba(0, 0, 0, 0.88);
+
+  /* Scrollbar */
+  --scrollbar-thumb: rgba(0, 0, 0, 0.4);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.5);
+  --scrollbar-track: transparent;
+
+  /* Loader */
+  --loader-blur-bg: rgba(255, 255, 255, 0.15);
+  --loader-tri-stroke: #888;
+  --loader-tri-fill: #f1c40f;
+  --loader-text: #888;
+
+  /* Progress */
+  --progress-color: oklch(0.65 0.18 var(--hue));
+  --progress-color-end: oklch(0.70 0.16 calc(var(--hue) + 40));
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, var(--card-transparent-opacity, 0.72));
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --header-bg: rgba(255, 255, 255, 0.85);
+
+  /* Selection */
+  --selection-bg: oklch(0.90 0.06 var(--hue));
+
+  /* Link */
+  --link-underline: oklch(0.93 0.04 var(--hue));
+  --link-hover: oklch(0.95 0.025 var(--hue));
+
+  /* Navbar */
+  --nav-bg: var(--card-bg);
+  --nav-blur: none;
+  --nav-shadow: var(--shadow-sm);
+  --nav-radius: 0.75rem;
+
+  /* Panel */
+  --panel-bg: var(--card-bg-transparent);
+  --panel-blur: blur(20px);
+
+  /* TOC */
+  --toc-badge-bg: oklch(0.9 0.045 var(--hue));
+  --toc-item-active: oklch(0.70 0.13 var(--hue));
+
+  /* License */
+  --license-block-bg: rgba(0, 0, 0, 0.03);
+
+  /* Float panel */
+  --float-panel-bg: #fff;
+
+  /* Display icons */
+  --display-light-icon: 1;
+  --display-dark-icon: 0;
+}
+
+/* Dark mode tokens */
+.dark {
+  --primary: oklch(0.72 0.16 var(--hue));
+  --primary-light: oklch(0.25 0.06 var(--hue));
+  --primary-dark: oklch(0.80 0.10 var(--hue));
+
+  --page-bg: oklch(0.16 0.014 var(--hue));
+  --card-bg: oklch(0.23 0.015 var(--hue));
+  --card-bg-alt: oklch(0.19 0.015 var(--hue));
+
+  --text-color: oklch(0.90 0.01 var(--hue));
+  --text-secondary: oklch(0.65 0.02 var(--hue));
+  --text-muted: oklch(0.50 0.01 var(--hue));
+
+  --line-divider: rgba(255, 255, 255, 0.08);
+  --line-color: rgba(255, 255, 255, 0.1);
+  --border-color: oklch(0.28 0.015 var(--hue));
+
+  --btn-content: oklch(0.75 0.1 var(--hue));
+  --btn-regular-bg: oklch(0.33 0.035 var(--hue));
+  --btn-regular-bg-hover: oklch(0.38 0.04 var(--hue));
+  --btn-regular-bg-active: oklch(0.43 0.045 var(--hue));
+  --btn-plain-bg-hover: oklch(0.30 0.035 var(--hue));
+  --btn-plain-bg-active: oklch(0.27 0.025 var(--hue));
+
+  --code-bg: oklch(0.16 0.012 var(--hue));
+  --code-border: oklch(0.24 0.015 var(--hue));
+  --inline-code-bg: var(--btn-regular-bg);
+  --inline-code-color: var(--btn-content);
+  --codeblock-bg: oklch(0.17 0.015 var(--hue));
+  --codeblock-topbar-bg: oklch(0.12 0.015 var(--hue));
+
+  --blockquote-bg: oklch(0.17 0.01 var(--hue));
+  --table-stripe: oklch(0.17 0.01 var(--hue));
+  --table-border: oklch(0.25 0.015 var(--hue));
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.35);
+  --shadow-xl: 0 18px 45px rgba(0, 0, 0, 0.5);
+
+  --toast-bg: oklch(0.85 0.01 var(--hue));
+  --toast-text: oklch(0.15 0.01 var(--hue));
+
+  --search-highlight: oklch(0.30 0.08 150 / 0.5);
+  --search-selected: oklch(0.22 0.03 var(--hue));
+
+  --line-number: oklch(0.45 0.01 var(--hue));
+  --line-number-bg: oklch(0.15 0.012 var(--hue));
+
+  --lightbox-bg: rgba(0, 0, 0, 0.94);
+
+  --scrollbar-thumb: rgba(255, 255, 255, 0.4);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.5);
+
+  --loader-blur-bg: rgba(13, 17, 23, 0.15);
+  --loader-tri-stroke: oklch(0.55 0.01 var(--hue));
+  --loader-tri-fill: #f1c40f;
+  --loader-text: oklch(0.55 0.01 var(--hue));
+
+  --glass-bg: rgba(20, 20, 30, var(--card-transparent-opacity, 0.72));
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --header-bg: rgba(13, 17, 23, 0.88);
+
+  --selection-bg: oklch(0.35 0.08 var(--hue));
+
+  --link-underline: oklch(0.40 0.08 var(--hue));
+  --link-hover: oklch(0.40 0.08 var(--hue));
+
+  --toc-badge-bg: oklch(0.28 0.04 var(--hue));
+  --toc-item-active: oklch(0.72 0.14 var(--hue));
+
+  --license-block-bg: var(--codeblock-bg);
+
+  --float-panel-bg: oklch(0.19 0.015 var(--hue));
+
+  --display-light-icon: 0;
+  --display-dark-icon: 1;
+}
+
+/* No wallpaper transparency - keep cards opaque */
+body:not(.wallpaper-transparent) {
+  --card-bg-transparent: var(--card-bg);
+}
+
+/* ============================================================
+   Color Aliases (for backward compatibility in existing code)
+   ============================================================ */
+:root {
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-bg: var(--page-bg);
+  --color-bg-alt: var(--card-bg-alt);
+  --color-bg-card: var(--card-bg);
+  --color-text: var(--text-color);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border-color);
+  --color-border-light: var(--line-divider);
+  --color-code-bg: var(--code-bg);
+  --color-code-border: var(--code-border);
+  --btn-hover: var(--btn-regular-bg-hover);
+}

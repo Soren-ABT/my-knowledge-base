@@ -1,0 +1,64 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import DocSidebar from "../../components/DocSidebar.astro";
+
+export async function getStaticPaths() {
+  const docs = await getCollection("docs");
+  return docs.map((doc) => {
+    const slug = doc.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+    return { params: { slug } };
+  });
+}
+
+const { slug } = Astro.params;
+const allDocs = await getCollection("docs");
+
+const doc = allDocs.find((d) => {
+  const s = d.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+  return s === slug;
+});
+
+if (!doc) {
+  return Astro.redirect("/404/");
+}
+
+const { Content } = await render(doc);
+const { data } = doc;
+
+const docTitle = data.title || slug!.split("/").pop()!.replace(/-/g, " ");
+---
+
+<Layout title={docTitle} description={data.description || ""}>
+  <div class="flex gap-8">
+    {/* Doc sidebar */}
+    <aside class="hidden w-56 shrink-0 lg:block">
+      <div class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] p-4">
+        <DocSidebar />
+      </div>
+    </aside>
+
+    {/* Main content */}
+    <div class="min-w-0 flex-1">
+      <div class="mx-auto max-w-4xl">
+        <article class="content-glass animate-content">
+          <div class="prose markdown-section">
+            <Content />
+          </div>
+        </article>
+
+        <div class="doc-footer">
+          <hr />
+          <p>
+            最后更新于 {doc.data.updated ? new Date(doc.data.updated).toLocaleDateString("zh-CN") : "未知"}
+          </p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            {data.tags?.map((tag: string) => (
+              <span class="tag-chip">{tag}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

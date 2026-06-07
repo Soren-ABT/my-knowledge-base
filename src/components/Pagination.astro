@@ -1,0 +1,104 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl?: string;
+}
+
+const { currentPage, totalPages, baseUrl = "/" } = Astro.props;
+
+function pageUrl(page: number): string {
+  if (page === 1) return baseUrl;
+  return `${baseUrl}page/${page}/`;
+}
+
+// Build page list with ellipsis
+const pages: (number | string)[] = [];
+const allPages = Array.from({ length: totalPages }, (_, i) => i + 1);
+for (const p of allPages) {
+  if (p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1) {
+    if (pages.length > 0) {
+      const last = pages[pages.length - 1];
+      if (typeof last === "number" && last < p - 1) {
+        pages.push("...");
+      }
+    }
+    pages.push(p);
+  }
+}
+---
+
+{totalPages > 1 && (
+  <nav class="mt-10 flex items-center justify-center gap-1.5">
+    {currentPage > 1 && (
+      <a
+        href={pageUrl(currentPage - 1)}
+        class="btn-page"
+        aria-label="上一页"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </a>
+    )}
+
+    {pages.map((item) => {
+      if (item === "...") {
+        return (
+          <span class="flex h-9 w-9 items-center justify-center text-sm text-[var(--color-text-secondary)]">
+            ...
+          </span>
+        );
+      }
+      const page = item as number;
+      return (
+        <a
+          href={pageUrl(page)}
+          class={`btn-page ${page === currentPage ? "btn-page-active" : ""}`}
+        >
+          {page}
+        </a>
+      );
+    })}
+
+    {currentPage < totalPages && (
+      <a
+        href={pageUrl(currentPage + 1)}
+        class="btn-page"
+        aria-label="下一页"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+    )}
+  </nav>
+)}
+
+<style>
+  .btn-page {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    background: var(--color-bg-card);
+  }
+  .btn-page:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  .btn-page-active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+  }
+  .btn-page-active:hover {
+    color: white;
+    background: var(--color-primary-dark);
+  }
+</style>

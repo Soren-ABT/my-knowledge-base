@@ -1,0 +1,77 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+const allPosts = await getCollection("posts", ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const tagCount = new Map<string, number>();
+for (const post of allPosts) {
+  for (const tag of post.data.tags) {
+    tagCount.set(tag, (tagCount.get(tag) || 0) + 1);
+  }
+}
+
+const sortedTags = Array.from(tagCount.entries()).sort((a, b) => b[1] - a[1]);
+
+---
+
+<Layout title="标签">
+  <div class="mx-auto max-w-4xl">
+    <!-- Page header -->
+    <header class="mb-10">
+      <div class="flex items-end justify-between">
+        <div>
+          <h1 class="text-2xl font-bold">所有标签</h1>
+          <p class="mt-1 text-sm text-[var(--color-text-secondary)]">
+            共 {sortedTags.length} 个标签 · {allPosts.length} 篇文章
+          </p>
+        </div>
+      </div>
+      <div class="page-header-divider"></div>
+    </header>
+
+    <!-- Stats -->
+    <div class="stats-grid mb-10">
+      <div class="stat-card">
+        <span class="stat-number">{sortedTags.length}</span>
+        <span class="stat-label">标签总数</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{allPosts.length}</span>
+        <span class="stat-label">文章总数</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{sortedTags.length > 0 ? sortedTags[0][0] : '—'}</span>
+        <span class="stat-label">最多标签</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{sortedTags.length > 0 ? sortedTags[0][1] : 0}</span>
+        <span class="stat-label">最多文章数</span>
+      </div>
+    </div>
+
+    <!-- Tag cloud -->
+    <div class="flex flex-wrap gap-3">
+      {sortedTags.map(([tag, count]) => (
+        <a
+          href={`/tags/${tag}/`}
+          class="card-base inline-flex items-center gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] px-4 py-2.5 no-underline transition-all hover:shadow-md"
+        >
+          <span class="font-medium text-[var(--color-text)] text-sm">{tag}</span>
+          <span class="rounded-full bg-[var(--color-primary-light)] px-2 py-0.5 text-xs font-medium text-[var(--color-primary-dark)]">
+            {count}
+          </span>
+        </a>
+      ))}
+    </div>
+
+    {sortedTags.length === 0 && (
+      <div class="py-20 text-center text-[var(--color-text-secondary)]">
+        <p class="text-lg">还没有标签</p>
+        <p class="mt-2 text-sm">发布文章并添加标签即可在此查看</p>
+      </div>
+    )}
+  </div>
+</Layout>

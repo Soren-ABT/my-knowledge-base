@@ -1,0 +1,92 @@
+---
+import WelcomeLayout from "../layouts/WelcomeLayout.astro";
+import { profileConfig, siteConfig } from "../config";
+import "../styles/welcome.css";
+---
+
+<WelcomeLayout>
+  <div id="custom-cursor"></div>
+  <canvas id="bg-canvas"></canvas>
+  <div id="zoom-hud">1.0x</div>
+
+  <div class="top-right-group">
+    <button class="glass-btn" id="modeToggle" title="切换昼夜" aria-label="切换昼夜模式">
+      <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+
+  <div class="content">
+    <h1 id="cover-title">{siteConfig.title}</h1>
+    <div class="subtitle" id="greeting">{siteConfig.subtitle}</div>
+    <div class="buttons">
+      <a href="/posts/" class="btn btn-primary">开始阅读</a>
+      {
+        profileConfig.links.length > 0 && (
+          <a href={profileConfig.links[0].url} class="btn" target="_blank" rel="noopener">{profileConfig.links[0].name}</a>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="info-panel" id="infoPanel">
+    <button class="ip-close" id="ipClose" aria-label="关闭">&#10005;</button>
+    <div class="ip-icon" id="ipIcon">&#x1F537;</div>
+    <div class="ip-details">
+      <div class="ip-name" id="ipName">Select a body</div>
+      <div class="ip-stats" id="ipStats"></div>
+    </div>
+  </div>
+
+  <div class="scroll-hint"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  <div class="hint-text" id="hintText">Click a wireframe body &middot; Scroll to zoom &middot; Pinch to zoom</div>
+</WelcomeLayout>
+
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160/build/three.module.js"
+  }
+}
+</script>
+
+<script type="module" src="/js/welcome-3d.js"></script>
+
+<script>
+// ==================== 时间问候语 + 逐字动画 + 打字效果 ====================
+(function() {
+  var hour = new Date().getHours();
+  var greet = '';
+  if (hour < 6) greet = '夜深了，让思绪在星空间漫游。';
+  else if (hour < 9) greet = '晨光初现，新的一天开始了。';
+  else if (hour < 12) greet = '上午好，愿你思路清晰。';
+  else if (hour < 14) greet = '午后时光，泡杯茶继续探索。';
+  else if (hour < 18) greet = '下午好，学习永无止境。';
+  else if (hour < 22) greet = '晚上的安静，最适合深度思考。';
+  else greet = '夜深了，让思绪在星空间漫游。';
+
+  var subtitleEl = document.getElementById('greeting');
+  if (subtitleEl) {
+    var chars = greet.split('');
+    var idx = 0;
+    subtitleEl.textContent = '';
+    subtitleEl.style.opacity = '1';
+    function typeChar() {
+      if (idx < chars.length) {
+        subtitleEl.textContent += chars[idx];
+        idx++;
+        setTimeout(typeChar, 40 + Math.random() * 60);
+      }
+    }
+    setTimeout(typeChar, 800);
+  }
+})();
+(function() {
+  var t = document.getElementById('cover-title');
+  if (!t) return;
+  var txt = t.textContent.trim(), h = '';
+  for (var i = 0; i < txt.length; i++) h += '<span style="animation-delay:'+(i*0.05)+'s">'+(txt[i]===' '?'&nbsp;':txt[i])+'</span>';
+  t.innerHTML = h;
+})();
+</script>

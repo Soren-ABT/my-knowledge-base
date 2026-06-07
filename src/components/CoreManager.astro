@@ -1,0 +1,662 @@
+---
+// CoreManager — centralized event delegation (Mizuki pattern)
+// Runs in <head>, survives ClientRouter navigations.
+// All interactive listeners delegate on document/window.
+// astro:after-swap re-syncs UI state from localStorage.
+---
+<script is:inline>
+(function() {
+  'use strict';
+
+  // ==================== STATE ====================
+  var ANIM_DURATION = 100;
+  var settingsOpen = false;
+  var tocOpen = false;
+  var tocObserver = null;
+  var tocScrollTicking = false;
+  var wpVisHandler = null;
+  var wpCarouselTimers = [];
+
+  // ==================== UTILITY ====================
+  function syncCSSVars() {
+    var s = document.documentElement.style;
+    var op = localStorage.getItem('overlay-opacity');
+    var bl = localStorage.getItem('overlay-blur');
+    var co = localStorage.getItem('overlay-card-opacity');
+    if (op) s.setProperty('--wallpaper-opacity', Number(op) / 100);
+    if (bl) s.setProperty('--wallpaper-blur', bl + 'px');
+    if (co) s.setProperty('--card-transparent-opacity', Number(co) / 100);
+  }
+
+  function syncBodyClass() {
+    var mode = localStorage.getItem('wallpaper-mode');
+    if (mode === 'banner' || mode === 'fullscreen' || mode === 'overlay') {
+      document.body.classList.add('wallpaper-transparent');
+    }
+  }
+
+  // ==================== SETTINGS PANEL ANIMATION ====================
+  function animateIn(el) {
+    var html = document.documentElement;
+    if (html.classList.contains('is-theme-transitioning')) {
+      el.classList.remove('float-panel-closed');
+      el.style.opacity = '1';
+      el.style.transform = 'scale(1) translateY(0)';
+      el.style.pointerEvents = 'auto';
+      return;
+    }
+    el.classList.remove('float-panel-closed');
+    el.style.opacity = '0';
+    el.style.transform = 'scale(0.95) translateY(-8px)';
+    el.style.pointerEvents = 'none';
+    el.style.transition = 'all ' + ANIM_DURATION + 'ms ease-out';
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        el.style.opacity = '1';
+        el.style.transform = 'scale(1) translateY(0)';
+        el.style.pointerEvents = 'auto';
+        setTimeout(function() { el.style.transition = ''; }, ANIM_DURATION);
+      });
+    });
+  }
+
+  function animateOut(el) {
+    var html = document.documentElement;
+    if (html.classList.contains('is-theme-transitioning')) {
+      el.classList.add('float-panel-closed');
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.pointerEvents = '';
+      return;
+    }
+    el.style.transition = 'all ' + ANIM_DURATION + 'ms ease-out';
+    el.style.pointerEvents = 'none';
+    el.style.opacity = '0';
+    el.style.transform = 'scale(0.95) translateY(-8px)';
+    setTimeout(function() {
+      el.classList.add('float-panel-closed');
+      el.style.transition = '';
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.pointerEvents = '';
+    }, ANIM_DURATION);
+  }
+
+  function openSettings() {
+    var panel = document.getElementById('settings-panel');
+    if (!panel) return;
+    settingsOpen = true;
+    animateIn(panel);
+  }
+
+  function closeSettings() {
+    var panel = document.getElementById('settings-panel');
+    if (!panel) return;
+    settingsOpen = false;
+    animateOut(panel);
+  }
+
+  // ==================== SETTINGS UI SYNC ====================
+  function syncSettingsUI() {
+    var hueSlider = document.getElementById('hue-slider');
+    var storedHue = localStorage.getItem('theme-hue');
+    if (hueSlider && storedHue) {
+      hueSlider.value = storedHue;
+      document.documentElement.style.setProperty('--hue', storedHue);
+    }
+
+    var storedMode = localStorage.getItem('wallpaper-mode') || 'banner';
+    var modeBtns = document.querySelectorAll('.settings-mode-btn');
+    modeBtns.forEach(function(b) {
+      b.classList.toggle('active', b.dataset.mode === storedMode);
+    });
+    var overlaySettings = document.getElementById('overlay-settings');
+    if (overlaySettings) {
+      overlaySettings.style.display = storedMode === 'overlay' ? 'block' : 'none';
+    }
+
+    var op = localStorage.getItem('overlay-opacity') || '80';
+    var bl = localStorage.getItem('overlay-blur') || '1.5';
+    var co = localStorage.getItem('overlay-card-opacity') || '80';
+    var opSlider = document.getElementById('overlay-opacity');
+    var blSlider = document.getElementById('overlay-blur');
+    var coSlider = document.getElementById('overlay-card-opacity');
+    if (opSlider) opSlider.value = op;
+    if (blSlider) blSlider.value = bl;
+    if (coSlider) coSlider.value = co;
+    var opVal = document.getElementById('overlay-opacity-val');
+    var blVal = document.getElementById('overlay-blur-val');
+    var coVal = document.getElementById('overlay-card-opacity-val');
+    if (opVal) opVal.textContent = op + '%';
+    if (blVal) blVal.textContent = bl + 'px';
+    if (coVal) coVal.textContent = co + '%';
+
+    var sakuraBtn = document.getElementById('sakura-toggle');
+    if (sakuraBtn) {
+      sakuraBtn.classList.toggle('active', localStorage.getItem('sakura-enabled') === 'true');
+    }
+
+    syncCSSVars();
+  }
+
+  // ==================== FLOATING TOC ====================
+  function getHeadings() {
+    var prose = document.querySelector('.prose, .markdown-section, article');
+    return prose ? prose.querySelectorAll('h1, h2, h3') : null;
+  }
+
+  function findActiveIndex(headings) {
+    var active = 0;
+    var sy = window.scrollY + 100;
+    headings.forEach(function(h, i) {
+      if (h.offsetTop <= sy) active = i;
+    });
+    return active;
+  }
+
+  function updateActiveHeading() {
+    if (tocOpen) return;
+    var content = document.getElementById('floating-toc-content');
+    if (!content) return;
+    var headings = getHeadings();
+    if (!headings) return;
+    var activeIndex = findActiveIndex(headings);
+    var items = content.querySelectorAll('.floating-toc-item');
+    items.forEach(function(item, i) {
+      item.classList.toggle('active', i === activeIndex);
+    });
+    if (items[activeIndex]) {
+      items[activeIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }
+
+  function generateTOC() {
+    var content = document.getElementById('floating-toc-content');
+    var wrapper = document.getElementById('floating-toc-wrapper');
+    if (!content || !wrapper) return;
+
+    var headings = getHeadings();
+    if (!headings || !headings.length) {
+      wrapper.style.display = 'none';
+      return;
+    }
+    wrapper.style.display = 'block';
+
+    var html = '';
+    headings.forEach(function(h, i) {
+      var tag = h.tagName.toLowerCase();
+      var id = h.id || ('ftoc-' + i);
+      if (!h.id) h.id = id;
+
+      var indent = tag === 'h3'
+        ? ' style="padding-left: 24px; font-size: 0.75rem;"'
+        : tag === 'h2' ? ' style="padding-left: 4px;"' : '';
+      var dotOrBadge = tag === 'h1'
+        ? '<span class="floating-toc-badge">' + (i + 1) + '</span>'
+        : '<span class="floating-toc-dot"></span>';
+
+      html += '<a role="button" tabindex="0" class="floating-toc-item" data-target="' + id + '"' + indent + '>' +
+        dotOrBadge +
+        '<span class="floating-toc-text">' + (h.textContent ? h.textContent.trim() : '') + '</span>' +
+        '</a>';
+    });
+    content.innerHTML = html;
+
+    updateActiveHeading();
+  }
+
+  function openTOC() {
+    tocOpen = true;
+    var panel = document.getElementById('floating-toc-panel');
+    if (panel) panel.classList.add('show');
+  }
+
+  function closeTOC() {
+    tocOpen = false;
+    var panel = document.getElementById('floating-toc-panel');
+    if (panel) panel.classList.remove('show');
+  }
+
+  function setupTocObserver() {
+    if (tocObserver) { tocObserver.disconnect(); tocObserver = null; }
+    var target = document.querySelector('.prose, .markdown-section, article');
+    if (target) {
+      tocObserver = new MutationObserver(function() {
+        setTimeout(generateTOC, 300);
+      });
+      tocObserver.observe(target, { childList: true, subtree: true });
+    }
+  }
+
+  // ==================== WALLPAPER ====================
+  function applyWallpaperMode(mode) {
+    var el = document.getElementById('fullscreen-wallpaper');
+    if (!el) return;
+    if (mode === 'fullscreen' || mode === 'overlay') {
+      el.style.display = 'block';
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          el.style.opacity = 'var(--wallpaper-opacity, 0.8)';
+        });
+      });
+    } else {
+      el.style.opacity = '0';
+      setTimeout(function() { el.style.display = 'none'; }, 500);
+    }
+  }
+
+  function initWallpaperSingle() {
+    var container = document.getElementById('wallpaper-single-container');
+    if (!container || container.children.length > 0) return;
+
+    var desktopImages = [];
+    var mobileImages = [];
+    var positionClass = 'object-center';
+    try {
+      desktopImages = JSON.parse(container.getAttribute('data-wallpaper-desktop') || '[]');
+      mobileImages = JSON.parse(container.getAttribute('data-wallpaper-mobile') || '[]');
+      positionClass = container.getAttribute('data-wallpaper-position') || 'object-center';
+    } catch(e) { return; }
+
+    function getRandom(images, key) {
+      if (!images.length) return null;
+      if (images.length === 1) return images[0];
+      var last = sessionStorage.getItem(key);
+      var idx;
+      do { idx = Math.floor(Math.random() * images.length); }
+      while (idx === parseInt(last || '-1'));
+      sessionStorage.setItem(key, String(idx));
+      return images[idx];
+    }
+
+    var dSrc = getRandom(desktopImages, 'wp_desktop_idx');
+    var mSrc = getRandom(mobileImages, 'wp_mobile_idx');
+
+    if (dSrc) {
+      var dd = document.createElement('div');
+      dd.className = 'hidden md:block w-full h-full relative';
+      dd.style.transform = 'translateZ(0)';
+      dd.innerHTML = '<img src="' + dSrc + '" alt="wallpaper" class="absolute inset-0 w-full h-full object-cover ' + positionClass + '" style="transform:translateZ(0);backface-visibility:hidden;opacity:1" decoding="async" loading="eager" />';
+      container.appendChild(dd);
+    }
+    if (mSrc) {
+      var md = document.createElement('div');
+      md.className = 'block md:hidden w-full h-full relative';
+      md.style.transform = 'translateZ(0)';
+      md.innerHTML = '<img src="' + mSrc + '" alt="wallpaper" class="absolute inset-0 w-full h-full object-cover ' + positionClass + '" style="transform:translateZ(0);backface-visibility:hidden;opacity:1" decoding="async" loading="eager" />';
+      container.appendChild(md);
+    }
+  }
+
+  function startCarousel() {
+    var container = document.getElementById('fullscreen-wallpaper');
+    if (!container) return;
+    var interval = parseInt(container.getAttribute('data-carousel-interval') || '5');
+
+    if (wpVisHandler) {
+      document.removeEventListener('visibilitychange', wpVisHandler);
+      wpVisHandler = null;
+    }
+    wpCarouselTimers.forEach(function(t) { clearInterval(t); });
+    wpCarouselTimers = [];
+
+    var desktopItems = container.querySelectorAll('.hidden.md\\:block [data-carousel-item]');
+    var mobileItems = container.querySelectorAll('.block.md\\:hidden [data-carousel-item-mobile]');
+
+    var savedIdx = parseInt(sessionStorage.getItem('wp_carousel_idx') || '0');
+
+    var groups = [
+      { items: desktopItems, current: savedIdx < desktopItems.length ? savedIdx : 0, timer: null, active: desktopItems.length > 1 },
+      { items: mobileItems, current: savedIdx < mobileItems.length ? savedIdx : 0, timer: null, active: mobileItems.length > 1 }
+    ];
+
+    groups.forEach(function(g) {
+      if (!g.active) return;
+      for (var i = 0; i < g.items.length; i++) {
+        g.items[i].style.opacity = i === g.current ? '1' : '0';
+      }
+    });
+
+    function next(g) {
+      var nxt = (g.current + 1) % g.items.length;
+      g.items[g.current].style.opacity = '0';
+      g.items[nxt].style.opacity = '1';
+      g.current = nxt;
+      sessionStorage.setItem('wp_carousel_idx', String(nxt));
+    }
+
+    function start() {
+      groups.forEach(function(g) {
+        if (g.active && !g.timer) {
+          g.timer = setInterval(function() {
+            if (!document.body.contains(g.items[0])) { stop(); return; }
+            next(g);
+          }, interval * 1000);
+        }
+      });
+    }
+
+    function stop() {
+      groups.forEach(function(g) {
+        if (g.timer) { clearInterval(g.timer); g.timer = null; }
+      });
+    }
+
+    wpVisHandler = function() {
+      if (document.hidden) stop();
+      else {
+        var exists = groups.some(function(g) { return g.items.length > 0 && document.body.contains(g.items[0]); });
+        if (exists) start();
+      }
+    };
+
+    start();
+    document.addEventListener('visibilitychange', wpVisHandler);
+  }
+
+  function initWallpaper() {
+    var el = document.getElementById('fullscreen-wallpaper');
+    if (!el) return;
+
+    var mode = localStorage.getItem('wallpaper-mode') || 'banner';
+    if (mode === 'fullscreen' || mode === 'overlay') {
+      el.style.opacity = 'var(--wallpaper-opacity, 0.8)';
+    }
+
+    if (document.getElementById('wallpaper-single-container')) {
+      initWallpaperSingle();
+    }
+    if (el.hasAttribute('data-carousel-interval')) {
+      startCarousel();
+    }
+  }
+
+  // ==================== EVENT DELEGATION ====================
+
+  // Click delegation
+  document.addEventListener('click', function(e) {
+    // Settings FAB — toggle panel (Mizuki: close other panels first)
+    var fab = e.target.closest('#settings-fab');
+    if (fab) {
+      e.stopPropagation();
+      if (tocOpen) closeTOC();
+      settingsOpen ? closeSettings() : openSettings();
+      return;
+    }
+
+    // Settings close button
+    if (e.target.closest('#settings-close')) {
+      closeSettings();
+      return;
+    }
+
+    // Settings mode buttons
+    var modeBtn = e.target.closest('.settings-mode-btn');
+    if (modeBtn) {
+      var mode = modeBtn.dataset.mode;
+      document.querySelectorAll('.settings-mode-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.mode === mode);
+      });
+      var overlaySettings = document.getElementById('overlay-settings');
+      if (overlaySettings) overlaySettings.style.display = mode === 'overlay' ? 'block' : 'none';
+
+      document.body.classList.remove('wallpaper-transparent', 'no-banner-mode');
+      if (mode === 'banner' || mode === 'fullscreen' || mode === 'overlay') {
+        document.body.classList.add('wallpaper-transparent');
+      }
+      localStorage.setItem('wallpaper-mode', mode);
+      window.dispatchEvent(new CustomEvent('wallpaper-mode-change', { detail: { mode: mode } }));
+      return;
+    }
+
+    // Sakura toggle
+    var sakuraBtn = e.target.closest('#sakura-toggle');
+    if (sakuraBtn) {
+      var enabled = !sakuraBtn.classList.contains('active');
+      sakuraBtn.classList.toggle('active', enabled);
+      localStorage.setItem('sakura-enabled', enabled);
+      window.dispatchEvent(new CustomEvent('sakura-toggle', { detail: { enabled: enabled } }));
+      return;
+    }
+
+    // Navbar theme toggle — delegate to window.__theme.toggle()
+    var themeBtn = e.target.closest('#theme-toggle-btn');
+    if (themeBtn) {
+      if (window.__theme && typeof window.__theme.toggle === 'function') {
+        window.__theme.toggle();
+      }
+      return;
+    }
+
+    // Floating TOC button (Mizuki: close settings first)
+    var tocBtn = e.target.closest('#floating-toc-btn');
+    if (tocBtn) {
+      if (settingsOpen) closeSettings();
+      if (tocOpen) closeTOC();
+      else { generateTOC(); openTOC(); }
+      return;
+    }
+
+    // Floating TOC close button
+    if (e.target.closest('#floating-toc-close')) {
+      closeTOC();
+      return;
+    }
+
+    // Floating TOC item — scroll to heading
+    var tocItem = e.target.closest('.floating-toc-item');
+    if (tocItem) {
+      var target = document.getElementById(tocItem.dataset.target);
+      if (target) {
+        var top = target.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+      }
+      closeTOC();
+      return;
+    }
+
+    // Click outside to close panels
+    if (settingsOpen || tocOpen) {
+      var panel = document.getElementById('settings-panel');
+      var settingsFab = document.getElementById('settings-fab');
+      var tocWrapper = document.getElementById('floating-toc-wrapper');
+
+      if (settingsOpen && panel && settingsFab &&
+          !panel.contains(e.target) && !settingsFab.contains(e.target)) {
+        closeSettings();
+      }
+      if (tocOpen && tocWrapper && !tocWrapper.contains(e.target)) {
+        closeTOC();
+      }
+    }
+  });
+
+  // Input delegation
+  document.addEventListener('input', function(e) {
+    var t = e.target;
+
+    if (t.id === 'hue-slider') {
+      document.documentElement.style.setProperty('--hue', t.value);
+      localStorage.setItem('theme-hue', t.value);
+      return;
+    }
+
+    if (t.id === 'overlay-opacity') {
+      var v = t.value;
+      var valEl = document.getElementById('overlay-opacity-val');
+      if (valEl) valEl.textContent = v + '%';
+      document.documentElement.style.setProperty('--wallpaper-opacity', v / 100);
+      localStorage.setItem('overlay-opacity', v);
+      return;
+    }
+
+    if (t.id === 'overlay-blur') {
+      var v = t.value;
+      var valEl = document.getElementById('overlay-blur-val');
+      if (valEl) valEl.textContent = v + 'px';
+      document.documentElement.style.setProperty('--wallpaper-blur', v + 'px');
+      localStorage.setItem('overlay-blur', v);
+      return;
+    }
+
+    if (t.id === 'overlay-card-opacity') {
+      var v = t.value;
+      var valEl = document.getElementById('overlay-card-opacity-val');
+      if (valEl) valEl.textContent = v + '%';
+      document.documentElement.style.setProperty('--card-transparent-opacity', v / 100);
+      localStorage.setItem('overlay-card-opacity', v);
+      return;
+    }
+  });
+
+  // Keyboard: Esc to close panels
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape') return;
+    if (settingsOpen) { closeSettings(); return; }
+    if (tocOpen) { closeTOC(); return; }
+  });
+
+  // Scroll: TOC active heading tracking
+  window.addEventListener('scroll', function() {
+    if (tocScrollTicking) return;
+    tocScrollTicking = true;
+    requestAnimationFrame(function() {
+      var wrapper = document.getElementById('floating-toc-wrapper');
+      if (wrapper && wrapper.style.display !== 'none') updateActiveHeading();
+      tocScrollTicking = false;
+    });
+  }, { passive: true });
+
+  // Wallpaper mode change — listens for custom event from settings mode buttons
+  window.addEventListener('wallpaper-mode-change', function(e) {
+    applyWallpaperMode(e.detail.mode);
+  });
+
+  // ==================== THEME TRANSITION GUARDS (Mizuki pattern) ====================
+  var isThemeTransitioning = false;
+  (function() {
+    var observer = new MutationObserver(function(mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        var m = mutations[i];
+        if (m.type === 'attributes' && m.attributeName === 'class' && m.target === document.documentElement) {
+          var transitioning = document.documentElement.classList.contains('is-theme-transitioning');
+          if (transitioning && !isThemeTransitioning) {
+            isThemeTransitioning = true;
+            // Pause wallpaper carousel during theme switch
+            wpCarouselTimers.forEach(function(t) { clearInterval(t); });
+            // Pause sakura canvas
+            var sakura = document.getElementById('sakura-canvas');
+            if (sakura) sakura.style.display = 'none';
+          } else if (!transitioning && isThemeTransitioning) {
+            isThemeTransitioning = false;
+            // Resume wallpaper carousel
+            var el = document.getElementById('fullscreen-wallpaper');
+            if (el && el.hasAttribute('data-carousel-interval')) {
+              startCarousel();
+            }
+            // Restore sakura
+            var sakura = document.getElementById('sakura-canvas');
+            if (sakura && localStorage.getItem('sakura-enabled') === 'true') {
+              sakura.style.display = '';
+            }
+          }
+        }
+      }
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  })();
+
+  // ==================== LINK PRELOADING (Mizuki pattern) ====================
+  (function() {
+    var preloaded = {};
+    var prefetchTimer = null;
+    var prefetchQueue = [];
+
+    function flushPrefetch() {
+      var hrefs = prefetchQueue.splice(0);
+      hrefs.forEach(function(href) {
+        if (preloaded[href]) return;
+        preloaded[href] = true;
+        var link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = href;
+        link.as = 'document';
+        document.head.appendChild(link);
+      });
+    }
+
+    function queuePrefetch(href) {
+      if (preloaded[href] || prefetchQueue.indexOf(href) !== -1) return;
+      prefetchQueue.push(href);
+      clearTimeout(prefetchTimer);
+      prefetchTimer = setTimeout(flushPrefetch, 150);
+    }
+
+    function isInternalPath(href) {
+      if (!href || href.startsWith('http') || href.startsWith('//') || href.startsWith('#') || href.startsWith('javascript:')) return false;
+      if (href.startsWith('/')) return true;
+      return href.indexOf('.') === -1 || href.endsWith('.html') || href.endsWith('.htm');
+    }
+
+    var preloadObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && entry.target.href) {
+          queuePrefetch(entry.target.href);
+          preloadObserver.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '200px' });
+
+    function observeLinks() {
+      var links = document.querySelectorAll('a[href]');
+      for (var i = 0; i < links.length; i++) {
+        var a = links[i];
+        if (isInternalPath(a.getAttribute('href'))) {
+          preloadObserver.observe(a);
+        }
+      }
+    }
+
+    // Observe on init
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', observeLinks);
+    } else {
+      observeLinks();
+    }
+
+    // Re-observe after navigation
+    document.addEventListener('astro:after-swap', function() {
+      setTimeout(observeLinks, 200);
+    });
+  })();
+
+  // ==================== ASTRO AFTER SWAP ====================
+  document.addEventListener('astro:after-swap', function() {
+    syncCSSVars();
+    syncBodyClass();
+    syncSettingsUI();
+    generateTOC();
+    setupTocObserver();
+    initWallpaper();
+  });
+
+  // ==================== INITIALIZATION ====================
+  syncCSSVars();
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      syncBodyClass();
+      syncSettingsUI();
+      setTimeout(generateTOC, 600);
+      setupTocObserver();
+      initWallpaper();
+    });
+  } else {
+    syncBodyClass();
+    syncSettingsUI();
+    setTimeout(generateTOC, 600);
+    setupTocObserver();
+    initWallpaper();
+  }
+})();
+</script>

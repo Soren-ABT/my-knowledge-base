@@ -1,0 +1,183 @@
+/* ============================================================
+   Base Styles — HTML, body, scrollbar, view transitions, utilities
+   ============================================================ */
+
+/* ============================================================
+   Top gradient highlight (for transparent navbar)
+   ============================================================ */
+.top-gradient-highlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 180px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.3) 30%, rgba(255,255,255,0.15) 60%, rgba(255,255,255,0.05) 80%, transparent 100%);
+  pointer-events: none;
+  z-index: 20;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dark .top-gradient-highlight {
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.05) 80%, transparent 100%);
+}
+
+/* ============================================================
+   Base HTML / Body
+   ============================================================ */
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+body {
+  font-family: "JetBrains Mono Variable", "JetBrainsMonoNerdFont", "LXGWWenKai", "Microsoft YaHei", "微软雅黑",
+    "Noto Sans SC", system-ui, -apple-system, sans-serif;
+  background-color: var(--page-bg);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: var(--selection-bg);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+
+/* ============================================================
+   View Transitions — smooth page crossfade
+   ============================================================ */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: vt-fade-out 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+::view-transition-new(root) {
+  animation: vt-fade-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes vt-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   Transition CSS Variables (Mizuki pattern)
+   ============================================================ */
+:root {
+  --transition-duration: 120ms;
+  --transition-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-easing-out: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --transition-translate: 1.5rem;
+  --transition-stagger: 35ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-duration: 0.01ms;
+    --transition-stagger: 0ms;
+    --transition-translate: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --transition-translate: 0.5rem;
+    --transition-duration: 150ms;
+  }
+}
+
+/* Keep wallpaper and navbar stable during transitions */
+#fullscreen-wallpaper,
+#top-row,
+#theme-wave-canvas,
+#sakura-canvas {
+  view-transition-name: none;
+}
+
+/* ============================================================
+   Smooth property transitions for settings changes
+   ============================================================ */
+html {
+  transition: --hue 0.3s ease;
+}
+
+/* Elements that respond to hue changes — smooth color shift */
+body,
+.card-base,
+.content-glass,
+.btn-regular,
+.code-block-wrapper,
+#navbar > div {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ============================================================
+   No-transition helper
+   ============================================================ */
+.no-transition,
+.no-transition *,
+.no-transition *::before,
+.no-transition *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* ============================================================
+   GPU Compositing Utilities (Mizuki pattern)
+   ============================================================ */
+
+/* Promote an element to its own GPU layer for smooth animations */
+.animate-gpu {
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Clean up GPU hints after animation completes to free resources */
+.animation-complete {
+  will-change: auto;
+}
+
+/* Contain paint/layout for rendering isolation during theme transitions */
+.is-theme-transitioning #theme-wave-canvas {
+  contain: layout style paint;
+  transform: translateZ(0);
+}
+
+/* ============================================================
+   Wave canvas
+   ============================================================ */
+#theme-wave-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  display: none;
+}
+
+/* ============================================================
+   Page progress bar
+   ============================================================ */
+#page-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  height: 3px;
+  background: linear-gradient(90deg, var(--progress-color), var(--progress-color-end));
+  transition: width 0.12s linear;
+  border-radius: 0 2px 2px 0;
+  pointer-events: none;
+}

@@ -1,0 +1,41 @@
+{
+  "name": "personal-blog",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "node scripts/scan-music.mjs && astro dev",
+    "start": "node scripts/scan-music.mjs && astro dev",
+    "build": "node scripts/scan-music.mjs && astro build && npx pagefind --site dist",
+    "preview": "astro preview",
+    "scan-music": "node scripts/scan-music.mjs",
+    "scan-music:watch": "node scripts/scan-music.mjs --watch"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^5.0.6",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.3",
+    "@expressive-code/plugin-collapsible-sections": "^0.42.0",
+    "@expressive-code/plugin-line-numbers": "^0.42.0",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.3.0",
+    "astro": "^6.4.3",
+    "astro-expressive-code": "^0.42.0",
+    "hastscript": "^9.0.1",
+    "katex": "^0.17.0",
+    "mdast-util-to-string": "^4.0.0",
+    "music-metadata": "^11.12.3",
+    "reading-time": "^1.5.0",
+    "rehype-components": "^0.3.0",
+    "rehype-katex": "^7.0.1",
+    "remark-directive": "^4.0.0",
+    "remark-math": "^6.0.0",
+    "satori": "^0.26.0",
+    "sharp": "^0.34.5",
+    "tailwindcss": "^4.3.0",
+    "unist-util-visit": "^5.1.0"
+  },
+  "devDependencies": {
+    "pagefind": "^1.5.2"
+  }
+}

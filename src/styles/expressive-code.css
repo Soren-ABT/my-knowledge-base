@@ -1,0 +1,50 @@
+/* ============================================================
+   Expressive Code — site-specific overrides
+   ============================================================ */
+
+/* Force custom font throughout Expressive Code */
+.expressive-code,
+.expressive-code pre,
+.expressive-code code,
+.expressive-code .ec-line,
+.expressive-code .title {
+  font-family: 'JetBrains Mono Variable', 'JetBrainsMonoNerdFont-Light', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+/* Match site border radius */
+.expressive-code .frame {
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+/* Dark mode code block shadow refinement */
+.dark .expressive-code .frame {
+  box-shadow: var(--shadow-md);
+}
+
+/* Code line hover effect */
+.expressive-code .ec-line:hover {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+/* Frame header: language indicator + name */
+.expressive-code .frame .header:not(:empty) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono Variable', 'JetBrainsMonoNerdFont-Light', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.3px;
+}
+
+.expressive-code .frame .header:not(:empty)::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+}

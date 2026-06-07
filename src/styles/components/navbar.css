@@ -1,0 +1,215 @@
+/* Semi (glass-morphism) */
+#navbar[data-dynamic-transparent="semi"] {
+  --nav-bg: var(--card-bg-transparent);
+  --nav-blur: blur(8px);
+  --nav-shadow: var(--shadow-lg);
+}
+
+/* None (solid) */
+#navbar[data-dynamic-transparent="none"] {
+  --nav-bg: var(--card-bg);
+  --nav-blur: none;
+  --nav-shadow: var(--shadow-sm);
+  --panel-bg: var(--card-bg);
+  --panel-blur: none;
+}
+
+/* Full transparent (desktop homepage) */
+@media (min-width: 1280px) {
+  body.wallpaper-transparent #navbar[data-transparent-mode="full"] {
+    --nav-bg: transparent;
+    --nav-blur: none;
+    --nav-shadow: none;
+    --nav-radius: 0;
+  }
+}
+
+/* Semi-Full: transparent when not scrolled, glass when scrolled */
+body.wallpaper-transparent #navbar[data-transparent-mode="semifull"]:not(.scrolled) {
+  --nav-bg: transparent;
+  --nav-blur: none;
+  --nav-shadow: none;
+  --nav-radius: 0;
+}
+body.wallpaper-transparent #navbar[data-transparent-mode="semifull"].scrolled {
+  --nav-bg: var(--card-bg-transparent);
+  --nav-blur: blur(8px);
+  --nav-shadow: var(--shadow-lg);
+  --nav-radius: var(--radius-large);
+}
+
+/* Navbar core styling */
+#navbar > div {
+  border: none !important;
+  outline: none;
+  background: var(--nav-bg);
+  -webkit-backdrop-filter: var(--nav-blur);
+  backdrop-filter: var(--nav-blur);
+  box-shadow: var(--nav-shadow);
+  border-radius: var(--nav-radius);
+  will-change: background, backdrop-filter, box-shadow;
+  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================
+   Content Glass Card — Apple-style frosted overlay for articles
+   ============================================================ */
+.content-glass {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-sm);
+  padding: 2rem;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  contain: layout style;
+}
+
+/* When wallpaper is in overlay/fullscreen mode, apply glass */
+body.wallpaper-transparent .content-glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-color: var(--glass-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  isolation: isolate;
+}
+.dark body.wallpaper-transparent .content-glass {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 768px) {
+  .content-glass {
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+  }
+}
+
+/* ============================================================
+   Doc sidebar
+   ============================================================ */
+.doc-sidebar-link {
+  display: block;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+.doc-sidebar-link:hover {
+  background: var(--btn-plain-bg-hover);
+  color: var(--text-color);
+}
+.doc-sidebar-link.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 500;
+}
+.doc-sidebar-category {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  padding: 0.5rem 0.75rem 0.25rem;
+}
+.doc-sidebar-category:first-child { padding-top: 0; }
+
+/* ============================================================
+   Admonition blocks — note, tip, important, caution, warning
+   ============================================================ */
+.admonition {
+  border-left: 4px solid var(--primary);
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-left-width: 4px;
+}
+.admonition-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 15%, transparent);
+}
+.admonition-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+.admonition-title {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.admonition-content {
+  padding: 12px 16px;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+.admonition-content > :first-child { margin-top: 0; }
+.admonition-content > :last-child { margin-bottom: 0; }
+
+.admonition-note { border-left-color: oklch(0.65 0.12 250); }
+.admonition-note .admonition-header { background: color-mix(in srgb, oklch(0.65 0.12 250) 8%, transparent); border-bottom-color: color-mix(in srgb, oklch(0.65 0.12 250) 15%, transparent); }
+.admonition-tip { border-left-color: oklch(0.65 0.14 150); }
+.admonition-tip .admonition-header { background: color-mix(in srgb, oklch(0.65 0.14 150) 8%, transparent); border-bottom-color: color-mix(in srgb, oklch(0.65 0.14 150) 15%, transparent); }
+.admonition-important { border-left-color: oklch(0.65 0.14 60); }
+.admonition-important .admonition-header { background: color-mix(in srgb, oklch(0.65 0.14 60) 8%, transparent); border-bottom-color: color-mix(in srgb, oklch(0.65 0.14 60) 15%, transparent); }
+.admonition-caution { border-left-color: oklch(0.65 0.14 30); }
+.admonition-caution .admonition-header { background: color-mix(in srgb, oklch(0.65 0.14 30) 8%, transparent); border-bottom-color: color-mix(in srgb, oklch(0.65 0.14 30) 15%, transparent); }
+.admonition-warning { border-left-color: oklch(0.65 0.18 15); }
+.admonition-warning .admonition-header { background: color-mix(in srgb, oklch(0.65 0.18 15) 8%, transparent); border-bottom-color: color-mix(in srgb, oklch(0.65 0.18 15) 15%, transparent); }
+
+/* ============================================================
+   Table wrapper — mobile-responsive scroll
+   ============================================================ */
+.table-wrapper {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+}
+.table-wrapper table {
+  margin: 0;
+  min-width: 100%;
+}
+.table-wrapper::-webkit-scrollbar { height: 6px; }
+.table-wrapper::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: 0 0 0.5rem 0.5rem; }
+.table-wrapper::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+/* ============================================================
+   Mermaid diagram styles
+   ============================================================ */
+.mermaid-diagram-container {
+  margin: 1.5rem 0;
+}
+.mermaid-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+}
+.mermaid {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+.mermaid-error {
+  color: #ef4444;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+}

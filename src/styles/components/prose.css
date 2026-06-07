@@ -1,0 +1,203 @@
+/* ============================================================
+   Prose / Markdown content
+   ============================================================ */
+.prose {
+  --tw-prose-body: var(--text-color);
+  --tw-prose-headings: var(--text-color);
+  --tw-prose-links: var(--primary);
+  --tw-prose-code: var(--text-color);
+  --tw-prose-pre-bg: var(--code-bg);
+  --tw-prose-quote-borders: var(--primary);
+  --tw-prose-quotes: var(--text-secondary);
+  --tw-prose-bold: var(--text-color);
+  --tw-prose-counters: var(--text-muted);
+  --tw-prose-bullets: var(--text-muted);
+  --tw-prose-hr: var(--border-color);
+  --tw-prose-th-borders: var(--border-color);
+  --tw-prose-td-borders: var(--border-color);
+  max-width: none;
+}
+
+.prose pre {
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+}
+
+.prose img {
+  border-radius: 0.5rem;
+  cursor: zoom-in;
+  transition: transform 0.15s;
+}
+.prose img:hover { transform: scale(1.02); }
+
+.prose h1, .prose h2, .prose h3 { color: var(--primary); }
+.prose h1 { font-size: 2rem; font-weight: 700; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 2rem; }
+.prose h2 { font-size: 1.5rem; font-weight: 600; margin-top: 1.8rem; }
+.prose h3 { font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; }
+.prose h4 { font-size: 1.05rem; font-weight: 500; margin-top: 1.2rem; }
+
+.prose code:not(pre code) {
+  background: var(--inline-code-bg);
+  color: var(--inline-code-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.prose blockquote {
+  border-left: 4px solid var(--blockquote-border);
+  background: var(--blockquote-bg);
+  padding: 12px 18px;
+  margin: 1.2rem 0;
+  border-radius: 0 6px 6px 0;
+  color: var(--text-secondary);
+}
+
+.prose table { border-collapse: collapse; width: 100%; margin: 1.5rem 0; }
+.prose th, .prose td { border: 1px solid var(--table-border); padding: 10px 14px; text-align: left; }
+.prose th { background: var(--card-bg-alt); font-weight: 600; }
+.prose tr:nth-child(even) { background: var(--table-stripe); }
+
+.prose a {
+  color: var(--primary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+.prose a:hover { border-bottom-color: var(--primary); }
+
+.dark .prose {
+  --tw-prose-body: var(--text-color);
+  --tw-prose-headings: var(--text-color);
+  --tw-prose-links: var(--primary);
+  --tw-prose-code: var(--text-color);
+  --tw-prose-pre-bg: var(--code-bg);
+}
+
+/* ============================================================
+   KaTeX Rendering (server-side via rehype-katex)
+   ============================================================ */
+
+/* Display math — scrollable overflow for wide formulas */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  margin: 1.4rem 0;
+  padding: 0.6rem 0;
+  text-align: center;
+}
+
+.katex-display > .katex {
+  display: inline-block;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Display math scrollbar */
+.katex-display::-webkit-scrollbar { height: 5px; }
+.katex-display::-webkit-scrollbar-track { background: transparent; }
+.katex-display::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+
+/* Inline math — vertical alignment */
+.katex {
+  font-size: 1.05em;
+  line-height: normal;
+}
+
+/* Prevent prose from interfering with KaTeX */
+.prose .katex,
+.prose .katex * {
+  font-size: inherit;
+  line-height: normal;
+}
+
+.prose .katex-display {
+  margin: 1.5rem 0;
+  padding: 0.3rem 0;
+}
+
+/* Dark mode — ensure formula text inherits correctly */
+.dark .katex,
+.dark .prose .katex {
+  color: var(--text-color);
+}
+
+/* Prevent symbol clipping */
+.katex .katex-html {
+  overflow: visible !important;
+}
+
+.katex .mord,
+.katex .mbin,
+.katex .mrel,
+.katex .minner,
+.katex .mopen,
+.katex .mclose,
+.katex .mpunct,
+.katex .minner {
+  overflow: visible !important;
+}
+
+/* ============================================================
+   Heading anchor
+   ============================================================ */
+.heading-anchor {
+  display: inline-block;
+  opacity: 0;
+  margin-left: 4px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: opacity 0.2s, transform 0.2s;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  user-select: none;
+  text-decoration: none;
+}
+.markdown-section h1:hover .heading-anchor,
+.markdown-section h2:hover .heading-anchor,
+.markdown-section h3:hover .heading-anchor,
+.markdown-section h4:hover .heading-anchor { opacity: 1; }
+.heading-anchor:hover { transform: scale(1.15); color: var(--text-color); }
+
+/* ============================================================
+   Toast
+   ============================================================ */
+#toast-container {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10050;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  padding: 10px 22px;
+  border-radius: 20px;
+  background: var(--toast-bg);
+  color: var(--toast-text);
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto;
+  animation: toastIn 0.35s cubic-bezier(0.22,0.61,0.36,1), toastOut 0.3s 2s cubic-bezier(0.55,0.06,0.68,0.19) forwards;
+}
+.toast.success { border-left: 3px solid #27ae60; }
+.toast.info { border-left: 3px solid var(--primary); }
+@keyframes toastIn {
+  0% { opacity: 0; transform: translateY(16px) scale(0.9) }
+  100% { opacity: 1; transform: translateY(0) scale(1) }
+}
+@keyframes toastOut {
+  0% { opacity: 1; transform: translateY(0) scale(1) }
+  100% { opacity: 0; transform: translateY(-8px) scale(0.9) }
+}
+

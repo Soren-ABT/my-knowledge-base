@@ -1,0 +1,238 @@
+---
+import { siteConfig } from "../config";
+import ThemeScript from "../components/ThemeScript.astro";
+import CoreManager from "../components/CoreManager.astro";
+
+const pageTitle = siteConfig.subtitle
+  ? `${siteConfig.title} - ${siteConfig.subtitle}`
+  : siteConfig.title;
+const hue = siteConfig.themeColor.hue;
+---
+
+<!doctype html>
+<html lang={siteConfig.lang.replace("_", "-")}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={siteConfig.subtitle} />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={siteConfig.subtitle} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteConfig.title} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={siteConfig.subtitle} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+    <style define:vars={{ hue }}></style>
+
+    <!-- Theme: centralized module (Mizuki pattern) — single source of truth -->
+    <ThemeScript />
+
+    <!-- CoreManager: centralized event delegation for all interactive UI -->
+    <CoreManager />
+  </head>
+  <body class="welcome-page">
+    <!-- Wave canvas for theme transitions -->
+    <canvas id="theme-wave-canvas"></canvas>
+
+    <!-- Loading overlay -->
+    <div id="loading">
+      <div class="loader-wrapper" id="loaderWrapper">
+        <div class="loader-triangle" id="loaderTriangle">
+          <svg viewBox="0 0 100 100">
+            <polygon class="tri-bg" points="50,10 91.7,80 8.3,80" />
+            <polygon class="tri-progress" points="50,10 91.7,80 8.3,80" pathLength="120" />
+          </svg>
+        </div>
+        <div class="loading-text">LOADING</div>
+      </div>
+    </div>
+
+    <slot />
+
+    <!-- Client app logic -->
+    <script defer src="/js/app.js"></script>
+
+    <!-- Music player engine + modules (ensure loaded even when entry page is WelcomeLayout) -->
+    <script defer src="/js/music-player.js"></script>
+    <script defer src="/js/music-player-decoder.js"></script>
+    <script defer src="/js/music-player-library.js"></script>
+
+    <!-- Loading screen & wave animation scripts -->
+    <script is:inline data-astro-rerun>
+      (function() {
+        'use strict';
+
+        // ========== 加载动画 (Loader) ==========
+        var LOADER_MAX_ANGLE = 9;
+        var LOADER_BASE_SHADOW = 'drop-shadow(0 0 4px rgba(0,0,0,0.15)) drop-shadow(0 0 1px rgba(0,0,0,0.3))';
+        var stateLoading = false;
+
+        var loaderWrapper = document.getElementById('loaderWrapper');
+        var loaderTriangle = document.getElementById('loaderTriangle');
+        var loading = document.getElementById('loading');
+
+        function handleLoaderMouse(e) {
+          if (stateLoading) return;
+          var dx = (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+          var dy = (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+          if (loaderWrapper) {
+            loaderWrapper.style.transform = 'rotateX(' + (-dy * LOADER_MAX_ANGLE) + 'deg) rotateY(' + (dx * LOADER_MAX_ANGLE) + 'deg) translateZ(14px)';
+          }
+          if (loaderTriangle) {
+            loaderTriangle.style.filter = LOADER_BASE_SHADOW + ' drop-shadow(' + (dx * 10) + 'px ' + (dy * 10) + 'px 12px rgba(0,0,0,0.35))';
+          }
+        }
+
+        document.addEventListener('mousemove', handleLoaderMouse);
+
+        window.__hideLoader = function() {
+          if (stateLoading) return;
+          stateLoading = true;
+          document.removeEventListener('mousemove', handleLoaderMouse);
+          if (loading) {
+            loading.classList.add('fade-out');
+            setTimeout(function() {
+              if (loading) loading.style.display = 'none';
+            }, 450);
+          }
+        };
+
+        // ========== 波浪切换动画 (ThemeWave) ==========
+        var waveCanvas = document.getElementById('theme-wave-canvas');
+        var waveCtx = null;
+        var waveAnimId = null;
+        var WAVE_DURATION = 1000;
+        var WAVE_FREQ = 2.2;
+        var WAVE_MAX_AMP = 65;
+        var WAVE_HARMONICS = [{mult:1.0,amp:1.0},{mult:2.3,amp:0.25},{mult:4.7,amp:0.1}];
+
+        function ensureWaveCtx() {
+          if (!waveCtx && waveCanvas) waveCtx = waveCanvas.getContext('2d');
+          return waveCtx;
+        }
+
+        window.__animateWave = function(fillColor) {
+          var canvas = waveCanvas, ctx = ensureWaveCtx();
+          if (!canvas || !ctx) return;
+          if (waveAnimId) { cancelAnimationFrame(waveAnimId); waveAnimId = null; }
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          canvas.style.display = 'block';
+          var w = canvas.width, h = canvas.height;
+          var freq = WAVE_FREQ, maxAmp = WAVE_MAX_AMP, harmonics = WAVE_HARMONICS;
+          var dur = WAVE_DURATION, st = performance.now();
+
+          function frame(now) {
+            var raw = Math.min((now - st) / dur, 1);
+            var eased = 1 - Math.pow(1 - raw, 4);
+            var waveY = -maxAmp + eased * (h + maxAmp * 2);
+            var ampEnvelope = Math.sin(eased * Math.PI);
+            var amp = maxAmp * ampEnvelope;
+            var steps = Math.max(2, Math.floor(w / 1.5));
+            var ps = eased * Math.PI * 1.8;
+
+            ctx.clearRect(0, 0, w, h);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            for (var i = 0; i <= steps; i++) {
+              var x = (i / steps) * w;
+              var phase = (i / steps) * Math.PI * 2 * freq + ps;
+              var yOff = 0;
+              for (var j = 0; j < harmonics.length; j++) {
+                yOff += Math.sin(phase * harmonics[j].mult) * amp * harmonics[j].amp;
+              }
+              ctx.lineTo(x, waveY + yOff);
+            }
+            ctx.lineTo(w, h);
+            ctx.lineTo(0, h);
+            ctx.closePath();
+            ctx.fillStyle = fillColor;
+            ctx.fill();
+
+            // Gradient shadow overlay
+            ctx.save();
+            ctx.clip();
+            var gT = waveY - amp - 10, gB = waveY + amp + 80;
+            var grd = ctx.createLinearGradient(0, gT, 0, gB);
+            grd.addColorStop(0, 'rgba(0,0,0,0)');
+            grd.addColorStop(0.3, 'rgba(0,0,0,0)');
+            grd.addColorStop(0.6, 'rgba(0,0,0,0.10)');
+            grd.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grd;
+            ctx.fillRect(0, gT, w, gB - gT);
+            ctx.restore();
+
+            // Highlight stroke
+            ctx.beginPath();
+            for (var i = 0; i <= steps; i++) {
+              var x = (i / steps) * w;
+              var phase = (i / steps) * Math.PI * 2 * freq + ps;
+              var yOff = 0;
+              for (var j = 0; j < harmonics.length; j++) {
+                yOff += Math.sin(phase * harmonics[j].mult) * amp * harmonics[j].amp;
+              }
+              if (i === 0) ctx.moveTo(x, waveY + yOff);
+              else ctx.lineTo(x, waveY + yOff);
+            }
+            ctx.strokeStyle = 'rgba(255,255,255,0.20)';
+            ctx.lineWidth = 1.4;
+            ctx.stroke();
+
+            ctx.beginPath();
+            for (var i = 0; i <= steps; i++) {
+              var x = (i / steps) * w;
+              var phase = (i / steps) * Math.PI * 2 * freq + ps;
+              var yOff = 0;
+              for (var j = 0; j < harmonics.length; j++) {
+                yOff += Math.sin(phase * harmonics[j].mult) * amp * harmonics[j].amp;
+              }
+              if (i === 0) ctx.moveTo(x, waveY + yOff - 1.0);
+              else ctx.lineTo(x, waveY + yOff - 1.0);
+            }
+            ctx.strokeStyle = 'rgba(255,255,255,0.38)';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+
+            if (raw < 1) {
+              waveAnimId = requestAnimationFrame(frame);
+            } else {
+              ctx.clearRect(0, 0, w, h);
+              canvas.style.display = 'none';
+              waveAnimId = null;
+            }
+          }
+          waveAnimId = requestAnimationFrame(frame);
+        };
+
+        // ========== 无过渡类 (no-transition) ==========
+        window.__freezeTransitions = function(el) {
+          el.classList.add('no-transition');
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              el.classList.remove('no-transition');
+            });
+          });
+        };
+
+        // ========== Theme change → wave animation ==========
+        window.addEventListener('theme-change', function(e) {
+          try {
+            var bg = getComputedStyle(document.body).getPropertyValue('--wl-bg').trim()
+                  || getComputedStyle(document.body).getPropertyValue('--page-bg').trim();
+            if (typeof window.__animateWave === 'function') {
+              window.__animateWave(bg || (e.detail.dark ? '#08080f' : '#f0ede8'));
+            }
+          } catch(err) {}
+        });
+      })();
+    </script>
+  </body>
+</html>

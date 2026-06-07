@@ -1,0 +1,71 @@
+---
+import { getCollection } from "astro:content";
+
+// Build sidebar from docs collection
+const docs = await getCollection("docs");
+
+// Group by top-level directory
+const categories = new Map<string, { title: string; items: { slug: string; title: string }[] }>();
+
+for (const doc of docs) {
+  const parts = doc.id.split("/");
+  // Skip README and files without proper structure
+  let category: string;
+  let itemSlug: string;
+
+  if (parts[0] === "files") {
+    // files/complex-analysis/chapter2/U2... -> category: Complex Analysis
+    category = parts[1] || "other";
+    itemSlug = doc.id;
+  } else if (doc.id === "README") {
+    continue;
+  } else {
+    category = parts[0] || "other";
+    itemSlug = doc.id;
+  }
+
+  // Convert slug to readable name
+  const catName = category
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+
+  if (!categories.has(category)) {
+    categories.set(category, { title: catName, items: [] });
+  }
+
+  const title = doc.data.title || parts[parts.length - 1].replace(/\.(md|mdx)$/, "").replace(/-/g, " ");
+  categories.get(category)!.items.push({
+    slug: doc.id,
+    title,
+  });
+}
+
+const currentPath = Astro.url?.pathname || "";
+---
+
+<nav class="doc-sidebar space-y-1">
+  <div class="mb-4">
+    <a href="/docs/" class="doc-sidebar-link font-semibold text-[var(--text-color)]">
+      知识库首页
+    </a>
+  </div>
+  {
+    Array.from(categories.entries()).map(([catKey, cat]) => (
+      <div>
+        <div class="doc-sidebar-category">{cat.title}</div>
+        {cat.items.map((item) => {
+          const docPath = `/docs/${item.slug.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "")}/`;
+          const isActive = currentPath === docPath;
+          return (
+            <a
+              href={docPath}
+              class:list={["doc-sidebar-link", { active: isActive }]}
+            >
+              {item.title}
+            </a>
+          );
+        })}
+      </div>
+    ))
+  }
+</nav>

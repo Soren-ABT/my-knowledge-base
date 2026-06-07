@@ -1,0 +1,37 @@
+# build output
+dist/
+
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+
+# environment variables
+.env
+.env.production
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Vercel
+.vercel
+
+# Temp
+*.log
+*.tmp
+
+# Large music files (>100MB GitHub limit)
+public/assets/music/url/015-A Most Profaned Fragment.flac
+public/assets/music/url/017-Cascade.flac
+public/assets/music/url/02.Old Stories.flac
+public/assets/music/url/02.天より降りし力.flac
+public/assets/music/url/140-God knows．．．.flac

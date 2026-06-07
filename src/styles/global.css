@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   Design Tokens — OKLCH color system, theme variables
+   ============================================================ */
+@import "./design-tokens.css";
+
+/* ============================================================
+   Base — HTML, body, scrollbar, view transitions, utilities
+   ============================================================ */
+@import "./base.css";
+
+/* ============================================================
+   Components (split by domain)
+   ============================================================ */
+@import "./components/cards.css";
+@import "./components/prose.css";
+@import "./components/code-blocks.css";
+@import "./components/navbar.css";
+@import "./components/widgets.css";
+
+/* ============================================================
+   Expressive Code — code block overrides
+   ============================================================ */
+@import "./expressive-code.css";
+
+/* ============================================================
+   Panels (split by domain)
+   ============================================================ */
+@import "./panels/search.css";
+@import "./panels/lightbox.css";
+@import "./panels/toc.css";
+@import "./panels/settings.css";
+
+/* ============================================================
+   Animations — keyframes, stagger, collapsible code, reduced motion
+   ============================================================ */
+@import "./animations.css";
+
+/* ============================================================
+   Local Fonts — self-hosted, no Google Fonts CDN
+   ============================================================ */
+@font-face {
+  font-family: 'JetBrainsMonoNerdFont';
+  src: url('/assets/font/JetBrainsMonoNerdFont-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGWWenKai';
+  src: url('/assets/font/LXGWWenKai-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-display: swap;
+}

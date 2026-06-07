@@ -1,0 +1,123 @@
+---
+import type { FullscreenWallpaperConfig } from "../types/config";
+
+interface Props {
+  config: FullscreenWallpaperConfig;
+  className?: string;
+}
+
+const { config, className } = Astro.props;
+
+const toArray = (src: string | string[] | undefined): string[] =>
+  Array.isArray(src) ? src : typeof src === "string" ? [src] : [];
+
+const getImageSources = () => {
+  const srcConfig = config.src;
+  if (
+    typeof srcConfig === "object" &&
+    srcConfig !== null &&
+    !Array.isArray(srcConfig)
+  ) {
+    const desktop = toArray(srcConfig.desktop);
+    const mobile = toArray(srcConfig.mobile);
+    return {
+      desktop: desktop.length > 0 ? desktop : mobile,
+      mobile: mobile.length > 0 ? mobile : desktop,
+    };
+  }
+  const allImages = toArray(srcConfig as string | string[]);
+  return { desktop: allImages, mobile: allImages };
+};
+
+const imageSources = getImageSources();
+const hasDesktopImages = imageSources.desktop.length > 0;
+const hasMobileImages = imageSources.mobile.length > 0;
+
+if (!hasDesktopImages && !hasMobileImages) {
+  // Return empty, will be hidden
+}
+
+const isCarouselEnabled =
+  config.carousel?.enable &&
+  (imageSources.desktop.length > 1 || imageSources.mobile.length > 1);
+const carouselInterval = config.carousel?.interval || 5;
+const position = config.position || "center";
+const zIndex = config.zIndex || -1;
+const opacity = config.opacity ?? 0.8;
+const blurAmount = config.blur || 0;
+
+const positionClass = (() => {
+  switch (position) {
+    case "top": return "object-top";
+    case "bottom": return "object-bottom";
+    default: return "object-center";
+  }
+})();
+---
+
+<div
+  id="fullscreen-wallpaper"
+  class:list={[
+    "fixed inset-0 w-full h-full overflow-hidden pointer-events-none wallpaper-container",
+    className
+  ]}
+  style={`z-index: ${zIndex}; transform: translateZ(0); perspective: 1000px; opacity: var(--wallpaper-opacity, ${opacity}); filter: blur(var(--wallpaper-blur, ${blurAmount}px));`}
+  data-fullscreen-wallpaper
+  data-carousel-interval={isCarouselEnabled ? String(carouselInterval) : undefined}
+>
+  <script is:inline>
+    (function() {
+      // Minimal initial display state only — prevents FOUC.
+      // All event-driven mode handling is in CoreManager.astro (head).
+      var el = document.currentScript.parentElement;
+      var mode = localStorage.getItem('wallpaper-mode') || 'banner';
+      if (mode === 'banner' || mode === 'none') {
+        el.style.display = 'none';
+        el.style.opacity = '0';
+      }
+    })();
+  </script>
+
+  {isCarouselEnabled ? (
+    <>
+      {hasDesktopImages && (
+        <div class="hidden md:block w-full h-full relative" style="transform: translateZ(0);">
+          {imageSources.desktop.map((src, index) => (
+            <img
+              src={src}
+              alt={`desktop wallpaper ${index + 1}`}
+              class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${positionClass}`}
+              data-carousel-item={index}
+              style={`transform: translateZ(0); backface-visibility: hidden; will-change: opacity; opacity: ${index === 0 ? 1 : 0};`}
+              fetchpriority={index === 0 ? "high" : "auto"}
+              decoding="async"
+              loading={index === 0 ? "eager" : "lazy"}
+            />
+          ))}
+        </div>
+      )}
+      {hasMobileImages && (
+        <div class="block md:hidden w-full h-full relative" style="transform: translateZ(0);">
+          {imageSources.mobile.map((src, index) => (
+            <img
+              src={src}
+              alt={`mobile wallpaper ${index + 1}`}
+              class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${positionClass}`}
+              data-carousel-item-mobile={index}
+              style={`transform: translateZ(0); backface-visibility: hidden; will-change: opacity; opacity: ${index === 0 ? 1 : 0};`}
+              fetchpriority={index === 0 ? "high" : "auto"}
+              decoding="async"
+              loading={index === 0 ? "eager" : "lazy"}
+            />
+          ))}
+        </div>
+      )}
+    </>
+  ) : (
+    <div id="wallpaper-single-container" class="w-full h-full relative"
+         data-wallpaper-desktop={JSON.stringify(imageSources.desktop)}
+         data-wallpaper-mobile={JSON.stringify(imageSources.mobile)}
+         data-wallpaper-position={positionClass}>
+    </div>
+  )}
+</div>

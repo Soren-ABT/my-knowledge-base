@@ -1,0 +1,101 @@
+音乐播放系统深度对比分析
+我已通读了你项目中所有音乐播放相关的代码（约 5000+ 行 JS/TS + 构建脚本 + CSS），以下是与 foobar2000、Mizuki、Navidrome、Roon 的系统性对比和优化建议。
+
+一、已做得好的部分
+扫描器（scan-music.mjs）设计得很扎实 — 支持 20+ 格式的 magic byte 检测、外部封面查找、.lrc 歌词匹配、ReplayGain 标签解析
+Codec 智能层（music-player-decoder.js）正确实现了浏览器能力探测和 Roon 式信号路径
+Apple Music 风格音乐库（music-player-library.js）已有完整的 sidebar 导航、专辑/艺术家/流派/年份视图、右键菜单、音轨属性面板
+沉浸模式（immersive view）是很好的起步
+二、高优先级 — 缺失的核心功能
+1. 无缝播放（Gapless Playback）
+foobar2000 的标志性功能。你的系统完全不支持。当前实现在一首曲子结束后，调用 next() → loadSong() → audio.load()，存在切换间隙。这对于古典、现场专辑和概念专辑（如你的 FFXIV OST）是致命的。Node.js 构建端已有 ReplayGain 的 encoder delay/padding 解析（audio-decoder.mjs:386-391），但运行时完全没用到。
+
+建议: 创建两个交替的 <audio> 元素实现 crossfading gapless 引擎，利用 encoder delay/padding 元数据进行精确样本级衔接。
+
+2. ReplayGain 音量均衡
+你已经在扫描时提取了 ReplayGain 标签（scan-music.mjs:351-358），生成的播放列表数据中也包含了 replayGain 字段，但运行时播放器完全没有应用增益调整。这意味着不同响度的曲目之间音量跳变明显。
+
+建议: 在 setupAudio() 中，创建 GainNode 通过 Web Audio API 的 createMediaElementSource 连接，根据 trackGain/albumGain 自动调整增益。
+
+3. 播放队列（Play Queue）vs 播放列表（Playlist）
+你只有一个扁平播放列表。Navidrome、foobar2000、Roon 都严格区分"音乐库"和"播放队列"。用户无法：
+
+"下一首播放"（插队）
+"添加到队列末尾"
+拖拽重排队列
+查看"即将播放"列表
+右键菜单里"下一首播放"的实现只是 MP.playIndex(trackIndex) — 立即播放而非插入队列。
+
+建议: 在 state 中新增 playQueue 数组，与 playlist 解耦。next() 优先从队列取，队列为空时才 fallback 到播放列表顺序。
+
+4. 波形/频谱可视化 & 可拖动进度预览
+所有参考播放器都有可视化。Roon 有精确的波形图支持可视化拖拽定位。你的进步条只是一个 5px 高的色块。
+
+建议: 用 Web Audio API 的 AnalyserNode 生成实时频谱或波形。audiowaveform 库可以预生成波形 JSON 数据并在构建时注入。
+
+5. 无任何持久化服务端存储
+播放次数存在 localStorage（music-player-library.js:25-38），清除浏览器数据即丢失。Navidrome 支持完整的服务端持久化。
+
+建议: 如果暂时不需要后端，至少提供 JSON 导出/导入播放统计的功能。长期可以考虑一个轻量 API（如 SQLite + Astro API routes）存储播放历史、收藏、评分。
+
+6. 智能播放列表 / 动态过滤器
+foobar2000 的 autoplaylist 和 Navidrome 的 smart playlist 允许基于规则（如"所有 5 星 2000 年后发行的 Jazz 曲目"）动态生成播放列表，你的系统完全没有这个机制。
+
+三、中优先级 — 增强功能
+7. DSP 链不够完善
+EQ 是 10 段 preset-only（foobar2000 是 18 段 + 自定义保存/加载，Roon MUSE 是完整参数 EQ + 可视化曲线）
+没有 resampler/downsampler — 你检测了 >96kHz 文件但只打印了 console.warn，没有实际降采样
+没有 crossfeed（耳机听感优化）
+没有 compressor/limiter
+没有 响度归一化（EBU R128 loudness normalization，区别于 ReplayGain track gain）
+建议: 短期优先实现 ReplayGain 增益应用（改动最小，收益最大）。中长期可以加入参数 EQ UI 和 SOX 风格的降采样。
+
+8. 元数据深度不足
+Roon 提供极其丰富的 credits（制作人、录音工程师、混音师、录音室、内页说明），并且区分 Composer/Performer/Conductor/Soloist 等多重角色。你的 tag-reader 已解析了 composer/lyricist/arranger，但UI 层面几乎没有展示这些信息。
+
+9. 艺术家形象
+Navidrome 从 Last.fm 拉取艺术家照片和简介，Roon 从 AllMusic/TiVo 获取。你的音乐库只有从专辑封面提取的颜色做 hero theme，没有任何艺术家视觉标识。
+
+10. 没有 Last.fm / ListenBrainz scrobbling
+foobar2000 和 Navidrome 都支持。这对听音统计和音乐发现很重要。
+
+11. 缺少常见播放功能
+睡眠定时器
+播放速度控制（0.5x ~ 2x）
+A-B 循环
+静音检测跳过
+书签（长录音/播客场景）
+12. 格式覆盖存在缺口
+你检测了 DSD（.dsf/.dff）但在评论中说暂不支持。WavPack/APE/TAK/TTA 可以检测但不能在浏览器播放。对于这些格式，你也没有提供自动转码为 FLAC 的方案指引。
+
+13. 没有评分和收藏系统
+foobar2000 和 Navidrome 都支持 1-5 星评分和收藏标记。你的系统完全没有用户反馈信号的闭环，无法实现"播放最多""最近播放""从未放过"等常用视图。
+
+四、低优先级 — 锦上添花
+功能	参考平台
+多设备同步播放	Roon, Navidrome
+离线缓存（Service Worker）	Navidrome (与 Subsonic 客户端配合)
+播客/有声书支持（含断点续播）	Navidrome
+网络电台（SHOUTcast/Icecast）	Navidrome
+CD 抓轨 + AccurateRip 校验	foobar2000
+Audio fingerprinting（MusicBrainz/AccoustID）	foobar2000, Roon
+协作播放列表	Navidrome
+Roon Radio（AI 驱动的相似发现）	Roon
+WASAPI/ASIO 独占模式	foobar2000
+多房间同步	Roon
+五、可以立即优化的小改动
+src/pages/index.astro 中音乐播放器作为全局组件，可以考虑加入 Media Session API 支持（浏览器媒体键、锁屏控件），这个只需要在 setupAudio() 中添加几行代码。
+
+音频缓存策略 — 当前每次切歌都重新 fetch 音频文件，可以利用浏览器的 prefetch 或手动创建预加载 <audio> 元素提前缓存下一首。
+
+歌词面板 目前没有搜索歌词功能，也没有从外部源（如 NetEase/LRCLIB API）自动获取缺失歌词的能力。你没有外部 API 的集成。
+
+键盘快捷键 在音乐库模式下有基本的 Space/Arrow/ESC 支持，但没有全局的媒体键快捷键（上一首/下一首），也没有音量快捷键。
+
+总结
+你的项目定位是一个静态博客内的音乐播放器，而非独立的音乐服务器（Navidrome）或桌面 Hi-Fi 播放器（foobar2000/Roon）。在这个定位下，最应该优先做的三项优化是：
+
+实现 ReplayGain 运行时增益调整（数据已经有了，就差 GainNode 连接）
+添加 Gapless/Crossfade 引擎（双 Audio 元素交替）
+区分 Play Queue 和 Playlist（"下一首播放"排队机制）
+这三项改动触及了当前架构最核心的用户体验瓶颈，其余功能可以根据实际需求逐步叠加。
