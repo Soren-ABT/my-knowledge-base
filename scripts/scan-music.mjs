@@ -26,7 +26,7 @@ const JSON_OUTPUT_FILE = join(PUBLIC_DIR, 'api', 'music-playlist.json');
 
 const SUPPORTED_EXTENSIONS = new Set([
   '.mp3', '.flac', '.m4a', '.ogg', '.wav', '.wma', '.aiff', '.aif',
-  '.ape', '.wv', '.opus', '.aac', '.dsf', '.dff', '.mpc', '.mp4',
+  '.ape', '.wv', '.opus', '.aac', '.mpc', '.mp4',
   '.alac', '.tak', '.tta', '.ac3', '.dts', '.aifc', '.wave',
 ]);
 

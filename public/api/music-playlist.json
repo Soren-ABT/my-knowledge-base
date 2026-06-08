@@ -67,5 +67,38 @@
     "browserSupported": true,
     "needsTranscode": false,
     "recommendedFormat": ""
+  },
+  {
+    "title": "All Of Me",
+    "artist": "Kenichi Tsunoda Big Band",
+    "artistRaw": "Kenichi Tsunoda Big Band",
+    "albumArtist": "Kenichi Tsunoda Big Band",
+    "album": "Mixer's Lab Soundseries Vol.1 (384kHz DXD)",
+    "year": 2018,
+    "genre": "Jazz",
+    "tags": [
+      "Jazz"
+    ],
+    "track": {
+      "no": 4,
+      "of": 1
+    },
+    "composer": "",
+    "cover": "/assets/music/cover/All_Of_Me_9ebb082d.jpg",
+    "url": "/assets/music/url/All%20Of%20Me.flac",
+    "duration": 182,
+    "sampleRate": 384000,
+    "bitsPerSample": 24,
+    "channels": 2,
+    "bitrate": 8131003.236198566,
+    "isHiRes": true,
+    "codec": "flac",
+    "codecName": "FLAC",
+    "qualityTier": "studioMaster",
+    "qualityLabel": "Studio Master",
+    "qualityBadge": "HR",
+    "browserSupported": true,
+    "needsTranscode": false,
+    "recommendedFormat": ""
   }
 ]
