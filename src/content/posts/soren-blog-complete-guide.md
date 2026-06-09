@@ -14,6 +14,56 @@ pinned: true
 
 本文将详细记录整个搭建过程，包括技术选型、架构设计、核心功能实现、踩坑经验以及性能优化策略。全文超过两万字，建议收藏后分段阅读。
 
+### 谁适合读这篇文章？
+
+| 读者类型 | 可以收获什么 |
+|----------|-------------|
+| **初学者（正在学 HTML/CSS/JS）** | 了解一个完整项目从零到一的流程，学习如何组织前端代码 |
+| **有一定基础（会用 React/Vue）** | 理解 Astro 的 Islands 架构思维，对比传统 SPA 框架 |
+| **想搭建个人博客的学生** | 获得完整的技术方案和部署指南，成本为零 |
+| **对音频/DSP 感兴趣** | 了解 Web Audio API 的信号链路实现 |
+| **只想要灵感/参考** | 浏览架构设计和功能列表，提取你需要的部分 |
+
+### 阅读建议
+
+- **第 1-3 章**：必读，理解项目全貌和技术决策
+- **第 4-5 章**：CSS 架构和音乐播放器，最深入的两个系统
+- **第 7 章**：主题系统设计，可迁移到任何项目
+- **第 17 章**：踩坑大全，节省你的调试时间
+- **其他章节**：按需跳读，每个系统相对独立
+
+### 搭建成本
+
+作为学生，成本是一个很现实的考量。好消息是：**从开发到部署，以下所有工具全部免费**：
+
+| 项目 | 工具/服务 | 费用 |
+|------|-----------|------|
+| 代码编辑器 | VS Code | 免费 |
+| 版本控制 | Git + GitHub | 免费 |
+| 托管部署 | GitHub Pages | 免费 |
+| CDN 加速 | Vercel / Cloudflare Pages | 免费（有慷慨的免费额度） |
+| 域名 | `github.io` 二级域名 | 免费 |
+| 搜索 | Pagefind（静态索引） | 免费 |
+| 评论 | Giscus（GitHub Discussions） | 免费 |
+| 字体 | 开源字体（如霞鹜文楷） | 免费 |
+| 字体 CDN | Google Fonts / jsDelivr | 免费 |
+
+也就是说，**从头到尾不需要花一分钱**。唯一可能需要付费的是自定义域名（可选，约 ¥50-100/年），但这不是必需的。
+
+---
+
+## 搭建这个博客教会我的事
+
+在开始讲技术之前，我想先说说这个项目带给我的成长。作为本科生，在搭建过程中我学到了远比代码更多的东西：
+
+- **系统设计思维** — 一个博客涉及路由、内容管理、样式架构、构建管道、部署流程……每个子系统都需要清晰的设计边界和接口
+- **调试能力** — 从"为什么音乐不播放"到"为什么 Vite 死锁"，每个 bug 都是一次深入底层原理的机会
+- **性能意识** — Lighthouse 评分不是目的，但追求满分的过程教会你什么是真正的性能优化
+- **文档能力** — 把复杂的技术实现写清楚，本身就是一个高价值的技能训练
+- **耐心** — 有些功能（如音乐播放器的 DSP 链）需要反复试错，这是课堂里学不到的
+
+如果你也是在读学生，我强烈建议你动手做一个自己的项目——不是照着教程复制，而是从"我想要什么"出发，一个功能一个功能地实现。这种自驱的实践比任何课程作业都更能提升工程能力。
+
 ---
 
 ## 一、项目概述
@@ -1118,6 +1168,39 @@ const posts = (await getCollection("posts"))
 
 Astro 构建输出到 `dist/`，通过 GitHub Actions 部署到 `gh-pages` 分支。
 
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run build
+      - run: npx pagefind --site dist  # 生成搜索索引
+
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          cname: ''  # 如有自定义域名则填写
+```
+
+部署后需要在 GitHub 仓库的 Settings → Pages 中将 Source 设为 `gh-pages` 分支。
+
 ### 15.2 Vercel（加速层）
 
 配置 `vercel.json`：
@@ -1259,6 +1342,57 @@ KaTeX 和 MathJax 对 `\(`、`\[` 的分隔符支持不一致。
 
 **解决**：服务端使用 KaTeX 预渲染，客户端加载 MathJax 作为复杂公式的回退方案。
 
+### 17.7 开发环境
+
+**问题：`npm run dev` 启动后页面一直加载，最终超时**
+
+**原因**：`public/` 目录下有大体积文件（如音频、视频）时，Vite 的文件监听系统可能过载。特别是某些特殊格式（如 DSD `.dsf`/`.dff`）被扫描脚本处理时会造成死锁。
+
+**排查步骤**：
+1. 检查 `public/` 目录大小：`du -sh public/`
+2. 检查是否有大量文件在 `public/` 被 Vite 监听
+3. 检查扫描脚本是否包含了不支持的格式
+
+**解决**：
+- 将不需要被 Vite 监听的大文件移到外部目录
+- 确保扫描脚本的格式白名单与解码器能力匹配
+- 在 `vite.server.watch.ignored` 中排除大文件目录
+
+**问题：`@tailwindcss/vite` 在 Node 24 上不工作**
+
+**原因**：`@tailwindcss/vite` 某些版本与 Node 24 的模块系统存在兼容性问题，表现为模块管道死锁。
+
+**解决**：使用 Node 20 LTS 版本，这是目前最稳定的选择。可以用 `nvm` 管理多个 Node 版本：
+
+```bash
+nvm install 20
+nvm use 20
+```
+
+**问题：`npm i` 报错或依赖冲突**
+
+**解决**：删除 `node_modules` 和 `package-lock.json` 后重新安装：
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### 17.8 部署相关
+
+**问题：GitHub Pages 部署后页面 404**
+
+常见原因：
+1. `base` 配置错误——用户站点用 `"/"`，项目站点用 `"/仓库名/"`
+2. GitHub Pages 的 Source 分支没选对——应该选 `gh-pages`
+3. 构建失败但没注意到——检查 Actions 日志
+
+**解决**：先在本地 `npm run build && npx serve dist` 验证构建产物是否正常。
+
+**问题：自定义域名后 HTTPS 不可用**
+
+GitHub Pages 在设置自定义域名后会自动申请 Let's Encrypt 证书，但需要几分钟到几小时。如果长时间不生效，检查 DNS 记录是否正确。
+
 ---
 
 ## 十八、未来规划
@@ -1290,15 +1424,19 @@ KaTeX 和 MathJax 对 `\(`、`\[` 的分隔符支持不一致。
 
 构建这个博客是一次非常充实的技术实践。从 Astro 6 + Tailwind CSS 4 的静态站点架构，到 Web Audio API 的音乐播放器，再到 OKLCH 颜色系统和毛玻璃 UI 设计，每个部分都经过了仔细的打磨。
 
+这个项目目前还在持续演进中。我的开发哲学是**先上线、再迭代**——不要让完美主义阻碍你发布第一个版本。实际上，你现在看到的博客经过了十几个版本的迭代才达到现在的完成度。
+
 如果你也想搭建类似的项目，建议从以下几个方面入手：
 
-1. **先用 Astro 搭一个基础博客**，熟悉其文件路由和 Content Collections
-2. **逐步添加功能**：搜索 → 标签 → 归档 → 主题切换 → 壁纸
+1. **先用 Astro 搭一个基础博客**，熟悉其文件路由和 Content Collections（1-2 天）
+2. **逐步添加功能**：搜索 → 标签 → 归档 → 主题切换 → 壁纸（每个功能半天到一天）
 3. **音乐播放器是最大的挑战**，建议先简化实现，再逐步添加 DSP 功能
 4. **CSS 设计系统是长期投资**，花时间设计好令牌体系，后续调整会很方便
+5. **不要一开始就追求完美**——先让博客能跑，写几篇文章，再根据实际需求迭代
 
-完整的源代码可以在 [GitHub](https://github.com/soren-abt/my-knowledge-base) 查看。
+完整的源代码可以在 [GitHub](https://github.com/soren-abt/my-knowledge-base) 查看。如果这个项目对你有帮助，欢迎 Star；如果有问题，也欢迎提 Issue 讨论。
 
 ---
 
-*本文最后更新于 2026 年 6 月 8 日。*
+*本文最后更新于 2026 年 6 月 10 日。*
+
