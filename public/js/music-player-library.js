@@ -51,6 +51,18 @@ window.__musicPlayerLibrary = function (MP) {
       if (raw) lib._recentList = JSON.parse(raw);
     } catch (e) { lib._recentList = []; }
     if (!lib._recentList) lib._recentList = [];
+    // Purge entries for tracks no longer in the playlist
+    var validUrls = {};
+    var pl = _state.playlist;
+    for (var i = 0; i < pl.length; i++) { validUrls[pl[i].url] = true; }
+    var filtered = [];
+    for (var i = 0; i < lib._recentList.length; i++) {
+      if (validUrls[lib._recentList[i].url]) filtered.push(lib._recentList[i]);
+    }
+    if (filtered.length !== lib._recentList.length) {
+      lib._recentList = filtered;
+      saveRecent();
+    }
   }
 
   function saveRecent() {
