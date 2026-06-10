@@ -131,7 +131,7 @@ pinned: false
 ---
 ```
 
-知识库文档放在 `src/content/docs/files/` 目录下。
+知识库文档放在 `src/content/docs/files/` 目录下（仅本地保留，git 已排除）。
 
 ---
 
@@ -235,7 +235,7 @@ my-knowledge-base/
 │   │   └── musicPlaylist.generated.ts   # 播放列表 TS（自动生成）
 │   ├── content/
 │   │   ├── posts/                       # 博客文章（*.md）
-│   │   └── docs/files/                  # 知识库文档
+│   │   └── docs/                        # 知识库（仅本地，.gitignore 排除）
 │   ├── content.config.ts                # Zod 内容校验
 │   ├── layouts/
 │   │   ├── Layout.astro                 # 主布局（所有内容页）

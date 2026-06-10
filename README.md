@@ -131,7 +131,7 @@ pinned: false
 ---
 ```
 
-For knowledge base documents, place files in `src/content/docs/files/`.
+For knowledge base documents, place files in `src/content/docs/files/` (kept local, excluded from git).
 
 ---
 
@@ -235,7 +235,7 @@ my-knowledge-base/
 │   │   └── musicPlaylist.generated.ts   # Playlist TS (auto-generated)
 │   ├── content/
 │   │   ├── posts/                       # Blog posts (*.md)
-│   │   └── docs/files/                  # Knowledge base docs
+│   │   └── docs/                        # Knowledge base (local only, .gitignored)
 │   ├── content.config.ts                # Zod content schema
 │   ├── layouts/
 │   │   ├── Layout.astro                 # Main layout (all content pages)

@@ -131,7 +131,7 @@ pinned: false
 ---
 ```
 
-ナレッジベースのドキュメントは `src/content/docs/files/` に配置します。
+ナレッジベースのドキュメントは `src/content/docs/files/` に配置します（ローカルのみ、git から除外）。
 
 ---
 
@@ -235,7 +235,7 @@ my-knowledge-base/
 │   │   └── musicPlaylist.generated.ts   # プレイリスト TS（自動生成）
 │   ├── content/
 │   │   ├── posts/                       # ブログ記事（*.md）
-│   │   └── docs/files/                  # ナレッジベース文書
+│   │   └── docs/                        # ナレッジベース（ローカルのみ、.gitignore 除外）
 │   ├── content.config.ts                # Zod コンテンツスキーマ
 │   ├── layouts/
 │   │   ├── Layout.astro                 # メインレイアウト（全コンテンツページ）

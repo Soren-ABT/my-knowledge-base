@@ -131,7 +131,7 @@ pinned: false
 ---
 ```
 
-知識庫文件放在 `src/content/docs/files/` 目錄下。
+知識庫文件放在 `src/content/docs/files/` 目錄下（僅本機保留，git 已排除）。
 
 ---
 
@@ -235,7 +235,7 @@ my-knowledge-base/
 │   │   └── musicPlaylist.generated.ts   # 播放清單 TS（自動生成）
 │   ├── content/
 │   │   ├── posts/                       # 部落格文章（*.md）
-│   │   └── docs/files/                  # 知識庫文件
+│   │   └── docs/                        # 知識庫（僅本機，.gitignore 排除）
 │   ├── content.config.ts                # Zod 內容校驗
 │   ├── layouts/
 │   │   ├── Layout.astro                 # 主佈局（所有內容頁）
