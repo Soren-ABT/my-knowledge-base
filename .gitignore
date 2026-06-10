@@ -22,6 +22,9 @@ npm-debug.log*
 .vscode/
 *.iml
 
+# Claude Code
+.claude/
+
 # Vercel
 .vercel
 
