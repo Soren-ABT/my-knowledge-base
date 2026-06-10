@@ -33,7 +33,7 @@ npm-debug.log*
 *.tmp
 
 # Personal docs (keep local, not on GitHub)
-src/content/docs/files/
+src/content/docs/
 
 # Large music files (>100MB GitHub limit)
 public/assets/music/url/015-A Most Profaned Fragment.flac
