@@ -36,9 +36,10 @@ npm-debug.log*
 src/content/docs/README.md
 src/content/docs/files/
 
-# Large music files (>100MB GitHub limit)
-public/assets/music/url/015-A Most Profaned Fragment.flac
-public/assets/music/url/017-Cascade.flac
-public/assets/music/url/02.Old Stories.flac
-public/assets/music/url/02.天より降りし力.flac
-public/assets/music/url/140-God knows．．．.flac
+# Music files (keep local, not on GitHub — copyright)
+public/assets/music/url/
+public/assets/music/cover/
+
+# Auto-generated playlist (local only)
+public/api/music-playlist.json
+src/config/musicPlaylist.generated.ts
