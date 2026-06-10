@@ -16,7 +16,7 @@
   }
 
   var isMobile = window.innerWidth < 768;
-  var SAKURA_COUNT = isMobile ? 9 : 21;
+  var SAKURA_COUNT = isMobile ? 15 : 35;
   var petals = [];
   var running = false;
   var animId = null;
