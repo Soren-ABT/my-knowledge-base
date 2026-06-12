@@ -27,6 +27,7 @@
 - [x] Astro [View Transitions](https://docs.astro.build/en/guides/view-transitions/) によるスムーズなページ遷移
 - [x] システム設定に応じたライト/ダークテーマ自動切替
 - [x] 動的色相スライダー — 1 つの CSS 変数でサイト全体のアクセントカラーを変更
+- [x] ブログホームページ：2カラムレイアウト + リアルタイム時計 + 音楽プレーヤーサイドバー
 - [x] フルスクリーン壁紙カルーセル + グラスモーフィズムカード効果
 - [x] 桜のパーティクルアニメーション（Canvas、オン/オフ切替可能）
 - [x] ウェルカムページのカスタムカーソル（ホバーエフェクト付き）
@@ -221,6 +222,7 @@ my-knowledge-base/
 │       ├── music-player-eq-presets.js   # イコライザープリセット
 │       ├── music-player-decoder.js      # フォーマットデコーダー情報
 │       ├── music-player-lyrics.js       # 歌詞表示
+│       ├── now-playing.js               # サイドバーミニプレーヤー
 │       ├── sakura.js                    # 桜パーティクルエフェクト
 │       ├── welcome-3d.js                # Three.js 3D シーン
 │       └── mermaid-render.js            # Mermaid 図表レンダラー
@@ -240,9 +242,9 @@ my-knowledge-base/
 │   ├── layouts/
 │   │   ├── Layout.astro                 # メインレイアウト（全コンテンツページ）
 │   │   └── WelcomeLayout.astro          # ウェルカムページレイアウト
-│   ├── pages/                           # ルートページ（12 ファイル）
+│   ├── pages/                           # ルートページ（17 ファイル）
 │   ├── plugins/                         # Remark/Rehype プラグイン（12 ファイル）
-│   ├── styles/                          # CSS デザインシステム（7 層）
+│   ├── styles/                          # CSS デザインシステム（コンポーネント、パネル、ページ、音楽プレーヤー）
 │   └── types/                           # TypeScript 型定義
 ├── astro.config.ts                      # Astro 設定
 ├── pagefind.yml                         # 検索エンジン設定

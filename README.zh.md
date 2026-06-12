@@ -27,6 +27,7 @@
 - [x] 流畅的页面过渡动画（Astro [View Transitions](https://docs.astro.build/en/guides/view-transitions/)）
 - [x] 明暗双主题，自动跟随系统偏好
 - [x] 动态色相滑块 —— 一个 CSS 变量控制全站色调
+- [x] 博客首页双栏布局：实时时钟 + 音乐播放器侧边栏小部件
 - [x] 全屏壁纸轮播 + 毛玻璃卡片效果
 - [x] 樱花粒子飘落动画（Canvas，可开关）
 - [x] 欢迎页自定义鼠标光标（悬停特效）
@@ -221,6 +222,7 @@ my-knowledge-base/
 │       ├── music-player-eq-presets.js   # 均衡器预设
 │       ├── music-player-decoder.js      # 格式解码器信息
 │       ├── music-player-lyrics.js       # 歌词显示
+│       ├── now-playing.js               # 侧边栏迷你播放器
 │       ├── sakura.js                    # 樱花粒子效果
 │       ├── welcome-3d.js                # Three.js 3D 场景
 │       └── mermaid-render.js            # Mermaid 图表渲染
@@ -240,9 +242,9 @@ my-knowledge-base/
 │   ├── layouts/
 │   │   ├── Layout.astro                 # 主布局（所有内容页）
 │   │   └── WelcomeLayout.astro          # 欢迎页布局
-│   ├── pages/                           # 路由页面（12 个文件）
+│   ├── pages/                           # 路由页面（17 个文件）
 │   ├── plugins/                         # Remark/Rehype 插件（12 个文件）
-│   ├── styles/                          # CSS 设计系统（7 层）
+│   ├── styles/                          # CSS 设计系统（组件、面板、页面、音乐播放器）
 │   └── types/                           # TypeScript 类型定义
 ├── astro.config.ts                      # Astro 配置
 ├── pagefind.yml                         # 搜索引擎配置

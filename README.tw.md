@@ -27,6 +27,7 @@
 - [x] 流暢的頁面過渡動畫（Astro [View Transitions](https://docs.astro.build/en/guides/view-transitions/)）
 - [x] 明暗雙主題，自動跟隨系統偏好
 - [x] 動態色相滑桿 —— 一個 CSS 變數控制全站色調
+- [x] 部落格首頁雙欄佈局：即時時鐘 + 音樂播放器側邊欄小工具
 - [x] 全螢幕桌布輪播 + 毛玻璃卡片效果
 - [x] 櫻花粒子飄落動畫（Canvas，可開關）
 - [x] 歡迎頁自訂滑鼠游標（懸停特效）
@@ -221,6 +222,7 @@ my-knowledge-base/
 │       ├── music-player-eq-presets.js   # 等化器預設
 │       ├── music-player-decoder.js      # 格式解碼器資訊
 │       ├── music-player-lyrics.js       # 歌詞顯示
+│       ├── now-playing.js               # 側邊欄迷你播放器
 │       ├── sakura.js                    # 櫻花粒子效果
 │       ├── welcome-3d.js                # Three.js 3D 場景
 │       └── mermaid-render.js            # Mermaid 圖表渲染
@@ -240,9 +242,9 @@ my-knowledge-base/
 │   ├── layouts/
 │   │   ├── Layout.astro                 # 主佈局（所有內容頁）
 │   │   └── WelcomeLayout.astro          # 歡迎頁佈局
-│   ├── pages/                           # 路由頁面（12 個檔案）
+│   ├── pages/                           # 路由頁面（17 個檔案）
 │   ├── plugins/                         # Remark/Rehype 外掛（12 個檔案）
-│   ├── styles/                          # CSS 設計系統（7 層）
+│   ├── styles/                          # CSS 設計系統（元件、面板、頁面、音樂播放器）
 │   └── types/                           # TypeScript 型別定義
 ├── astro.config.ts                      # Astro 設定
 ├── pagefind.yml                         # 搜尋引擎設定

@@ -27,6 +27,7 @@ From blog posts and knowledge base articles to interactive music listening, this
 - [x] Smooth page transitions via Astro [View Transitions](https://docs.astro.build/en/guides/view-transitions/)
 - [x] Light/dark theme switching with system preference detection
 - [x] Dynamic hue slider — change the entire site's accent color with one CSS variable
+- [x] Blog homepage with two-column layout, live clock, and music player sidebar widget
 - [x] Fullscreen wallpaper carousel with glassmorphism card effects
 - [x] Sakura particle animation (Canvas, toggleable)
 - [x] Custom cursor with hover effects on welcome page
@@ -221,6 +222,7 @@ my-knowledge-base/
 │       ├── music-player-eq-presets.js   # Equalizer presets
 │       ├── music-player-decoder.js      # Format decoder info
 │       ├── music-player-lyrics.js       # Lyrics display
+│       ├── now-playing.js               # Sidebar mini-player widget
 │       ├── sakura.js                    # Cherry blossom particles
 │       ├── welcome-3d.js                # Three.js 3D scene
 │       └── mermaid-render.js            # Mermaid diagram renderer
@@ -240,9 +242,9 @@ my-knowledge-base/
 │   ├── layouts/
 │   │   ├── Layout.astro                 # Main layout (all content pages)
 │   │   └── WelcomeLayout.astro          # Welcome page layout
-│   ├── pages/                           # Route pages (12 files)
+│   ├── pages/                           # Route pages (17 files)
 │   ├── plugins/                         # Remark/Rehype plugins (12 files)
-│   ├── styles/                          # CSS design system (7 layers)
+│   ├── styles/                          # CSS design system (components, panels, pages, music-player)
 │   └── types/                           # TypeScript type definitions
 ├── astro.config.ts                      # Astro configuration
 ├── pagefind.yml                         # Search engine config
