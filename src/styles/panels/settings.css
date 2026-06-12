@@ -8,11 +8,11 @@
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   z-index: 10002;
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
-#shortcuts-panel.active { display: flex; }
+#shortcuts-panel.float-panel-closed { display: none; }
 .shortcuts-modal {
   background: var(--card-bg);
   border-radius: 16px;
@@ -67,20 +67,9 @@
   bottom: 84px;
   left: 28px;
   width: 300px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  box-shadow: var(--shadow-xl);
   z-index: 50;
-  overflow: hidden;
   transform-origin: bottom left;
-}
-/* Mizuki float-panel pattern: closed by default, JS manages animation */
-.settings-panel.float-panel-closed {
-  opacity: 0;
-  transform: scale(0.95) translateY(-8px);
-  pointer-events: none;
-  visibility: hidden;
+  border: 1px solid var(--border-color);
 }
 .settings-header {
   display: flex;

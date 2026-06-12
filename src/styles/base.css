@@ -133,6 +133,56 @@ body,
 }
 
 /* ============================================================
+   Semantic Text Opacity Utilities
+   ============================================================ */
+.text-90 { color: rgba(0,0,0,0.9); }
+.text-75 { color: rgba(0,0,0,0.75); }
+.text-50 { color: rgba(0,0,0,0.5); }
+.text-30 { color: rgba(0,0,0,0.3); }
+
+:root.dark .text-90 { color: rgba(255,255,255,0.9); }
+:root.dark .text-75 { color: rgba(255,255,255,0.75); }
+:root.dark .text-50 { color: rgba(255,255,255,0.5); }
+:root.dark .text-30 { color: rgba(255,255,255,0.3); }
+
+/* ============================================================
+   Float Panel — unified overlay pattern
+   ============================================================ */
+.float-panel {
+  border-radius: var(--radius-large);
+  overflow: hidden;
+  background: var(--float-panel-bg);
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+  box-shadow: var(--shadow-xl);
+}
+.dark .float-panel { box-shadow: none; }
+
+.float-panel-closed {
+  opacity: 0;
+  transform: translateY(-0.5rem) scale(0.95);
+  pointer-events: none;
+}
+
+/* ============================================================
+   Dash line — vertical dashed connector for timelines
+   ============================================================ */
+.dash-line {
+  position: relative;
+}
+
+.dash-line::before {
+  content: "";
+  position: absolute;
+  width: 10%;
+  height: 100%;
+  left: calc(50% - 1px);
+  border-left: 2px dashed var(--line-color);
+  pointer-events: none;
+  transition: all 0.3s;
+  transform: translateY(-50%);
+}
+
+/* ============================================================
    GPU Compositing Utilities (Mizuki pattern)
    ============================================================ */
 

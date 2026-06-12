@@ -20,13 +20,13 @@
     SCROLL_SAVE_DEBOUNCE: 500,
     BACK_TO_TOP_THRESHOLD: 400,
     TOC_MIN_HEADINGS: 2,
+    PREVIEW_CACHE_MAX: 25,
+    PREVIEW_DEBOUNCE: 350,
+    PREVIEW_HIDE_DELAY: 200,
     WAVE_DURATION: 1000,
     WAVE_FREQ: 2.2,
     WAVE_MAX_AMP: 65,
     WAVE_HARMONICS: [{mult:1.0,amp:1.0},{mult:2.3,amp:0.25},{mult:4.7,amp:0.1}],
-    PREVIEW_CACHE_MAX: 25,
-    PREVIEW_DEBOUNCE: 350,
-    PREVIEW_HIDE_DELAY: 200,
     READING_POSITION_KEY: 'blog_reading_pos'
   };
 
@@ -646,13 +646,13 @@
           if (e.key === 'Escape') {
             closeSearch();
             var sp = $('shortcuts-panel');
-            if (sp) sp.classList.remove('active');
+            if (sp) sp.classList.add('float-panel-closed');
           }
           if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); return; }
           if ((e.ctrlKey || e.metaKey) && e.key === 'd') { e.preventDefault(); if (window.__theme && typeof window.__theme.toggle === 'function') window.__theme.toggle(); return; }
           if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowUp') { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
           if (e.key === '/' && !isInput) { e.preventDefault(); openSearch(); return; }
-          if (e.key === '?' && !isInput) { e.preventDefault(); var sp = $('shortcuts-panel'); if (sp) sp.classList.add('active'); return; }
+          if (e.key === '?' && !isInput) { e.preventDefault(); var sp = $('shortcuts-panel'); if (sp) sp.classList.remove('float-panel-closed'); return; }
         };
         document.addEventListener('keydown', handler);
       },
@@ -662,7 +662,7 @@
     };
   }
 
-  /* Theme change — wave animation + toast (theme state managed by __theme) */
+  /* Theme change — toast notification (CSS transitions handle the animation) */
   window.addEventListener('theme-change', function(e) {
     toast(e.detail.dark ? '已切换到深色模式' : '已切换到浅色模式', 'info');
     try {
@@ -678,14 +678,14 @@
   function openSearch() {
     var overlay = $('searchModalOverlay'), input = $('searchModalInput'), results = $('searchResults');
     if (!overlay) return;
-    overlay.classList.add('active');
+    overlay.classList.remove('float-panel-closed');
     if (input) { input.value = ''; setTimeout(function() { input.focus(); }, 100); }
     if (results) results.innerHTML = '<div class="search-no-results">输入关键词开始搜索...</div>';
     window.__searchSelectedIdx = -1;
   }
   function closeSearch() {
     var overlay = $('searchModalOverlay');
-    if (overlay) overlay.classList.remove('active');
+    if (overlay) overlay.classList.add('float-panel-closed');
     window.__searchSelectedIdx = -1;
   }
   function performSearch(kw) {
@@ -769,7 +769,7 @@
       searchInput.addEventListener('keydown', function(e) { handleSearchKb(e); });
     }
     var sp = $('shortcuts-panel');
-    if (sp) sp.addEventListener('click', function(e) { if (e.target === sp) sp.classList.remove('active'); });
+    if (sp) sp.addEventListener('click', function(e) { if (e.target === sp) sp.classList.add('float-panel-closed'); });
 
     // Keyboard shortcuts (always active)
     var kb = KeyboardModule();
@@ -815,6 +815,7 @@
         }
       }
     });
+
   }
 
   /* =================================================================
@@ -871,7 +872,7 @@
     var sp = document.getElementById('shortcuts-panel');
     if (sp && !sp._spBound) {
       sp._spBound = true;
-      sp.addEventListener('click', function(e) { if (e.target === sp) sp.classList.remove('active'); });
+      sp.addEventListener('click', function(e) { if (e.target === sp) sp.classList.add('float-panel-closed'); });
     }
 
     updateProgressBar();

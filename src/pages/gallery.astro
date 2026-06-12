@@ -1,0 +1,221 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+
+const allPosts = await getCollection("posts", ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+const postsWithImages = allPosts
+  .filter((p) => p.data.image && p.data.image.length > 0)
+  .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
+
+const slugFromId = (id: string) =>
+  id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return ((Math.abs(hash % 7) - 3) * 0.8);
+}
+---
+
+<Layout title="映像">
+  <div class="mx-auto max-w-6xl">
+    <header class="mb-10">
+      <div class="flex items-end justify-between">
+        <div>
+          <h1 class="text-2xl font-bold">映像</h1>
+          <p class="mt-1 text-sm text-75">
+            共 {postsWithImages.length} 张图片
+          </p>
+        </div>
+      </div>
+      <div class="page-header-divider"></div>
+    </header>
+
+    {
+      postsWithImages.length > 0 ? (
+        <div class="gallery-grid">
+          {postsWithImages.map((post, i) => {
+            const slug = slugFromId(post.id);
+            const tilt = hashString(slug);
+            return (
+              <a
+                href={`/posts/${slug}/`}
+                class="gallery-photo-card animate-gpu"
+                style={`--card-tilt: ${tilt}deg; animation-delay: calc(var(--content-delay) + ${i * 60}ms)`}
+                data-gallery-index={String(i)}
+                data-gallery-src={post.data.image}
+                data-gallery-title={post.data.title}
+              >
+                <div class="gallery-photo-frame">
+                  <div class="gallery-photo-inner">
+                    <img
+                      src={post.data.image}
+                      alt={post.data.title}
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div class="gallery-photo-tape"></div>
+                <span class="gallery-photo-title">{post.data.title}</span>
+              </a>
+            );
+          })}
+        </div>
+      ) : (
+        <div class="rounded-lg border border-dashed border-[var(--border-color)] p-12 text-center text-50">
+          <p class="text-lg">暂无带封面图片的文章</p>
+          <p class="mt-2 text-sm">为文章添加封面图片后，它们会显示在这里。</p>
+        </div>
+      )
+    }
+
+    <!-- Lightbox -->
+    <div id="gallery-lightbox" class="gallery-lb-overlay" role="dialog" aria-label="图片预览" inert>
+      <div class="gallery-lb-bg"></div>
+      <button class="gallery-lb-close" aria-label="关闭">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <button class="gallery-lb-prev" aria-label="上一张">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <button class="gallery-lb-next" aria-label="下一张">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+      <div class="gallery-lb-image-wrapper">
+        <img id="gallery-lb-img" src="" alt="" />
+        <div class="gallery-lb-caption"></div>
+      </div>
+      <div class="gallery-lb-counter"></div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // ============================================================
+  // Gallery Lightbox — vanilla JS
+  // ============================================================
+  (function() {
+    var lb = document.getElementById('gallery-lightbox');
+    if (!lb) return;
+
+    var lbImg = document.getElementById('gallery-lb-img') as HTMLImageElement | null;
+    var captionEl = lb.querySelector('.gallery-lb-caption');
+    var counterEl = lb.querySelector('.gallery-lb-counter');
+    var cards: { src: string; title: string }[] = [];
+    var currentIdx = -1;
+
+    function collectCards() {
+      cards = [];
+      document.querySelectorAll<HTMLElement>('.gallery-photo-card').forEach(function(el) {
+        cards.push({
+          src: el.dataset.gallerySrc || '',
+          title: el.dataset.galleryTitle || '',
+        });
+      });
+    }
+    collectCards();
+
+    document.addEventListener('astro:after-swap', function() {
+      var newLb = document.getElementById('gallery-lightbox');
+      if (newLb) {
+        lb = newLb;
+        lbImg = document.getElementById('gallery-lb-img') as HTMLImageElement | null;
+        captionEl = lb.querySelector('.gallery-lb-caption');
+        counterEl = lb.querySelector('.gallery-lb-counter');
+        collectCards();
+      }
+    });
+
+    function open(idx: number) {
+      if (!cards.length || !lbImg || !lb) return;
+      currentIdx = idx;
+      var card = cards[idx];
+      lbImg.src = card.src;
+      lbImg.alt = card.title || '';
+      if (captionEl) captionEl.textContent = card.title || '';
+      if (counterEl) counterEl.textContent = (idx + 1) + ' / ' + cards.length;
+      lb.classList.add('active');
+      lb.removeAttribute('inert');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      if (!lb) return;
+      lb.classList.remove('active');
+      lb.setAttribute('inert', '');
+      document.body.style.overflow = '';
+      currentIdx = -1;
+    }
+
+    function prev() {
+      if (currentIdx < 0) return;
+      open((currentIdx - 1 + cards.length) % cards.length);
+    }
+
+    function next() {
+      if (currentIdx < 0) return;
+      open((currentIdx + 1) % cards.length);
+    }
+
+    // Click on gallery photo card image → open lightbox
+    document.addEventListener('click', function(e) {
+      var target = e.target as HTMLElement;
+      if (!target.closest('.gallery-photo-inner')) return;
+      var card = target.closest('.gallery-photo-card') as HTMLElement;
+      if (!card) return;
+      e.preventDefault();
+      var idx = parseInt(card.dataset.galleryIndex || '-1');
+      if (!isNaN(idx)) open(idx);
+    });
+
+    // Close button
+    var closeBtn = lb.querySelector('.gallery-lb-close');
+    if (closeBtn) closeBtn.addEventListener('click', function(e) { e.stopPropagation(); close(); });
+
+    // Prev/next
+    var prevBtn = lb.querySelector('.gallery-lb-prev');
+    var nextBtn = lb.querySelector('.gallery-lb-next');
+    if (prevBtn) prevBtn.addEventListener('click', function(e) { e.stopPropagation(); prev(); });
+    if (nextBtn) nextBtn.addEventListener('click', function(e) { e.stopPropagation(); next(); });
+
+    // Click background to close
+    lb.addEventListener('click', function(e) {
+      var target = e.target as HTMLElement;
+      if (target === lb || target.classList.contains('gallery-lb-bg')) close();
+    });
+
+    // Keyboard
+    document.addEventListener('keydown', function(e) {
+      if (!lb || !lb.classList.contains('active')) return;
+      if (e.key === 'Escape') { close(); return; }
+      if (e.key === 'ArrowLeft') { prev(); return; }
+      if (e.key === 'ArrowRight') { next(); return; }
+    });
+
+    // Touch swipe
+    var touchStartX = 0;
+    lb.addEventListener('touchstart', function(e) {
+      touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+
+    lb.addEventListener('touchend', function(e) {
+      var dx = (e.changedTouches[0] || e.touches[0]).clientX - touchStartX;
+      if (Math.abs(dx) > 50) {
+        if (dx > 0) prev();
+        else next();
+      }
+    });
+  })();
+</script>

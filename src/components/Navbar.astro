@@ -12,7 +12,7 @@ const { transparentMode = "semifull" } = Astro.props;
   id="navbar"
   data-transparent-mode={transparentMode}
   data-is-home={Astro.url.pathname === "/" || Astro.url.pathname === "" ? "true" : "false"}
-  class="z-50"
+  class="z-50 onload-animation"
 >
   <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
     <a href="/" class="flex items-center gap-3 text-lg font-bold no-underline transition-opacity hover:opacity-80">
@@ -32,6 +32,7 @@ const { transparentMode = "semifull" } = Astro.props;
       <a href="/posts/" class="nav-link">文章</a>
       <a href="/archive/" class="nav-link">归档</a>
       <a href="/tags/" class="nav-link">标签</a>
+      <a href="/gallery/" class="nav-link">映像</a>
       <a href="/docs/" class="nav-link">知识库</a>
       <a href="/about/" class="nav-link">关于</a>
 

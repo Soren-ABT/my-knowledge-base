@@ -1,20 +1,33 @@
+import { readdirSync, existsSync } from "fs";
+import { join } from "path";
 import type { FullscreenWallpaperConfig } from "../types/config";
+
+const WALLPAPER_DIR = join(process.cwd(), "public/assets/wallpaper");
+
+function scanWallpapers(): { desktop: string[]; mobile: string[] } {
+  if (!existsSync(WALLPAPER_DIR)) return { desktop: [], mobile: [] };
+
+  const files = readdirSync(WALLPAPER_DIR);
+  const desktop = files
+    .filter((f) => /^\d+\.webp$/i.test(f))
+    .sort((a, b) => parseInt(a) - parseInt(b))
+    .map((f) => `/assets/wallpaper/${f}`);
+
+  const mobile = files
+    .filter((f) => /^m\d+\.webp$/i.test(f))
+    .sort((a, b) => parseInt(a.replace(/^m/i, "")) - parseInt(b.replace(/^m/i, "")))
+    .map((f) => `/assets/wallpaper/${f}`);
+
+  return { desktop, mobile };
+}
+
+const scanned = scanWallpapers();
 
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
   enable: true,
   src: {
-    desktop: [
-      "/assets/wallpaper/1.webp",
-      "/assets/wallpaper/2.webp",
-      "/assets/wallpaper/3.webp",
-      "/assets/wallpaper/4.webp",
-    ],
-    mobile: [
-      "/assets/wallpaper/m1.webp",
-      "/assets/wallpaper/m2.webp",
-      "/assets/wallpaper/m3.webp",
-      "/assets/wallpaper/m4.webp",
-    ],
+    desktop: scanned.desktop,
+    mobile: scanned.mobile,
   },
   position: "center",
   carousel: {

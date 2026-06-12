@@ -1,0 +1,647 @@
+/* ============================================================
+   Homepage — Fuwari two-column + Kirameku polish
+   ============================================================ */
+
+/* ---- Layout container ---- */
+.home-layout {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   Hero
+   ============================================================ */
+.home-hero {
+  margin-bottom: 2rem;
+}
+
+.hero-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.5s ease;
+}
+.hero-card:hover {
+  border-color: color-mix(in srgb, var(--primary) 25%, var(--border-color));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.dark .hero-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.hero-top-bar {
+  height: 3px;
+  border-radius: 24px 24px 0 0;
+  background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899, #f59e0b);
+}
+
+.hero-body {
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+@media (min-width: 640px) {
+  .hero-body {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.hero-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-color);
+  letter-spacing: -0.03em;
+}
+@media (min-width: 640px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+}
+
+.hero-subtitle {
+  margin-top: 0.35rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+@media (min-width: 640px) {
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+}
+
+.hero-stats {
+  display: flex;
+  gap: 1.25rem;
+  flex-shrink: 0;
+}
+@media (max-width: 639px) {
+  .hero-stats {
+    gap: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+}
+
+.hero-stat {
+  text-align: center;
+  min-width: 3rem;
+}
+
+.hero-stat-icon {
+  display: block;
+  margin: 0 auto 0.35rem;
+  opacity: 0.7;
+}
+
+.hero-stat-num {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  line-height: 1.2;
+  transition: transform 0.2s ease;
+}
+.hero-stat:hover .hero-stat-num {
+  transform: scale(1.08);
+}
+
+/* Color-coded stats */
+.stat-posts  { color: #6366f1; }
+.stat-tags   { color: #a855f7; }
+.stat-words  { color: #10b981; }
+.stat-pinned { color: #f59e0b; }
+
+.hero-stat-label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+/* ============================================================
+   Main two-column grid
+   ============================================================ */
+.home-main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 768px) {
+  .home-main {
+    grid-template-columns: 15rem 1fr;
+  }
+}
+
+/* ============================================================
+   Sidebar
+   ============================================================ */
+.home-sidebar {
+  display: none;
+}
+@media (min-width: 768px) {
+  .home-sidebar {
+    display: flex;
+    position: sticky;
+    top: calc(4.5rem + 1rem);
+    align-self: start;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.sidebar-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-large);
+  padding: 1rem;
+  transition: border-color 0.2s ease, transform 0.5s ease, box-shadow 0.5s ease;
+}
+.sidebar-card:hover {
+  border-color: color-mix(in srgb, var(--primary) 20%, var(--border-color));
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+
+.sidebar-bio {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 0.3rem;
+  line-height: 1.45;
+}
+
+.sidebar-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.sidebar-link-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.4rem;
+  font-size: 0.73rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+.sidebar-link-item:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+.sidebar-link-item svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+.sidebar-link-item:hover svg {
+  opacity: 1;
+}
+
+.sidebar-section-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.6rem;
+}
+
+/* Sidebar nav */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.4rem;
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+.sidebar-nav-item:hover {
+  background: var(--btn-plain-bg-hover);
+  color: var(--primary);
+}
+
+/* Sidebar tags */
+.sidebar-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.sidebar-tag-count {
+  opacity: 0.55;
+  margin-left: 0.15rem;
+  font-size: 0.65rem;
+}
+
+/* ============================================================
+   Profile card — avatar with gradient ring
+   ============================================================ */
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+}
+
+.profile-avatar-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8, #6366f1, #a855f7);
+  z-index: 0;
+}
+
+.profile-avatar-img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  z-index: 1;
+  border: 2px solid var(--card-bg);
+}
+
+.profile-avatar-initial {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar-profile-text {
+  min-width: 0;
+  flex: 1;
+}
+
+/* Gradient line separator between profile and links */
+.profile-gradient-line {
+  height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899, transparent);
+  margin: 0.5rem 0 0.75rem;
+  opacity: 0.5;
+}
+
+/* ============================================================
+   Now Playing card
+   ============================================================ */
+.np-idle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  padding: 0.25rem 0;
+}
+
+.np-cover-row {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 0.6rem;
+  background: var(--card-bg-alt, color-mix(in srgb, var(--primary) 8%, transparent));
+}
+
+.np-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.np-cover-row:hover .np-cover {
+  transform: scale(1.08);
+}
+
+.np-cover-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.np-cover-row:hover .np-cover-overlay {
+  opacity: 1;
+}
+
+.np-title {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.np-artist {
+  font-size: 0.73rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.6rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.np-progress-bar {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border-color);
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+}
+
+.np-progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 2px;
+  background: var(--primary);
+  transition: width 0.3s linear;
+}
+
+.np-time {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-bottom: 0.5rem;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.np-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.np-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.np-btn:hover {
+  background: var(--btn-plain-bg-hover);
+  color: var(--primary);
+}
+
+.np-btn-play {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.np-btn-play:hover {
+  transform: scale(1.1);
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Toggle play/pause icons */
+.np-btn-play[data-playing="1"] .np-icon-play { display: none; }
+.np-btn-play[data-playing="1"] .np-icon-pause { display: block; }
+.np-btn-play[data-playing="0"] .np-icon-play { display: block; }
+.np-btn-play[data-playing="0"] .np-icon-pause { display: none; }
+
+/* ============================================================
+   Live Clock
+   ============================================================ */
+.clock-display {
+  text-align: center;
+  padding: 0.25rem 0;
+}
+
+.clock-time {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: "JetBrains Mono", monospace;
+  color: var(--text-color);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.clock-date {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* ============================================================
+   Post list
+   ============================================================ */
+.home-content {
+  min-width: 0;
+}
+
+.home-posts-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.home-posts-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.3rem;
+}
+
+.home-posts-count {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.home-post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.home-posts-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+/* ============================================================
+   Staggered entry animation — homepage sections fade in sequentially
+   ============================================================ */
+
+/* Speed up content-wrapper on homepage so children control their own timing */
+body:has(.home-layout) #content-wrapper {
+  animation-delay: 0ms;
+}
+
+.home-hero,
+.home-sidebar,
+.home-content {
+  opacity: 0;
+  animation: fade-in-up 400ms ease-out forwards;
+  animation-fill-mode: forwards;
+}
+
+.home-hero    { animation-delay: 0ms; }
+.home-sidebar { animation-delay: 80ms; }
+.home-content { animation-delay: 160ms; }
+
+/* Post cards stagger within the list */
+.home-post-list > *:nth-child(1) { animation-delay: 200ms; }
+.home-post-list > *:nth-child(2) { animation-delay: 240ms; }
+.home-post-list > *:nth-child(3) { animation-delay: 280ms; }
+.home-post-list > *:nth-child(4) { animation-delay: 320ms; }
+.home-post-list > *:nth-child(5) { animation-delay: 360ms; }
+.home-post-list > *:nth-child(6) { animation-delay: 400ms; }
+
+/* ============================================================
+   Glassmorphism — frosted cards when wallpaper is transparent
+   ============================================================ */
+body.wallpaper-transparent .hero-card,
+body.wallpaper-transparent .sidebar-card {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border-color: var(--glass-border);
+}
+
+body.wallpaper-transparent .hero-card {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+}
+
+body.wallpaper-transparent .sidebar-card {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.dark body.wallpaper-transparent .hero-card {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.dark body.wallpaper-transparent .sidebar-card {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* ============================================================
+   Mobile sidebar — horizontal scroll strip for key cards
+   ============================================================ */
+@media (max-width: 767px) {
+  .home-sidebar {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+    position: static;
+  }
+  .home-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide all sidebar cards on mobile by default */
+  .sidebar-card {
+    display: none;
+  }
+
+  /* Show only now-playing and clock as horizontal cards */
+  .sidebar-nowplaying,
+  .sidebar-clock {
+    display: block;
+    flex-shrink: 0;
+    min-width: 10rem;
+    max-width: 12rem;
+  }
+
+  .sidebar-clock .clock-time {
+    font-size: 1.1rem;
+  }
+  .sidebar-clock .clock-date {
+    font-size: 0.65rem;
+  }
+}
+
+/* ============================================================
+   Reduced motion — accessibility
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .home-hero,
+  .home-sidebar,
+  .home-content,
+  .home-post-list > * {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    opacity: 1 !important;
+  }
+  body:has(.home-layout) #content-wrapper {
+    animation-delay: 0.01ms !important;
+  }
+  .hero-card:hover {
+    transform: none;
+  }
+  .sidebar-card:hover {
+    transform: none;
+  }
+  .hero-stat:hover .hero-stat-num {
+    transform: none;
+  }
+}

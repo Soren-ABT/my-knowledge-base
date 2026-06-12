@@ -208,13 +208,13 @@
   function openTOC() {
     tocOpen = true;
     var panel = document.getElementById('floating-toc-panel');
-    if (panel) panel.classList.add('show');
+    if (panel) { panel.classList.remove('float-panel-closed'); panel.classList.add('show'); }
   }
 
   function closeTOC() {
     tocOpen = false;
     var panel = document.getElementById('floating-toc-panel');
-    if (panel) panel.classList.remove('show');
+    if (panel) { panel.classList.add('float-panel-closed'); panel.classList.remove('show'); }
   }
 
   function setupTocObserver() {
@@ -360,7 +360,11 @@
 
     var mode = localStorage.getItem('wallpaper-mode') || 'banner';
     if (mode === 'fullscreen' || mode === 'overlay') {
+      el.style.display = 'block';
       el.style.opacity = 'var(--wallpaper-opacity, 0.8)';
+    } else {
+      el.style.display = 'none';
+      el.style.opacity = '0';
     }
 
     if (document.getElementById('wallpaper-single-container')) {
@@ -455,18 +459,19 @@
       return;
     }
 
-    // Click outside to close panels
-    if (settingsOpen || tocOpen) {
-      var panel = document.getElementById('settings-panel');
-      var settingsFab = document.getElementById('settings-fab');
-      var tocWrapper = document.getElementById('floating-toc-wrapper');
-
-      if (settingsOpen && panel && settingsFab &&
-          !panel.contains(e.target) && !settingsFab.contains(e.target)) {
-        closeSettings();
-      }
-      if (tocOpen && tocWrapper && !tocWrapper.contains(e.target)) {
-        closeTOC();
+    // Click outside to close any open float panel (generic)
+    var openPanels = document.querySelectorAll('.float-panel:not(.float-panel-closed)');
+    for (var i = 0; i < openPanels.length; i++) {
+      var panel = openPanels[i];
+      var trigger = panel.__floatTrigger;
+      if (!panel.contains(e.target) && (!trigger || !trigger.contains(e.target)) &&
+          !e.target.closest('#settings-fab') && !e.target.closest('#floating-toc-btn')) {
+        // Close settings panel
+        if (panel.id === 'settings-panel') { closeSettings(); }
+        // Close TOC
+        if (panel.id === 'floating-toc-panel') { closeTOC(); }
+        // Generic fallback: add float-panel-closed
+        panel.classList.add('float-panel-closed');
       }
     }
   });
@@ -555,9 +560,9 @@
               startCarousel();
             }
             // Restore sakura
-            var sakura = document.getElementById('sakura-canvas');
-            if (sakura && localStorage.getItem('sakura-enabled') === 'true') {
-              sakura.style.display = '';
+            var sakura2 = document.getElementById('sakura-canvas');
+            if (sakura2 && localStorage.getItem('sakura-enabled') === 'true') {
+              sakura2.style.display = '';
             }
           }
         }
@@ -638,6 +643,8 @@
     generateTOC();
     setupTocObserver();
     initWallpaper();
+    // Reset content delay for instant SPA navigation (no entrance animation)
+    document.documentElement.style.setProperty('--content-delay', '0ms');
   });
 
   // ==================== INITIALIZATION ====================

@@ -37,6 +37,12 @@
 @import "./panels/settings.css";
 
 /* ============================================================
+   Pages
+   ============================================================ */
+@import "./pages/gallery.css";
+@import "./pages/home.css";
+
+/* ============================================================
    Animations — keyframes, stagger, collapsible code, reduced motion
    ============================================================ */
 @import "./animations.css";

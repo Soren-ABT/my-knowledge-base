@@ -182,7 +182,7 @@ const shouldShowTopHighlight =
       </div>
     </div>
 
-    <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6" transition:animate="fade" data-pagefind-body>
+    <main id="content-wrapper" class="onload-animation mx-auto max-w-6xl px-4 py-8 sm:px-6" transition:animate="fade" data-pagefind-body>
       <slot />
     </main>
 
@@ -203,7 +203,7 @@ const shouldShowTopHighlight =
     <SettingsPanel />
 
     <!-- Search modal -->
-    <div class="search-modal-overlay" id="searchModalOverlay">
+    <div class="search-modal-overlay float-panel-closed" id="searchModalOverlay">
       <div class="search-modal" role="search">
         <div class="search-modal-header">
           <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -227,7 +227,7 @@ const shouldShowTopHighlight =
     </div>
 
     <!-- Shortcuts panel -->
-    <div id="shortcuts-panel">
+    <div id="shortcuts-panel" class="float-panel-closed">
       <div class="shortcuts-modal" role="dialog" aria-label="快捷键帮助">
         <h3>键盘快捷键</h3>
         <div class="kbd-row"><span>全局搜索</span><span><kbd>Ctrl</kbd>+<kbd>K</kbd></span></div>

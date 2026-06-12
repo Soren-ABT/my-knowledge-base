@@ -12,12 +12,12 @@
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   z-index: 10001;
-  display: none;
+  display: flex;
   align-items: flex-start;
   justify-content: center;
   padding-top: 12vh;
 }
-.search-modal-overlay.active { display: flex; }
+.search-modal-overlay.float-panel-closed { display: none; }
 .search-modal {
   background: var(--card-bg);
   border-radius: 18px;
