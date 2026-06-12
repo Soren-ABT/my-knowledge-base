@@ -1,4 +1,4 @@
-# 🎵 Soren's Knowledge Base & Blog
+# Soren's Knowledge Base & Blog
 
 <img align='right' src='public/favicon.svg' width='180px' alt="logo">
 

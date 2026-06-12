@@ -1,4 +1,4 @@
-# 🎵 Soren's ナレッジベース & ブログ
+# Soren's ナレッジベース & ブログ
 
 <img align='right' src='public/favicon.svg' width='180px' alt="logo">
 

@@ -1,4 +1,4 @@
-# 🎵 Soren's 知识库与博客
+# Soren's 知识库与博客
 
 <img align='right' src='public/favicon.svg' width='180px' alt="logo">
 
