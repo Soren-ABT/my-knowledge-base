@@ -28,13 +28,7 @@ interface Props {
   withSidebar?: boolean;
 }
 
-const {
-  title,
-  description,
-  ogImage,
-  withProgressBar = true,
-  withSidebar = false,
-} = Astro.props;
+const { title, description, ogImage, withProgressBar = true, withSidebar = false } = Astro.props;
 
 const pageTitle = title
   ? `${title} - ${siteConfig.title}`
@@ -98,7 +92,13 @@ const shouldShowTopHighlight =
     <CoreManager />
 
     <!-- Font preload for self-hosted fonts -->
-    <link rel="preload" href="/assets/font/JetBrainsMonoNerdFont-Light.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="/assets/font/JetBrainsMonoNerdFont-Light.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
 
     <!-- CDN hints for faster third-party loading -->
     <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
@@ -122,14 +122,20 @@ const shouldShowTopHighlight =
     <script is:inline>
       window.MathJax = {
         tex: {
-          inlineMath: [['$', '$'], ['\\(', '\\)']],
-          displayMath: [['$$', '$$'], ['\\[', '\\]']],
-          processEscapes: true
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
+          processEscapes: true,
         },
         options: {
-          skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'mjx-container'],
-          ignoreHtmlClass: 'tex2jax_ignore'
-        }
+          skipHtmlTags: ["script", "noscript", "style", "textarea", "mjx-container"],
+          ignoreHtmlClass: "tex2jax_ignore",
+        },
       };
     </script>
     <!-- MathJax async loader with CDN fallback -->
@@ -139,28 +145,26 @@ const shouldShowTopHighlight =
     <a href="#content-wrapper" class="skip-link">{ui["common.skipToContent"]}</a>
     <!-- Critical: set wallpaper mode before paint to prevent FOUC -->
     <script is:inline>
-      (function() {
-        var mode = localStorage.getItem('wallpaper-mode');
-        if (mode === 'banner' || mode === 'fullscreen' || mode === 'overlay') {
-          document.body.classList.add('wallpaper-transparent');
+      (function () {
+        var mode = localStorage.getItem("wallpaper-mode");
+        if (mode === "banner" || mode === "fullscreen" || mode === "overlay") {
+          document.body.classList.add("wallpaper-transparent");
         }
         var s = document.documentElement.style;
-        var op = localStorage.getItem('overlay-opacity');
-        var bl = localStorage.getItem('overlay-blur');
-        var co = localStorage.getItem('overlay-card-opacity');
-        if (op) s.setProperty('--wallpaper-opacity', Number(op) / 100);
-        if (bl) s.setProperty('--wallpaper-blur', bl + 'px');
-        if (co) s.setProperty('--card-transparent-opacity', Number(co) / 100);
+        var op = localStorage.getItem("overlay-opacity");
+        var bl = localStorage.getItem("overlay-blur");
+        var co = localStorage.getItem("overlay-card-opacity");
+        if (op) s.setProperty("--wallpaper-opacity", Number(op) / 100);
+        if (bl) s.setProperty("--wallpaper-blur", bl + "px");
+        if (co) s.setProperty("--card-transparent-opacity", Number(co) / 100);
       })();
     </script>
 
     <!-- Top gradient highlight for transparent navbar -->
-    {shouldShowTopHighlight && <div class="top-gradient-highlight"></div>}
+    {shouldShowTopHighlight && <div class="top-gradient-highlight" />}
 
     <!-- Fullscreen wallpaper -->
-    {fullscreenWallpaperConfig.enable && (
-      <FullscreenWallpaper config={fullscreenWallpaperConfig} />
-    )}
+    {fullscreenWallpaperConfig.enable && <FullscreenWallpaper config={fullscreenWallpaperConfig} />}
 
     <!-- Canvas layer: theme wave + sakura particles -->
     <CanvasLayer />
@@ -168,18 +172,24 @@ const shouldShowTopHighlight =
     <!-- Music Player -->
     <MusicPlayer />
 
-    {withProgressBar && siteConfig.pageProgressBar.enable && (
-      <div id="page-progress-bar"></div>
-    )}
+    {withProgressBar && siteConfig.pageProgressBar.enable && <div id="page-progress-bar" />}
 
     <!-- Navbar -->
-    <div id="top-row" class="z-50 pointer-events-none relative transition-all duration-700 max-w-6xl px-0 md:px-4 mx-auto">
+    <div
+      id="top-row"
+      class="z-50 pointer-events-none relative transition-all duration-700 max-w-6xl px-0 md:px-4 mx-auto"
+    >
       <div id="navbar-wrapper" class="pointer-events-auto sticky top-0 transition-all">
         <Navbar transparentMode={navbarTransparentMode} />
       </div>
     </div>
 
-    <main id="content-wrapper" class="onload-animation mx-auto max-w-6xl px-4 py-8 sm:px-6" transition:animate="fade" data-pagefind-body>
+    <main
+      id="content-wrapper"
+      class="onload-animation mx-auto max-w-6xl px-4 py-8 sm:px-6"
+      transition:animate="fade"
+      data-pagefind-body
+    >
       <slot />
     </main>
 

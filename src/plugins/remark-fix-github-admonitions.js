@@ -40,7 +40,9 @@ export function remarkFixGithubAdmonitions() {
         type: "containerDirective",
         name: directiveName,
         children: [
-          ...(paragraphChildren.length > 0 ? [{ type: "paragraph", children: paragraphChildren }] : []),
+          ...(paragraphChildren.length > 0
+            ? [{ type: "paragraph", children: paragraphChildren }]
+            : []),
           ...node.children.slice(1),
         ],
       };

@@ -18,10 +18,10 @@ const postsWithImages = allPosts
 function hashString(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash = (hash << 5) - hash + str.charCodeAt(i);
     hash |= 0;
   }
-  return ((Math.abs(hash % 7) - 3) * 0.8);
+  return (Math.abs(hash % 7) - 3) * 0.8;
 }
 ---
 
@@ -56,14 +56,10 @@ function hashString(str: string): number {
               >
                 <div class="gallery-photo-frame">
                   <div class="gallery-photo-inner">
-                    <img
-                      src={post.data.image}
-                      alt={post.data.title}
-                      loading="lazy"
-                    />
+                    <img src={post.data.image} alt={post.data.title} loading="lazy" />
                   </div>
                 </div>
-                <div class="gallery-photo-tape"></div>
+                <div class="gallery-photo-tape" />
                 <span class="gallery-photo-title">{post.data.title}</span>
               </a>
             );
@@ -81,18 +77,39 @@ function hashString(str: string): number {
     <div id="gallery-lightbox" class="gallery-lb-overlay" role="dialog" aria-label="图片预览" inert>
       <div class="gallery-lb-bg"></div>
       <button class="gallery-lb-close" aria-label="关闭">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
       <button class="gallery-lb-prev" aria-label="上一张">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="15 18 9 12 15 6"/>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
       </button>
       <button class="gallery-lb-next" aria-label="下一张">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="9 18 15 12 9 6"/>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
       </button>
       <div class="gallery-lb-image-wrapper">

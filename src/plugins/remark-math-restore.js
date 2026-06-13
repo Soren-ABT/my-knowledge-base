@@ -12,9 +12,7 @@ export function remarkMathRestore() {
       node.data = {
         hName: "p",
         hProperties: { className: ["math-display"] },
-        hChildren: [
-          { type: "text", value: `$$\n${node.value}\n$$` },
-        ],
+        hChildren: [{ type: "text", value: `$$\n${node.value}\n$$` }],
       };
     });
 
@@ -22,9 +20,7 @@ export function remarkMathRestore() {
       node.data = {
         hName: "span",
         hProperties: { className: ["math-inline"] },
-        hChildren: [
-          { type: "text", value: `$${node.value}$` },
-        ],
+        hChildren: [{ type: "text", value: `$${node.value}$` }],
       };
     });
   };

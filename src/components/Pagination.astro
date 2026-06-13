@@ -28,48 +28,60 @@ for (const p of allPages) {
 }
 ---
 
-{totalPages > 1 && (
-  <nav class="mt-10 flex items-center justify-center gap-1.5">
-    {currentPage > 1 && (
-      <a
-        href={pageUrl(currentPage - 1)}
-        class="btn-page"
-        aria-label="上一页"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-      </a>
-    )}
-
-    {pages.map((item) => {
-      if (item === "...") {
-        return (
-          <span class="flex h-9 w-9 items-center justify-center text-sm text-[var(--color-text-secondary)]">
-            ...
-          </span>
-        );
-      }
-      const page = item as number;
-      return (
-        <a
-          href={pageUrl(page)}
-          class={`btn-page ${page === currentPage ? "btn-page-active" : ""}`}
-        >
-          {page}
+{
+  totalPages > 1 && (
+    <nav class="mt-10 flex items-center justify-center gap-1.5">
+      {currentPage > 1 && (
+        <a href={pageUrl(currentPage - 1)} class="btn-page" aria-label="上一页">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
         </a>
-      );
-    })}
+      )}
 
-    {currentPage < totalPages && (
-      <a
-        href={pageUrl(currentPage + 1)}
-        class="btn-page"
-        aria-label="下一页"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-      </a>
-    )}
-  </nav>
-)}
+      {pages.map((item) => {
+        if (item === "...") {
+          return (
+            <span class="flex h-9 w-9 items-center justify-center text-sm text-[var(--color-text-secondary)]">
+              ...
+            </span>
+          );
+        }
+        const page = item as number;
+        return (
+          <a
+            href={pageUrl(page)}
+            class={`btn-page ${page === currentPage ? "btn-page-active" : ""}`}
+          >
+            {page}
+          </a>
+        );
+      })}
+
+      {currentPage < totalPages && (
+        <a href={pageUrl(currentPage + 1)} class="btn-page" aria-label="下一页">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </a>
+      )}
+    </nav>
+  )
+}
 
 <style>
   .btn-page {

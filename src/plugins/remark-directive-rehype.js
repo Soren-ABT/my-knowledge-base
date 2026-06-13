@@ -11,10 +11,7 @@ export function parseDirectiveNode() {
       ) {
         const data = node.data || (node.data = {});
         node.attributes = node.attributes || {};
-        if (
-          node.children.length > 0 &&
-          node.children[0].data?.directiveLabel
-        ) {
+        if (node.children.length > 0 && node.children[0].data?.directiveLabel) {
           node.attributes["has-directive-label"] = true;
         }
         const hast = h(node.name, node.attributes);

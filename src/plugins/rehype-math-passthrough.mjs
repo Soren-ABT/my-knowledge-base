@@ -15,7 +15,7 @@ export function rehypeMathPassthrough() {
           c.type === "element" &&
           c.tagName === "code" &&
           Array.isArray(c.properties?.className) &&
-          c.properties.className.includes("math-display")
+          c.properties.className.includes("math-display"),
       );
       if (!mathChild) return;
       const tex = extractText(mathChild);

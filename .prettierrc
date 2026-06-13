@@ -19,7 +19,8 @@
       "files": ["*.md", "*.mdx"],
       "options": {
         "printWidth": 120,
-        "proseWrap": "preserve"
+        "proseWrap": "preserve",
+        "embeddedLanguageFormatting": "off"
       }
     }
   ]

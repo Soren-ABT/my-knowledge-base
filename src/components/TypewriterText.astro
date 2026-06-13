@@ -6,20 +6,16 @@ interface Props {
   pauseTime?: number;
 }
 
-const {
-  texts = [],
-  speed = 80,
-  deleteSpeed = 40,
-  pauseTime = 2000,
-} = Astro.props;
+const { texts = [], speed = 80, deleteSpeed = 40, pauseTime = 2000 } = Astro.props;
 
 const jsonTexts = JSON.stringify(texts);
 ---
+
 <script is:inline>
   class TypewriterEffect {
     constructor(el) {
       this.el = el;
-      this.texts = JSON.parse(el.dataset.text || '[]');
+      this.texts = JSON.parse(el.dataset.text || "[]");
       this.speed = parseInt(el.dataset.speed) || 80;
       this.deleteSpeed = parseInt(el.dataset.deleteSpeed) || 40;
       this.pauseTime = parseInt(el.dataset.pauseTime) || 2000;
@@ -51,7 +47,10 @@ const jsonTexts = JSON.stringify(texts);
       this.el.textContent = current.substring(0, this.charIndex);
       if (this.charIndex >= current.length) {
         if (this.texts.length > 1) {
-          this.timer = setTimeout(() => { this.isDeleting = true; this.type(); }, this.pauseTime);
+          this.timer = setTimeout(() => {
+            this.isDeleting = true;
+            this.type();
+          }, this.pauseTime);
         }
         return;
       }
@@ -73,14 +72,14 @@ const jsonTexts = JSON.stringify(texts);
   }
 
   function initTypewriters() {
-    document.querySelectorAll('.typewriter-text').forEach(el => {
+    document.querySelectorAll(".typewriter-text").forEach((el) => {
       if (!el._typewriter) {
         el._typewriter = new TypewriterEffect(el);
       }
     });
   }
 
-  document.addEventListener('astro:page-load', initTypewriters);
+  document.addEventListener("astro:page-load", initTypewriters);
   initTypewriters();
 </script>
 
@@ -91,19 +90,24 @@ const jsonTexts = JSON.stringify(texts);
   data-delete-speed={deleteSpeed}
   data-pause-time={pauseTime}
 >
-  {texts.length > 0 ? '' : ''}
+  {texts.length > 0 ? "" : ""}
 </span>
 
 <style>
   .typewriter-text::after {
-    content: '|';
+    content: "|";
     animation: cursor-blink 1s step-end infinite;
     color: var(--primary);
     font-weight: 300;
   }
 
   @keyframes cursor-blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
   }
 </style>

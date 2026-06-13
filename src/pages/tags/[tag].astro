@@ -41,21 +41,26 @@ const sortedPosts = allPosts.sort(
       <div class="page-header-divider"></div>
     </header>
 
-    {sortedPosts.length === 0 && (
-      <div class="py-20 text-center text-[var(--color-text-secondary)]">
-        <p class="text-lg">该标签下暂无文章</p>
-        <a href="/tags/" class="mt-4 inline-block text-sm text-[var(--color-primary)] hover:underline">浏览所有标签 →</a>
-      </div>
-    )}
+    {
+      sortedPosts.length === 0 && (
+        <div class="py-20 text-center text-[var(--color-text-secondary)]">
+          <p class="text-lg">该标签下暂无文章</p>
+          <a
+            href="/tags/"
+            class="mt-4 inline-block text-sm text-[var(--color-primary)] hover:underline"
+          >
+            浏览所有标签 →
+          </a>
+        </div>
+      )
+    }
 
     <div class="post-grid">
       {sortedPosts.map((post) => <PostCard post={post} />)}
     </div>
 
     <div class="mt-10">
-      <a href="/tags/" class="btn-regular rounded-lg px-4 py-2 text-sm">
-        &larr; 所有标签
-      </a>
+      <a href="/tags/" class="btn-regular rounded-lg px-4 py-2 text-sm"> &larr; 所有标签 </a>
     </div>
   </div>
 </Layout>

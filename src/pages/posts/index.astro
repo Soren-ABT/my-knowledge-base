@@ -21,9 +21,7 @@ const allTags = new Map<string, number>();
 sortedPosts.forEach((p) => {
   p.data.tags.forEach((t) => allTags.set(t, (allTags.get(t) || 0) + 1));
 });
-const topTags = [...allTags.entries()]
-  .sort((a, b) => b[1] - a[1])
-  .slice(0, 10);
+const topTags = [...allTags.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10);
 
 const currentPage = 1;
 const totalPages = Math.ceil(sortedPosts.length / POSTS_PER_PAGE);
@@ -36,10 +34,7 @@ sortedPosts.forEach((p) => {
 });
 ---
 
-<Layout
-  title="文章"
-  description={siteConfig.subtitle}
->
+<Layout title="文章" description={siteConfig.subtitle}>
   <div class="mx-auto max-w-4xl">
     <!-- Page header -->
     <header class="mb-10">
@@ -68,7 +63,11 @@ sortedPosts.forEach((p) => {
         <span class="stat-label">标签分类</span>
       </div>
       <div class="stat-card">
-        <span class="stat-number">{totalChars > 10000 ? Math.round(totalChars / 1000) + 'k' : totalChars.toLocaleString()}</span>
+        <span class="stat-number"
+          >{
+            totalChars > 10000 ? Math.round(totalChars / 1000) + "k" : totalChars.toLocaleString()
+          }</span
+        >
         <span class="stat-label">总字数</span>
       </div>
       <div class="stat-card">
@@ -78,28 +77,43 @@ sortedPosts.forEach((p) => {
     </div>
 
     <!-- Tag cloud (quick filter) -->
-    {topTags.length > 0 && (
-      <div class="mb-8 flex flex-wrap items-center gap-2">
-        <span class="text-xs font-medium text-[var(--color-text-muted)] mr-1">热门标签:</span>
-        {topTags.map(([tag, count]) => (
-          <a href={`/tags/${tag}/`} class="tag-chip">
-            {tag} <span class="ml-1 opacity-60">{count}</span>
+    {
+      topTags.length > 0 && (
+        <div class="mb-8 flex flex-wrap items-center gap-2">
+          <span class="text-xs font-medium text-[var(--color-text-muted)] mr-1">热门标签:</span>
+          {topTags.map(([tag, count]) => (
+            <a href={`/tags/${tag}/`} class="tag-chip">
+              {tag} <span class="ml-1 opacity-60">{count}</span>
+            </a>
+          ))}
+          <a href="/tags/" class="text-xs text-[var(--color-primary)] hover:underline ml-1">
+            查看全部 →
           </a>
-        ))}
-        <a href="/tags/" class="text-xs text-[var(--color-primary)] hover:underline ml-1">
-          查看全部 →
-        </a>
-      </div>
-    )}
+        </div>
+      )
+    }
 
     <!-- Empty state -->
-    {pagePosts.length === 0 && (
-      <div class="py-20 text-center text-[var(--color-text-secondary)]">
-        <svg class="mx-auto mb-4 h-12 w-12 opacity-30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <p class="text-lg">还没有文章</p>
-        <p class="mt-2 text-sm">开始写你的第一篇博客吧</p>
-      </div>
-    )}
+    {
+      pagePosts.length === 0 && (
+        <div class="py-20 text-center text-[var(--color-text-secondary)]">
+          <svg
+            class="mx-auto mb-4 h-12 w-12 opacity-30"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <>
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </>
+          </svg>
+          <p class="text-lg">还没有文章</p>
+          <p class="mt-2 text-sm">开始写你的第一篇博客吧</p>
+        </div>
+      )
+    }
 
     <!-- Post grid -->
     <div class="post-grid">
@@ -113,7 +127,10 @@ sortedPosts.forEach((p) => {
     <div class="mt-12 text-center">
       <div class="doc-footer">
         <p>
-          互联网是有记忆的，我想留下一些成长的脚印。 — <a href="/" class="text-[var(--color-primary)] no-underline hover:underline">Soren的知识库</a>
+          互联网是有记忆的，我想留下一些成长的脚印。 — <a
+            href="/"
+            class="text-[var(--color-primary)] no-underline hover:underline">Soren的知识库</a
+          >
         </p>
       </div>
     </div>

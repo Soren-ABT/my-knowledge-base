@@ -34,7 +34,9 @@ const docTitle = data.title || slug!.split("/").pop()!.replace(/-/g, " ");
   <div class="flex gap-8">
     {/* Doc sidebar */}
     <aside class="hidden w-56 shrink-0 lg:block">
-      <div class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] p-4">
+      <div
+        class="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] p-4"
+      >
         <DocSidebar />
       </div>
     </aside>
@@ -51,12 +53,12 @@ const docTitle = data.title || slug!.split("/").pop()!.replace(/-/g, " ");
         <div class="doc-footer">
           <hr />
           <p>
-            最后更新于 {doc.data.updated ? new Date(doc.data.updated).toLocaleDateString("zh-CN") : "未知"}
+            最后更新于 {
+              doc.data.updated ? new Date(doc.data.updated).toLocaleDateString("zh-CN") : "未知"
+            }
           </p>
           <div class="mt-4 flex flex-wrap gap-2">
-            {data.tags?.map((tag: string) => (
-              <span class="tag-chip">{tag}</span>
-            ))}
+            {data.tags?.map((tag: string) => <span class="tag-chip">{tag}</span>)}
           </div>
         </div>
       </div>

@@ -7,8 +7,5 @@ export const musicPlayerConfig: MusicPlayerConfig = {
   enable: true,
   showFloatingPlayer: true,
   autoplay: false,
-  playlist: [
-    ...manualPlaylist,
-    ...generatedPlaylist,
-  ],
+  playlist: [...manualPlaylist, ...generatedPlaylist],
 };

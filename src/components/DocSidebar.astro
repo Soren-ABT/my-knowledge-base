@@ -26,15 +26,14 @@ for (const doc of docs) {
   }
 
   // Convert slug to readable name
-  const catName = category
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  const catName = category.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   if (!categories.has(category)) {
     categories.set(category, { title: catName, items: [] });
   }
 
-  const title = doc.data.title || parts[parts.length - 1].replace(/\.(md|mdx)$/, "").replace(/-/g, " ");
+  const title =
+    doc.data.title || parts[parts.length - 1].replace(/\.(md|mdx)$/, "").replace(/-/g, " ");
   categories.get(category)!.items.push({
     slug: doc.id,
     title,
@@ -58,10 +57,7 @@ const currentPath = Astro.url?.pathname || "";
           const docPath = `/docs/${normalizeSlug(item.slug)}/`;
           const isActive = currentPath === docPath;
           return (
-            <a
-              href={docPath}
-              class:list={["doc-sidebar-link", { active: isActive }]}
-            >
+            <a href={docPath} class:list={["doc-sidebar-link", { active: isActive }]}>
               {item.title}
             </a>
           );

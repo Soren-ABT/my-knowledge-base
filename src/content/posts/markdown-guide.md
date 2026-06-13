@@ -225,7 +225,7 @@ $$
 
 ## Mermaid 图表
 
-使用 ```` ```mermaid ```` 代码块绘制流程图、时序图等：
+使用 ` ```mermaid ` 代码块绘制流程图、时序图等：
 
 ````markdown
 ```mermaid
@@ -268,12 +268,12 @@ Mermaid 图表会自动跟随网站明暗主题切换——切换到暗色模式
 
 ## 表格
 
-| 框架 | 构建工具 | 渲染模式 | 适用场景 |
-|------|----------|----------|----------|
-| Astro | Vite | SSG/SSR | 内容网站 |
-| Next.js | Turbopack | SSR/SSG | 全栈应用 |
-| Nuxt | Vite | SSR/SSG | Vue 全栈 |
-| SvelteKit | Vite | SSR/SSG | Svelte 全栈 |
+| 框架      | 构建工具  | 渲染模式 | 适用场景    |
+| --------- | --------- | -------- | ----------- |
+| Astro     | Vite      | SSG/SSR  | 内容网站    |
+| Next.js   | Turbopack | SSR/SSG  | 全栈应用    |
+| Nuxt      | Vite      | SSR/SSG  | Vue 全栈    |
+| SvelteKit | Vite      | SSR/SSG  | Svelte 全栈 |
 
 表格在移动端会自动变为可横向滚动，不会破坏页面布局。
 
@@ -284,8 +284,10 @@ Mermaid 图表会自动跟随网站明暗主题切换——切换到暗色模式
 嵌套引用：
 
 > 外层引用
->> 内层引用
->>> 更深层的引用
+>
+> > 内层引用
+> >
+> > > 更深层的引用
 
 ## 任务列表
 

@@ -8,9 +8,7 @@ export async function GET() {
     return import.meta.env.PROD ? !data.draft : true;
   });
 
-  const sorted = posts.sort(
-    (a, b) => b.data.published.valueOf() - a.data.published.valueOf(),
-  );
+  const sorted = posts.sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
 
   return rss({
     title: siteConfig.title,

@@ -20,7 +20,10 @@ for (const post of sortedPosts) {
   if (!groupedByYear.has(year)) groupedByYear.set(year, []);
   const months = groupedByYear.get(year)!;
   let mg = months.find((m) => m.month === month);
-  if (!mg) { mg = { month, posts: [] }; months.push(mg); }
+  if (!mg) {
+    mg = { month, posts: [] };
+    months.push(mg);
+  }
   mg.posts.push(post);
 }
 for (const months of groupedByYear.values()) {
@@ -28,22 +31,69 @@ for (const months of groupedByYear.values()) {
 }
 
 const years = Array.from(groupedByYear.keys()).sort((a, b) => b - a);
-const MONTH_NAMES = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+const MONTH_NAMES = [
+  "1月",
+  "2月",
+  "3月",
+  "4月",
+  "5月",
+  "6月",
+  "7月",
+  "8月",
+  "9月",
+  "10月",
+  "11月",
+  "12月",
+];
 
 // ── View B (River): chronological ────────────────────────
 const chronologicalPosts = [...sortedPosts].reverse();
-const riverYears = Array.from(new Set(chronologicalPosts.map(p => p.data.published.getFullYear()))).sort((a, b) => a - b);
+const riverYears = Array.from(
+  new Set(chronologicalPosts.map((p) => p.data.published.getFullYear())),
+).sort((a, b) => a - b);
 
 // ── River config & path generation ──────────────────────
 interface RiverConfig {
-  cardW: number; cardH: number; cardGap: number;
-  riverY: number; amplitude: number; wavelength: number;
-  padding: number; stepSize: number;
+  cardW: number;
+  cardH: number;
+  cardGap: number;
+  riverY: number;
+  amplitude: number;
+  wavelength: number;
+  padding: number;
+  stepSize: number;
 }
 
-const desktopCfg: RiverConfig = { cardW: 240, cardH: 230, cardGap: 60, riverY: 240, amplitude: 80, wavelength: 600, padding: 600, stepSize: 4 };
-const tabletCfg: RiverConfig  = { cardW: 240, cardH: 210, cardGap: 50, riverY: 220, amplitude: 65, wavelength: 500, padding: 500, stepSize: 4 };
-const mobileCfg: RiverConfig  = { cardW: 170, cardH: 180, cardGap: 40, riverY: 180, amplitude: 50, wavelength: 400, padding: 300, stepSize: 20 };
+const desktopCfg: RiverConfig = {
+  cardW: 240,
+  cardH: 230,
+  cardGap: 60,
+  riverY: 240,
+  amplitude: 80,
+  wavelength: 600,
+  padding: 600,
+  stepSize: 4,
+};
+const tabletCfg: RiverConfig = {
+  cardW: 240,
+  cardH: 210,
+  cardGap: 50,
+  riverY: 220,
+  amplitude: 65,
+  wavelength: 500,
+  padding: 500,
+  stepSize: 4,
+};
+const mobileCfg: RiverConfig = {
+  cardW: 170,
+  cardH: 180,
+  cardGap: 40,
+  riverY: 180,
+  amplitude: 50,
+  wavelength: 400,
+  padding: 300,
+  stepSize: 20,
+};
 
 function buildRiverPath(totalWidth: number, cfg: RiverConfig, offsetY = 0): string {
   const { riverY, amplitude, wavelength, stepSize } = cfg;
@@ -51,10 +101,11 @@ function buildRiverPath(totalWidth: number, cfg: RiverConfig, offsetY = 0): stri
   const steps = Math.max(1, Math.ceil(totalWidth / stepSize));
   for (let i = 0; i <= steps; i++) {
     const x = (i / steps) * totalWidth;
-    const y = riverY
-      + amplitude * 0.5 * Math.sin((x / wavelength) * Math.PI * 2)
-      + amplitude * 0.3 * Math.sin((x / (wavelength * 0.6)) * Math.PI * 2 + 1)
-      + amplitude * 0.2 * Math.sin((x / (wavelength * 1.5)) * Math.PI * 2 + 2.5);
+    const y =
+      riverY +
+      amplitude * 0.5 * Math.sin((x / wavelength) * Math.PI * 2) +
+      amplitude * 0.3 * Math.sin((x / (wavelength * 0.6)) * Math.PI * 2 + 1) +
+      amplitude * 0.2 * Math.sin((x / (wavelength * 1.5)) * Math.PI * 2 + 2.5);
     parts.push(`${i === 0 ? "M" : "L"} ${x.toFixed(1)} ${(y + offsetY).toFixed(1)}`);
   }
   return parts.join(" ");
@@ -64,7 +115,13 @@ function totalW(posts: typeof chronologicalPosts, cfg: RiverConfig): number {
   return cfg.padding * 2 + posts.length * (cfg.cardW + cfg.cardGap) - cfg.cardGap;
 }
 
-interface CardPos { x: number; y: number; cx: number; waveY: number; isAbove: boolean; }
+interface CardPos {
+  x: number;
+  y: number;
+  cx: number;
+  waveY: number;
+  isAbove: boolean;
+}
 
 function cardPositions(posts: typeof chronologicalPosts, cfg: RiverConfig): CardPos[] {
   const offset = 50;
@@ -72,10 +129,11 @@ function cardPositions(posts: typeof chronologicalPosts, cfg: RiverConfig): Card
     const x = cfg.padding + i * (cfg.cardW + cfg.cardGap);
     const cx = x + cfg.cardW / 2;
     const { riverY, amplitude, wavelength } = cfg;
-    const waveY = riverY
-      + amplitude * 0.5 * Math.sin((cx / wavelength) * Math.PI * 2)
-      + amplitude * 0.3 * Math.sin((cx / (wavelength * 0.6)) * Math.PI * 2 + 1)
-      + amplitude * 0.2 * Math.sin((cx / (wavelength * 1.5)) * Math.PI * 2 + 2.5);
+    const waveY =
+      riverY +
+      amplitude * 0.5 * Math.sin((cx / wavelength) * Math.PI * 2) +
+      amplitude * 0.3 * Math.sin((cx / (wavelength * 0.6)) * Math.PI * 2 + 1) +
+      amplitude * 0.2 * Math.sin((cx / (wavelength * 1.5)) * Math.PI * 2 + 2.5);
     const isAbove = i % 2 === 0;
     const y = isAbove ? waveY - offset - cfg.cardH : waveY + offset;
     return { x, y, cx, waveY, isAbove };
@@ -83,7 +141,10 @@ function cardPositions(posts: typeof chronologicalPosts, cfg: RiverConfig): Card
 }
 
 function estimatePathLength(d: string): number {
-  const pts = d.replace(/^M\s*/, "").split(/ L\s*/).map(p => p.split(" ").map(Number));
+  const pts = d
+    .replace(/^M\s*/, "")
+    .split(/ L\s*/)
+    .map((p) => p.split(" ").map(Number));
   let len = 0;
   for (let i = 1; i < pts.length; i++) {
     len += Math.sqrt((pts[i][0] - pts[i - 1][0]) ** 2 + (pts[i][1] - pts[i - 1][1]) ** 2);
@@ -92,7 +153,10 @@ function estimatePathLength(d: string): number {
 }
 
 function sparklePositions(mainP: string, count: number): { x: number; y: number }[] {
-  const pts = mainP.replace(/^M\s*/, "").split(/ L\s*/).map(p => p.split(" ").map(Number));
+  const pts = mainP
+    .replace(/^M\s*/, "")
+    .split(/ L\s*/)
+    .map((p) => p.split(" ").map(Number));
   const result: { x: number; y: number }[] = [];
   const step = Math.max(1, Math.floor(pts.length / count));
   for (let i = 0; i < count; i++) {
@@ -102,8 +166,14 @@ function sparklePositions(mainP: string, count: number): { x: number; y: number 
   return result;
 }
 
-function floatingParticles(mainP: string, count: number): { x: number; y: number; delay: number; dur: number }[] {
-  const pts = mainP.replace(/^M\s*/, "").split(/ L\s*/).map(p => p.split(" ").map(Number));
+function floatingParticles(
+  mainP: string,
+  count: number,
+): { x: number; y: number; delay: number; dur: number }[] {
+  const pts = mainP
+    .replace(/^M\s*/, "")
+    .split(/ L\s*/)
+    .map((p) => p.split(" ").map(Number));
   const result: { x: number; y: number; delay: number; dur: number }[] = [];
   const step = Math.max(1, Math.floor(pts.length / count));
   for (let i = 0; i < count; i++) {
@@ -138,9 +208,19 @@ const cardsM = cardPositions(chronologicalPosts, mobileCfg);
 const pathLenD = estimatePathLength(pathMainD);
 
 interface RiverData {
-  tw: number; svgH: number; mainP: string; botP: string; cards: CardPos[];
+  tw: number;
+  svgH: number;
+  mainP: string;
+  botP: string;
+  cards: CardPos[];
 }
-function mkRiver(cfg: RiverConfig, tw: number, mainP: string, botP: string, cards: CardPos[]): RiverData {
+function mkRiver(
+  cfg: RiverConfig,
+  tw: number,
+  mainP: string,
+  botP: string,
+  cards: CardPos[],
+): RiverData {
   return { tw, svgH: cfg.riverY + cfg.amplitude + cfg.cardH + 220, mainP, botP, cards };
 }
 const riverD = mkRiver(desktopCfg, twD, pathMainD, pathBotD, cardsD);
@@ -153,18 +233,22 @@ const floatingD = floatingParticles(pathMainD, 10);
 // ── Category color system ────────────────────────────────
 function getCatColor(cat: string): string {
   const map: Record<string, string> = {
-    '技术': '#22d3ee', '生活': '#a78bfa', '学术': '#fbbf24',
-    '随笔': '#f472b6', '项目': '#34d399', '教程': '#60a5fa',
+    技术: "#22d3ee",
+    生活: "#a78bfa",
+    学术: "#fbbf24",
+    随笔: "#f472b6",
+    项目: "#34d399",
+    教程: "#60a5fa",
   };
   if (map[cat]) return map[cat];
   let h = 0;
-  for (let i = 0; i < cat.length; i++) h = ((h << 5) - h) + cat.charCodeAt(i);
+  for (let i = 0; i < cat.length; i++) h = (h << 5) - h + cat.charCodeAt(i);
   return `oklch(0.65 0.16 ${Math.abs(h % 360)})`;
 }
 
 function getCatBg(cat: string): string {
   const c = getCatColor(cat);
-  return c.replace('0.65', '0.5').replace('0.16', '0.10');
+  return c.replace("0.65", "0.5").replace("0.16", "0.10");
 }
 ---
 
@@ -185,11 +269,31 @@ function getCatBg(cat: string): string {
     <!-- View toggle tabs -->
     <nav class="archive-tabs mb-8" aria-label="归档视图切换">
       <button class="archive-tab active" data-view="timeline" aria-pressed="true">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="4"/><polyline points="6,10 12,4 18,10"/></svg>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          ><line x1="12" y1="20" x2="12" y2="4"></line><polyline points="6,10 12,4 18,10"
+          ></polyline></svg
+        >
         时间线
       </button>
       <button class="archive-tab" data-view="river" aria-pressed="false">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,17 8,11 12,15 16,9 20,13"/><circle cx="4" cy="17" r="1.5"/><circle cx="8" cy="11" r="1.5"/><circle cx="12" cy="15" r="1.5"/><circle cx="16" cy="9" r="1.5"/><circle cx="20" cy="13" r="1.5"/></svg>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          ><polyline points="4,17 8,11 12,15 16,9 20,13"></polyline><circle cx="4" cy="17" r="1.5"
+          ></circle><circle cx="8" cy="11" r="1.5"></circle><circle cx="12" cy="15" r="1.5"
+          ></circle><circle cx="16" cy="9" r="1.5"></circle><circle cx="20" cy="13" r="1.5"
+          ></circle></svg
+        >
         时间河
       </button>
     </nav>
@@ -205,22 +309,29 @@ function getCatBg(cat: string): string {
         <span class="stat-label">年份跨度</span>
       </div>
       <div class="stat-card">
-        <span class="stat-number">{sortedPosts.length > 0 ? years[0] : '—'}</span>
+        <span class="stat-number">{sortedPosts.length > 0 ? years[0] : "—"}</span>
         <span class="stat-label">最近年份</span>
       </div>
       <div class="stat-card">
-        <span class="stat-number">{groupedByYear.get(years[0])?.reduce((s, m) => s + m.posts.length, 0) || 0}</span>
+        <span class="stat-number"
+          >{groupedByYear.get(years[0])?.reduce((s, m) => s + m.posts.length, 0) || 0}</span
+        >
         <span class="stat-label">今年文章</span>
       </div>
     </div>
 
     <!-- Year jump navigation -->
     <nav class="mb-10 flex flex-wrap gap-2" aria-label="年份快速跳转">
-      {years.map((year) => (
-        <a href={`#year-${year}`} class="inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] no-underline transition-all hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]">
-          {year}
-        </a>
-      ))}
+      {
+        years.map((year) => (
+          <a
+            href={`#year-${year}`}
+            class="inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] no-underline transition-all hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+          >
+            {year}
+          </a>
+        ))
+      }
     </nav>
 
     <!-- ================================================================
@@ -231,9 +342,9 @@ function getCatBg(cat: string): string {
         {
           years.map((year) => {
             const months = groupedByYear.get(year)!;
-            const yearPosts = months.flatMap((m) => m.posts).sort(
-              (a, b) => b.data.published.valueOf() - a.data.published.valueOf()
-            );
+            const yearPosts = months
+              .flatMap((m) => m.posts)
+              .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
             const yearPostCount = yearPosts.length;
 
             return (
@@ -241,11 +352,9 @@ function getCatBg(cat: string): string {
                 <div class="archive-year-row">
                   <div class="archive-year-label text-75">{year}</div>
                   <div class="archive-year-dot-col">
-                    <div class="archive-year-ring"></div>
+                    <div class="archive-year-ring" />
                   </div>
-                  <div class="archive-year-count text-50">
-                    {yearPostCount} 篇文章
-                  </div>
+                  <div class="archive-year-count text-50">{yearPostCount} 篇文章</div>
                 </div>
 
                 {months.map(({ month, posts }) => (
@@ -261,15 +370,22 @@ function getCatBg(cat: string): string {
                           data-tags={post.data.tags.join(",")}
                           data-category={post.data.category || ""}
                         >
-                          <time datetime={post.data.published.toISOString()} class="archive-post-date text-50">
-                            {String(post.data.published.getMonth() + 1).padStart(2, "0")}-{String(post.data.published.getDate()).padStart(2, "0")}
+                          <time
+                            datetime={post.data.published.toISOString()}
+                            class="archive-post-date text-50"
+                          >
+                            {String(post.data.published.getMonth() + 1).padStart(2, "0")}-
+                            {String(post.data.published.getDate()).padStart(2, "0")}
                           </time>
                           <div class="archive-post-dot-col dash-line">
-                            <div class="archive-post-dot"></div>
+                            <div class="archive-post-dot" />
                           </div>
                           <span class="archive-post-title text-75">{post.data.title}</span>
                           <span class="archive-post-tags text-30">
-                            {post.data.tags.slice(0, 3).map((t) => `#${t}`).join(" ")}
+                            {post.data.tags
+                              .slice(0, 3)
+                              .map((t) => `#${t}`)
+                              .join(" ")}
                           </span>
                         </a>
                       );
@@ -304,179 +420,307 @@ function getCatBg(cat: string): string {
           >
             <defs>
               <linearGradient id="river-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="var(--primary-light)" stop-opacity="0" />
-                <stop offset="5%" stop-color="var(--primary-light)" stop-opacity="0.5" />
-                <stop offset="50%" stop-color="var(--primary)" stop-opacity="0.6" />
-                <stop offset="95%" stop-color="var(--primary-light)" stop-opacity="0.5" />
-                <stop offset="100%" stop-color="var(--primary-light)" stop-opacity="0" />
+                <stop offset="0%" stop-color="var(--primary-light)" stop-opacity="0"></stop>
+                <stop offset="5%" stop-color="var(--primary-light)" stop-opacity="0.5"></stop>
+                <stop offset="50%" stop-color="var(--primary)" stop-opacity="0.6"></stop>
+                <stop offset="95%" stop-color="var(--primary-light)" stop-opacity="0.5"></stop>
+                <stop offset="100%" stop-color="var(--primary-light)" stop-opacity="0"></stop>
               </linearGradient>
               <linearGradient id="river-grad-dim" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="var(--primary-light)" stop-opacity="0" />
-                <stop offset="5%" stop-color="var(--primary-light)" stop-opacity="0.3" />
-                <stop offset="50%" stop-color="var(--primary)" stop-opacity="0.4" />
-                <stop offset="95%" stop-color="var(--primary-light)" stop-opacity="0.3" />
-                <stop offset="100%" stop-color="var(--primary-light)" stop-opacity="0" />
+                <stop offset="0%" stop-color="var(--primary-light)" stop-opacity="0"></stop>
+                <stop offset="5%" stop-color="var(--primary-light)" stop-opacity="0.3"></stop>
+                <stop offset="50%" stop-color="var(--primary)" stop-opacity="0.4"></stop>
+                <stop offset="95%" stop-color="var(--primary-light)" stop-opacity="0.3"></stop>
+                <stop offset="100%" stop-color="var(--primary-light)" stop-opacity="0"></stop>
               </linearGradient>
               <filter id="river-glow" x="-5%" y="-20%" width="110%" height="140%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="6" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="6"></feGaussianBlur>
               </filter>
               <filter id="dot-glow" x="-100%" y="-100%" width="300%" height="300%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="3"></feGaussianBlur>
               </filter>
             </defs>
 
             <!-- River main path -->
-            <path id="river-main-path" d={riverD.mainP} fill="none"
-              stroke="url(#river-grad)" stroke-width="3" stroke-linecap="round"
+            <path
+              id="river-main-path"
+              d={riverD.mainP}
+              fill="none"
+              stroke="url(#river-grad)"
+              stroke-width="3"
+              stroke-linecap="round"
               class="river-path-animate"
-              style={`--river-path-len: ${pathLenD}`} />
+              style={`--river-path-len: ${pathLenD}`}></path>
 
             <!-- River glow layer (desktop) -->
-            <path id="river-glow-path" d={riverD.mainP} fill="none"
-              stroke="url(#river-grad)" stroke-width="20" stroke-linecap="round"
-              filter="url(#river-glow)" opacity="0.3"
+            <path
+              id="river-glow-path"
+              d={riverD.mainP}
+              fill="none"
+              stroke="url(#river-grad)"
+              stroke-width="20"
+              stroke-linecap="round"
+              filter="url(#river-glow)"
+              opacity="0.3"
               class="river-glow-layer river-path-animate"
-              style={`--river-path-len: ${pathLenD}`} />
+              style={`--river-path-len: ${pathLenD}`}></path>
 
             <!-- River bottom highlight -->
-            <path id="river-bot-path" d={riverD.botP} fill="none"
-              stroke="url(#river-grad-dim)" stroke-width="1"
+            <path
+              id="river-bot-path"
+              d={riverD.botP}
+              fill="none"
+              stroke="url(#river-grad-dim)"
+              stroke-width="1"
               class="river-path-animate"
-              style={`--river-path-len: ${pathLenD}`} />
+              style={`--river-path-len: ${pathLenD}`}></path>
 
             <!-- River flow shimmer -->
-            <path id="river-shimmer-path" d={riverD.mainP} fill="none"
-              stroke="var(--primary-light)" stroke-width="2" stroke-linecap="round"
-              opacity="0.12" class="river-flow-shimmer" />
+            <path
+              id="river-shimmer-path"
+              d={riverD.mainP}
+              fill="none"
+              stroke="var(--primary-light)"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity="0.12"
+              class="river-flow-shimmer"></path>
 
             <!-- Flowing particles (desktop) -->
             <g class="river-particles">
               {/* 6 path-following particles: varied size, speed, color */}
-              {[
-                { r: 3, dur: 10, delay: 0, fill: 'var(--primary)', opacity: 0.8 },
-                { r: 2, dur: 7, delay: 1.5, fill: 'var(--primary-light)', opacity: 0.6 },
-                { r: 4, dur: 12, delay: 3, fill: '#ffffff', opacity: 0.7 },
-                { r: 2, dur: 6, delay: 5, fill: 'var(--primary)', opacity: 0.55 },
-                { r: 3, dur: 9, delay: 2, fill: '#ffffff', opacity: 0.65 },
-                { r: 2, dur: 8, delay: 6, fill: 'var(--primary-light)', opacity: 0.5 },
-              ].map((p, i) => (
-                <circle r={String(p.r)} fill={p.fill} opacity={String(p.opacity)} filter="url(#dot-glow)">
-                  <animateMotion dur={`${p.dur}s`} repeatCount="indefinite" begin={`${p.delay}s`}>
-                    <mpath href="#river-flow-path" />
-                  </animateMotion>
-                </circle>
-              ))}
+              {
+                [
+                  { r: 3, dur: 10, delay: 0, fill: "var(--primary)", opacity: 0.8 },
+                  { r: 2, dur: 7, delay: 1.5, fill: "var(--primary-light)", opacity: 0.6 },
+                  { r: 4, dur: 12, delay: 3, fill: "#ffffff", opacity: 0.7 },
+                  { r: 2, dur: 6, delay: 5, fill: "var(--primary)", opacity: 0.55 },
+                  { r: 3, dur: 9, delay: 2, fill: "#ffffff", opacity: 0.65 },
+                  { r: 2, dur: 8, delay: 6, fill: "var(--primary-light)", opacity: 0.5 },
+                ].map((p, i) => (
+                  <circle
+                    r={String(p.r)}
+                    fill={p.fill}
+                    opacity={String(p.opacity)}
+                    filter="url(#dot-glow)"
+                  >
+                    <animateMotion dur={`${p.dur}s`} repeatCount="indefinite" begin={`${p.delay}s`}>
+                      <mpath href="#river-flow-path" />
+                    </animateMotion>
+                  </circle>
+                ))
+              }
               {/* 2 trailing particles (follow behind main particles) */}
               <circle r="1.5" fill="#ffffff" opacity="0.4" filter="url(#dot-glow)">
                 <animateMotion dur="10s" repeatCount="indefinite" begin="0.6s">
-                  <mpath href="#river-flow-path" />
+                  <mpath href="#river-flow-path"></mpath>
                 </animateMotion>
               </circle>
               <circle r="1.5" fill="var(--primary-light)" opacity="0.35" filter="url(#dot-glow)">
                 <animateMotion dur="7s" repeatCount="indefinite" begin="2.1s">
-                  <mpath href="#river-flow-path" />
+                  <mpath href="#river-flow-path"></mpath>
                 </animateMotion>
               </circle>
-              <path id="river-flow-path" d={riverD.mainP} fill="none" stroke="none" />
+              <path id="river-flow-path" d={riverD.mainP} fill="none" stroke="none"></path>
             </g>
 
             {/* Floating ambient particles (rise from river) */}
             <g class="river-particles">
-              {floatingD.map((fp) => (
-                <circle cx={String(fp.x)} cy={String(fp.y)} r="1.5" fill="var(--primary-light)" opacity="0">
-                  <animate attributeName="cy" values={`${fp.y};${fp.y - 40};${fp.y}`} dur={`${fp.dur}s`} begin={`${fp.delay}s`} repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0;0.6;0" dur={`${fp.dur}s`} begin={`${fp.delay}s`} repeatCount="indefinite" />
-                </circle>
-              ))}
+              {
+                floatingD.map((fp) => (
+                  <circle
+                    cx={String(fp.x)}
+                    cy={String(fp.y)}
+                    r="1.5"
+                    fill="var(--primary-light)"
+                    opacity="0"
+                  >
+                    <animate
+                      attributeName="cy"
+                      values={`${fp.y};${fp.y - 40};${fp.y}`}
+                      dur={`${fp.dur}s`}
+                      begin={`${fp.delay}s`}
+                      repeatCount="indefinite"
+                    />
+                    <animate
+                      attributeName="opacity"
+                      values="0;0.6;0"
+                      dur={`${fp.dur}s`}
+                      begin={`${fp.delay}s`}
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                ))
+              }
             </g>
 
             {/* River nodes with ripple effect */}
-            {chronologicalPosts.map((_post, i) => {
-              const stagger = (i % 3) * 0.8;
-              return (
-                <g class="river-node-group">
-                  {/* Ripple ring 1 */}
-                  <circle cx={cardsD[i].cx} cy={cardsD[i].waveY} r="6" fill="none" stroke="#ffffff" opacity="0">
-                    <animate attributeName="r" values="6;28" dur="3s" begin={`${stagger}s`} repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.45;0" dur="3s" begin={`${stagger}s`} repeatCount="indefinite" />
-                  </circle>
-                  {/* Ripple ring 2 (offset) */}
-                  <circle cx={cardsD[i].cx} cy={cardsD[i].waveY} r="6" fill="none" stroke="#ffffff" opacity="0">
-                    <animate attributeName="r" values="6;28" dur="3s" begin={`${stagger + 1.5}s`} repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.45;0" dur="3s" begin={`${stagger + 1.5}s`} repeatCount="indefinite" />
-                  </circle>
-                  {/* Solid dot */}
-                  <circle cx={cardsD[i].cx} cy={cardsD[i].waveY} r="6" fill="#ffffff" />
-                  <circle cx={cardsD[i].cx} cy={cardsD[i].waveY} r="10" fill="#ffffff" opacity="0.25" />
-                </g>
-              );
-            })}
+            {
+              chronologicalPosts.map((_post, i) => {
+                const stagger = (i % 3) * 0.8;
+                return (
+                  <g class="river-node-group">
+                    {/* Ripple ring 1 */}
+                    <circle
+                      cx={cardsD[i].cx}
+                      cy={cardsD[i].waveY}
+                      r="6"
+                      fill="none"
+                      stroke="#ffffff"
+                      opacity="0"
+                    >
+                      <animate
+                        attributeName="r"
+                        values="6;28"
+                        dur="3s"
+                        begin={`${stagger}s`}
+                        repeatCount="indefinite"
+                      />
+                      <animate
+                        attributeName="opacity"
+                        values="0.45;0"
+                        dur="3s"
+                        begin={`${stagger}s`}
+                        repeatCount="indefinite"
+                      />
+                    </circle>
+                    {/* Ripple ring 2 (offset) */}
+                    <circle
+                      cx={cardsD[i].cx}
+                      cy={cardsD[i].waveY}
+                      r="6"
+                      fill="none"
+                      stroke="#ffffff"
+                      opacity="0"
+                    >
+                      <animate
+                        attributeName="r"
+                        values="6;28"
+                        dur="3s"
+                        begin={`${stagger + 1.5}s`}
+                        repeatCount="indefinite"
+                      />
+                      <animate
+                        attributeName="opacity"
+                        values="0.45;0"
+                        dur="3s"
+                        begin={`${stagger + 1.5}s`}
+                        repeatCount="indefinite"
+                      />
+                    </circle>
+                    {/* Solid dot */}
+                    <circle cx={cardsD[i].cx} cy={cardsD[i].waveY} r="6" fill="#ffffff" />
+                    <circle
+                      cx={cardsD[i].cx}
+                      cy={cardsD[i].waveY}
+                      r="10"
+                      fill="#ffffff"
+                      opacity="0.25"
+                    />
+                  </g>
+                );
+              })
+            }
             {/* Sparkle dots along the river */}
             <g class="river-sparkles">
-              {sparklesD.map((sp, i) => (
-                <circle cx={String(sp.x)} cy={String(sp.y)} r="1.5" fill="#ffffff"
-                  class="river-sparkle"
-                  style={`animation-delay: ${(i * 0.25).toFixed(2)}s`} />
-              ))}
+              {
+                sparklesD.map((sp, i) => (
+                  <circle
+                    cx={String(sp.x)}
+                    cy={String(sp.y)}
+                    r="1.5"
+                    fill="#ffffff"
+                    class="river-sparkle"
+                    style={`animation-delay: ${(i * 0.25).toFixed(2)}s`}
+                  />
+                ))
+              }
             </g>
           </svg>
 
           <!-- Card overlay -->
           <div class="river-cards-layer" id="river-cards-layer">
-            {chronologicalPosts.map((post, i) => {
-              const cp = cardsD[i];
-              const slug = post.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
-              const cat = post.data.category || "";
-              const catColor = cat ? getCatColor(cat) : 'var(--border-color)';
-              return (
-                <a
-                  href={`/posts/${slug}/`}
-                  class={`river-card-v2 ${cp.isAbove ? 'above' : 'below'}`}
-                  data-category={cat}
-                  data-tags={post.data.tags.join(',')}
-                  data-river-index={String(i)}
-                  style={`--card-x: ${cp.x}px; --card-y: ${cp.y}px; --card-idx: ${i}`}
-                >
-                  <svg class="river-card-connector" aria-hidden="true"
-                    style={`position:absolute; top:${cp.isAbove ? '100%' : '-2rem'}; left:50%; width:2px; height:2rem; transform:translateX(-50%); overflow:visible; pointer-events:none;`}
+            {
+              chronologicalPosts.map((post, i) => {
+                const cp = cardsD[i];
+                const slug = post.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+                const cat = post.data.category || "";
+                const catColor = cat ? getCatColor(cat) : "var(--border-color)";
+                return (
+                  <a
+                    href={`/posts/${slug}/`}
+                    class={`river-card-v2 ${cp.isAbove ? "above" : "below"}`}
+                    data-category={cat}
+                    data-tags={post.data.tags.join(",")}
+                    data-river-index={String(i)}
+                    style={`--card-x: ${cp.x}px; --card-y: ${cp.y}px; --card-idx: ${i}`}
                   >
-                    <line x1="1" y1="0" x2="1" y2="100%"
-                      stroke={catColor} stroke-width="1.5" opacity="0.4"
-                      stroke-dasharray="4 3" />
-                  </svg>
-                  <div class="river-card-glass">
-                    {post.data.image ? (
-                      <div class="river-card-cover">
-                        <img src={post.data.image} alt="" loading="lazy" />
-                        <div class="river-card-cover-date">
-                          {String(post.data.published.getMonth() + 1).padStart(2, "0")}-{String(post.data.published.getDate()).padStart(2, "0")}
+                    <svg
+                      class="river-card-connector"
+                      aria-hidden="true"
+                      style={`position:absolute; top:${cp.isAbove ? "100%" : "-2rem"}; left:50%; width:2px; height:2rem; transform:translateX(-50%); overflow:visible; pointer-events:none;`}
+                    >
+                      <line
+                        x1="1"
+                        y1="0"
+                        x2="1"
+                        y2="100%"
+                        stroke={catColor}
+                        stroke-width="1.5"
+                        opacity="0.4"
+                        stroke-dasharray="4 3"
+                      />
+                    </svg>
+                    <div class="river-card-glass">
+                      {post.data.image ? (
+                        <div class="river-card-cover">
+                          <img src={post.data.image} alt="" loading="lazy" />
+                          <div class="river-card-cover-date">
+                            {String(post.data.published.getMonth() + 1).padStart(2, "0")}-
+                            {String(post.data.published.getDate()).padStart(2, "0")}
+                          </div>
+                        </div>
+                      ) : (
+                        <div class="river-card-no-cover">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            opacity="0.3"
+                          >
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                          </svg>
+                          <span class="river-card-cover-date" style="color:var(--text-muted)">
+                            {String(post.data.published.getMonth() + 1).padStart(2, "0")}-
+                            {String(post.data.published.getDate()).padStart(2, "0")}
+                          </span>
+                        </div>
+                      )}
+                      <div class="river-card-content">
+                        <h3 class="river-card-title">{post.data.title}</h3>
+                        {post.data.description && (
+                          <p class="river-card-desc">{post.data.description}</p>
+                        )}
+                        <div class="river-card-footer">
+                          {cat && (
+                            <span
+                              class="river-card-cat"
+                              style={`background:${getCatBg(cat)}; color:${catColor}`}
+                            >
+                              {cat}
+                            </span>
+                          )}
                         </div>
                       </div>
-                    ) : (
-                      <div class="river-card-no-cover">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                        <span class="river-card-cover-date" style="color:var(--text-muted)">
-                          {String(post.data.published.getMonth() + 1).padStart(2, "0")}-{String(post.data.published.getDate()).padStart(2, "0")}
-                        </span>
-                      </div>
-                    )}
-                    <div class="river-card-content">
-                      <h3 class="river-card-title">{post.data.title}</h3>
-                      {post.data.description && (
-                        <p class="river-card-desc">{post.data.description}</p>
-                      )}
-                      <div class="river-card-footer">
-                        {cat && (
-                          <span class="river-card-cat" style={`background:${getCatBg(cat)}; color:${catColor}`}>
-                            {cat}
-                          </span>
-                        )}
-                      </div>
                     </div>
-                  </div>
-                </a>
-              );
-            })}
+                  </a>
+                );
+              })
+            }
           </div>
         </div>
       </div>
@@ -525,8 +769,12 @@ function getCatBg(cat: string): string {
   }
 
   /* ── View visibility ──────────────────────────────────── */
-  .archive-view { display: none; }
-  .archive-view.active { display: block; }
+  .archive-view {
+    display: none;
+  }
+  .archive-view.active {
+    display: block;
+  }
 
   /* ============================================================
      View A — Timeline (Kirameku-polished)
@@ -537,7 +785,9 @@ function getCatBg(cat: string): string {
     background: var(--card-bg);
     border-radius: var(--radius-large);
     border: 1px solid var(--border-color);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
   body.wallpaper-transparent .archive-timeline-card {
     background: rgba(255, 255, 255, 0.55);
@@ -578,7 +828,9 @@ function getCatBg(cat: string): string {
     outline: 3px solid var(--primary);
     outline-offset: -2px;
     z-index: 50;
-    transition: outline-color 0.3s ease, transform 0.3s ease;
+    transition:
+      outline-color 0.3s ease,
+      transform 0.3s ease;
   }
   .archive-year-section.in-view .archive-year-ring {
     outline-color: var(--primary);
@@ -600,10 +852,17 @@ function getCatBg(cat: string): string {
     border-radius: 0.5rem;
     text-decoration: none;
     color: inherit;
-    transition: background-color 0.15s ease, transform 0.2s ease;
+    transition:
+      background-color 0.15s ease,
+      transform 0.2s ease;
   }
-  .archive-post-item:hover { background-color: var(--btn-plain-bg-hover); transform: translateX(0.25rem); }
-  .archive-post-item:active { background-color: var(--btn-plain-bg-active); }
+  .archive-post-item:hover {
+    background-color: var(--btn-plain-bg-hover);
+    transform: translateX(0.25rem);
+  }
+  .archive-post-item:active {
+    background-color: var(--btn-plain-bg-active);
+  }
 
   .archive-post-date {
     width: 15%;
@@ -649,7 +908,9 @@ function getCatBg(cat: string): string {
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-right: 2rem;
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      color 0.2s ease;
   }
   .archive-post-item:hover .archive-post-title {
     transform: translateX(0.25rem);
@@ -665,7 +926,9 @@ function getCatBg(cat: string): string {
   }
 
   /* Month labels */
-  .archive-month-group { margin-top: 0.25rem; }
+  .archive-month-group {
+    margin-top: 0.25rem;
+  }
   .archive-month-label {
     font-size: 0.7rem;
     font-weight: 600;
@@ -692,8 +955,12 @@ function getCatBg(cat: string): string {
     padding-left: calc(50vw - 50%);
     padding-right: calc(50vw - 50%);
   }
-  .river-viewport::-webkit-scrollbar { display: none; }
-  .river-viewport:active { cursor: grabbing; }
+  .river-viewport::-webkit-scrollbar {
+    display: none;
+  }
+  .river-viewport:active {
+    cursor: grabbing;
+  }
 
   .river-drag-container {
     position: relative;
@@ -716,8 +983,12 @@ function getCatBg(cat: string): string {
   }
 
   @keyframes river-draw-in {
-    from { stroke-dashoffset: var(--river-path-len, 5000); }
-    to   { stroke-dashoffset: 0; }
+    from {
+      stroke-dashoffset: var(--river-path-len, 5000);
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
   }
 
   /* River flow shimmer */
@@ -725,7 +996,9 @@ function getCatBg(cat: string): string {
     animation: river-shimmer 3s linear infinite;
   }
   @keyframes river-shimmer {
-    to { stroke-dashoffset: -120; }
+    to {
+      stroke-dashoffset: -120;
+    }
   }
 
   /* Glow breathing pulse */
@@ -733,8 +1006,13 @@ function getCatBg(cat: string): string {
     animation: glow-pulse 4s ease-in-out infinite;
   }
   @keyframes glow-pulse {
-    0%, 100% { opacity: 0.2; }
-    50% { opacity: 0.4; }
+    0%,
+    100% {
+      opacity: 0.2;
+    }
+    50% {
+      opacity: 0.4;
+    }
   }
 
   /* Sparkle dots */
@@ -743,9 +1021,19 @@ function getCatBg(cat: string): string {
     animation: sparkle-blink 2.5s ease-in-out infinite;
   }
   @keyframes sparkle-blink {
-    0%, 100% { opacity: 0; transform: scale(0.5); }
-    30% { opacity: 0.8; transform: scale(1.2); }
-    60% { opacity: 0; transform: scale(0.5); }
+    0%,
+    100% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    30% {
+      opacity: 0.8;
+      transform: scale(1.2);
+    }
+    60% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
   }
 
   /* Glow, particles, shimmer, sparkles hidden on mobile */
@@ -753,7 +1041,9 @@ function getCatBg(cat: string): string {
     .river-glow-layer,
     .river-particles,
     .river-flow-shimmer,
-    .river-sparkles { display: none; }
+    .river-sparkles {
+      display: none;
+    }
   }
 
   /* ── Card overlay ─────────────────────────────────────── */
@@ -786,12 +1076,22 @@ function getCatBg(cat: string): string {
     animation-delay: calc(var(--card-idx, 0) * 60ms);
   }
 
-  .river-card-v2.above { flex-direction: column; }
-  .river-card-v2.below { flex-direction: column-reverse; }
+  .river-card-v2.above {
+    flex-direction: column;
+  }
+  .river-card-v2.below {
+    flex-direction: column-reverse;
+  }
 
   @keyframes river-card-in {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   /* Glass card body */
@@ -802,7 +1102,10 @@ function getCatBg(cat: string): string {
     border: 1px solid var(--border-color);
     background: var(--card-bg);
     box-shadow: var(--shadow-sm);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
     cursor: pointer;
   }
 
@@ -842,14 +1145,14 @@ function getCatBg(cat: string): string {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.35), transparent 60%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.35), transparent 60%);
   }
   .river-card-cover-date {
     position: absolute;
     bottom: 4px;
     left: 8px;
     font-size: 0.6rem;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
     z-index: 1;
   }
 
@@ -908,27 +1211,65 @@ function getCatBg(cat: string): string {
 
   /* ── Responsive ───────────────────────────────────────── */
   @media (min-width: 768px) {
-    .archive-year-label { width: 10%; }
-    .archive-year-dot-col { width: 10%; }
-    .archive-year-count { width: 80%; }
-    .archive-post-date { width: 10%; }
-    .archive-post-dot-col { width: 10%; }
-    .archive-post-title { max-width: 65%; }
-    .archive-post-tags { width: 15%; }
-    .archive-month-label { padding-left: calc(20% + 0.5rem); }
+    .archive-year-label {
+      width: 10%;
+    }
+    .archive-year-dot-col {
+      width: 10%;
+    }
+    .archive-year-count {
+      width: 80%;
+    }
+    .archive-post-date {
+      width: 10%;
+    }
+    .archive-post-dot-col {
+      width: 10%;
+    }
+    .archive-post-title {
+      max-width: 65%;
+    }
+    .archive-post-tags {
+      width: 15%;
+    }
+    .archive-month-label {
+      padding-left: calc(20% + 0.5rem);
+    }
   }
 
   @media (max-width: 767px) {
-    .archive-post-tags { display: none; }
-    .archive-post-title { width: 70%; font-size: 0.82rem; padding-right: 0.5rem; }
-    .archive-post-date { font-size: 0.72rem; }
-    .archive-month-label { padding-left: calc(30% + 0.5rem); }
-    .river-card-v2 { width: 170px; }
+    .archive-post-tags {
+      display: none;
+    }
+    .archive-post-title {
+      width: 70%;
+      font-size: 0.82rem;
+      padding-right: 0.5rem;
+    }
+    .archive-post-date {
+      font-size: 0.72rem;
+    }
+    .archive-month-label {
+      padding-left: calc(30% + 0.5rem);
+    }
+    .river-card-v2 {
+      width: 170px;
+    }
     .river-card-cover,
-    .river-card-no-cover { height: 70px; }
-    .river-card-title { font-size: 0.7rem; }
-    .river-card-desc { font-size: 0.6rem; }
-    .river-viewport { margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; }
+    .river-card-no-cover {
+      height: 70px;
+    }
+    .river-card-title {
+      font-size: 0.7rem;
+    }
+    .river-card-desc {
+      font-size: 0.6rem;
+    }
+    .river-viewport {
+      margin: 0 -1rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
   }
 
   /* ============================================================
@@ -949,12 +1290,26 @@ function getCatBg(cat: string): string {
     .river-card-v2:hover .river-card-cover img {
       transform: none !important;
     }
-    .archive-year-ring { transition: none !important; }
-    .river-particles { display: none !important; }
-    .river-flow-shimmer { animation: none !important; display: none !important; }
-    .river-glow-layer { animation: none !important; opacity: 0.3 !important; }
-    .river-sparkles { display: none !important; }
-    .river-node-group circle[fill="none"] { display: none !important; }
+    .archive-year-ring {
+      transition: none !important;
+    }
+    .river-particles {
+      display: none !important;
+    }
+    .river-flow-shimmer {
+      animation: none !important;
+      display: none !important;
+    }
+    .river-glow-layer {
+      animation: none !important;
+      opacity: 0.3 !important;
+    }
+    .river-sparkles {
+      display: none !important;
+    }
+    .river-node-group circle[fill="none"] {
+      display: none !important;
+    }
   }
 </style>
 
@@ -975,7 +1330,11 @@ function getCatBg(cat: string): string {
     document.querySelectorAll<HTMLElement>(".archive-view").forEach((view) => {
       view.classList.toggle("active", view.id === `archive-view-${viewName}`);
     });
-    try { localStorage.setItem("archive-view", viewName); } catch (e) { /* noop */ }
+    try {
+      localStorage.setItem("archive-view", viewName);
+    } catch (e) {
+      /* noop */
+    }
   }
 
   // ============================================================
@@ -1005,7 +1364,13 @@ function getCatBg(cat: string): string {
   // localStorage restoration
   // ============================================================
   function restoreSavedView(): void {
-    const savedView = (() => { try { return localStorage.getItem("archive-view"); } catch (e) { return null; } })();
+    const savedView = (() => {
+      try {
+        return localStorage.getItem("archive-view");
+      } catch (e) {
+        return null;
+      }
+    })();
     if (savedView === "river") switchArchiveView("river");
   }
 
@@ -1013,13 +1378,18 @@ function getCatBg(cat: string): string {
   // View A — Year ring IntersectionObserver
   // ============================================================
   function setupRingObserver(): void {
-    _ringObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        (entry.target as HTMLElement).classList.toggle('in-view', entry.isIntersecting);
-      });
-    }, { rootMargin: '-80px 0px' });
+    _ringObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          (entry.target as HTMLElement).classList.toggle("in-view", entry.isIntersecting);
+        });
+      },
+      { rootMargin: "-80px 0px" },
+    );
 
-    document.querySelectorAll<HTMLElement>('.archive-year-section').forEach((s) => _ringObserver!.observe(s));
+    document
+      .querySelectorAll<HTMLElement>(".archive-year-section")
+      .forEach((s) => _ringObserver!.observe(s));
   }
 
   // ============================================================
@@ -1081,12 +1451,18 @@ function getCatBg(cat: string): string {
         const dt = now - lastTime;
         lastTime = now;
         velocityX *= FRICTION;
-        if (Math.abs(velocityX) < MIN_VELOCITY) { cancelMomentum(); return; }
+        if (Math.abs(velocityX) < MIN_VELOCITY) {
+          cancelMomentum();
+          return;
+        }
         viewport!.scrollLeft += velocityX * dt;
         const maxScroll = viewport!.scrollWidth - viewport!.clientWidth;
         viewport!.scrollLeft = Math.max(0, Math.min(maxScroll, viewport!.scrollLeft));
         if (viewport!.scrollLeft <= 0 || viewport!.scrollLeft >= maxScroll) {
-          if (Math.abs(velocityX) < MIN_VELOCITY * 2) { cancelMomentum(); return; }
+          if (Math.abs(velocityX) < MIN_VELOCITY * 2) {
+            cancelMomentum();
+            return;
+          }
         }
         momentumRAF = requestAnimationFrame(tick);
       }
@@ -1094,19 +1470,33 @@ function getCatBg(cat: string): string {
     }
 
     function cancelMomentum(): void {
-      if (momentumRAF) { cancelAnimationFrame(momentumRAF); momentumRAF = null; }
+      if (momentumRAF) {
+        cancelAnimationFrame(momentumRAF);
+        momentumRAF = null;
+      }
       velocityX = 0;
     }
 
     // Named handler references for removeEventListener
     const handleMouseDown = (e: MouseEvent) => startDrag(e.clientX);
-    const handleMouseMove = (e: MouseEvent) => { if (isDragging) moveDrag(e.clientX); };
-    const handleMouseUp   = () => { if (isDragging) endDrag(); };
-    const handleTouchStart = (e: TouchEvent) => { if (e.touches.length === 1) startDrag(e.touches[0].clientX); };
-    const handleTouchMove  = (e: TouchEvent) => {
-      if (isDragging && e.touches.length === 1) { e.preventDefault(); moveDrag(e.touches[0].clientX); }
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging) moveDrag(e.clientX);
     };
-    const handleTouchEnd = () => { endDrag(); };
+    const handleMouseUp = () => {
+      if (isDragging) endDrag();
+    };
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) startDrag(e.touches[0].clientX);
+    };
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isDragging && e.touches.length === 1) {
+        e.preventDefault();
+        moveDrag(e.touches[0].clientX);
+      }
+    };
+    const handleTouchEnd = () => {
+      endDrag();
+    };
 
     viewport.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mousemove", handleMouseMove);
@@ -1116,8 +1506,11 @@ function getCatBg(cat: string): string {
     viewport.addEventListener("touchend", handleTouchEnd);
 
     document.querySelectorAll<HTMLElement>(".river-card-v2").forEach((card) => {
-      card.addEventListener("click", function(e) {
-        if (didDrag) { e.preventDefault(); e.stopPropagation(); }
+      card.addEventListener("click", function (e) {
+        if (didDrag) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
       });
     });
 
@@ -1147,15 +1540,17 @@ function getCatBg(cat: string): string {
       const elCat = el.dataset.category || "";
       const tagOk = filterTags.length === 0 || filterTags.some((t) => elTags.includes(t));
       const catOk = !filterCategory || elCat === filterCategory;
-      el.style.display = (tagOk && catOk) ? "" : "none";
+      el.style.display = tagOk && catOk ? "" : "none";
     });
 
-    document.querySelectorAll<HTMLElement>(".archive-year-section, .river-year-block").forEach((section) => {
-      const hasVisible = section.querySelector<HTMLElement>(
-        '.archive-post-item:not([style*="display: none"]), .river-card-v2:not([style*="display: none"])'
-      );
-      if (!hasVisible) section.style.display = "none";
-    });
+    document
+      .querySelectorAll<HTMLElement>(".archive-year-section, .river-year-block")
+      .forEach((section) => {
+        const hasVisible = section.querySelector<HTMLElement>(
+          '.archive-post-item:not([style*="display: none"]), .river-card-v2:not([style*="display: none"])',
+        );
+        if (!hasVisible) section.style.display = "none";
+      });
   }
 
   // ============================================================

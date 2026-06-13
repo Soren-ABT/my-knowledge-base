@@ -5,3 +5,4 @@ public/pagefind
 *.generated.*
 pnpm-lock.yaml
 package-lock.json
+src/components/MusicPlayer.astro

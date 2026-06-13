@@ -6,81 +6,104 @@
 ---
 
 <script is:inline>
-(function() {
-  'use strict';
-  var DARK = 'dark', LIGHT = 'light', DEFAULT = DARK;
+  (function () {
+    "use strict";
+    var DARK = "dark",
+      LIGHT = "light",
+      DEFAULT = DARK;
 
-  function getStored() {
-    try { return localStorage.getItem('theme') || DEFAULT; }
-    catch(e) { return DEFAULT; }
-  }
-
-  // Applies theme to <html> without dispatching events (Mizuki pattern).
-  // Used for initial load and navigation re-sync. Only setTheme/toggle fires theme-change.
-  function applyToDocument(theme, animate) {
-    var html = document.documentElement;
-    var isDark = theme === DARK;
-    var wasDark = html.classList.contains('dark');
-
-    if (wasDark === isDark && html.getAttribute('data-theme') === (isDark ? 'github-dark' : 'github-light')) {
-      return;
-    }
-
-    function doApply() {
-      if (isDark) { html.classList.add('dark'); html.style.colorScheme = 'dark'; }
-      else { html.classList.remove('dark'); html.style.colorScheme = 'light'; }
-      html.setAttribute('data-theme', isDark ? 'github-dark' : 'github-light');
-    }
-
-    if (animate !== false && wasDark !== isDark && document.startViewTransition &&
-        !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      html.classList.add('is-theme-transitioning', 'use-view-transition');
-      var t = document.startViewTransition(function() { doApply(); });
-      t.finished.then(function() {
-        html.classList.remove('is-theme-transitioning', 'use-view-transition');
-      }).catch(function() {
-        html.classList.remove('is-theme-transitioning', 'use-view-transition');
-      });
-    } else {
-      if (wasDark !== isDark) html.classList.add('is-theme-transitioning');
-      doApply();
-      if (wasDark !== isDark) {
-        requestAnimationFrame(function() {
-          html.classList.remove('is-theme-transitioning');
-        });
+    function getStored() {
+      try {
+        return localStorage.getItem("theme") || DEFAULT;
+      } catch (e) {
+        return DEFAULT;
       }
     }
-    // Note: theme-change event is NOT dispatched here.
-    // Only manual toggle (window.__theme.toggle) dispatches it, matching Mizuki's architecture.
-  }
 
-  function setTheme(theme) {
-    try { localStorage.setItem('theme', theme); } catch(e) {}
-    applyToDocument(theme, true);
-  }
+    // Applies theme to <html> without dispatching events (Mizuki pattern).
+    // Used for initial load and navigation re-sync. Only setTheme/toggle fires theme-change.
+    function applyToDocument(theme, animate) {
+      var html = document.documentElement;
+      var isDark = theme === DARK;
+      var wasDark = html.classList.contains("dark");
 
-  // ---- Public API ----
-  window.__theme = {
-    get: getStored,
-    set: setTheme,
-    // Manual toggle: applies theme + dispatches theme-change for wave/toast/sakura
-    toggle: function() {
-      var next = getStored() === DARK ? LIGHT : DARK;
-      setTheme(next);
-      window.dispatchEvent(new CustomEvent('theme-change', { detail: { dark: next === DARK } }));
-    },
-    apply: applyToDocument,
-    DARK: DARK,
-    LIGHT: LIGHT
-  };
+      if (
+        wasDark === isDark &&
+        html.getAttribute("data-theme") === (isDark ? "github-dark" : "github-light")
+      ) {
+        return;
+      }
 
-  // Init on first load — no animation, must complete before first paint
-  applyToDocument(getStored(), false);
+      function doApply() {
+        if (isDark) {
+          html.classList.add("dark");
+          html.style.colorScheme = "dark";
+        } else {
+          html.classList.remove("dark");
+          html.style.colorScheme = "light";
+        }
+        html.setAttribute("data-theme", isDark ? "github-dark" : "github-light");
+      }
 
-  // Re-sync after every ClientRouter navigation.
-  // ClientRouter persists <head> but swaps <body>, so this listener survives.
-  document.addEventListener('astro:after-swap', function() {
+      if (
+        animate !== false &&
+        wasDark !== isDark &&
+        document.startViewTransition &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        html.classList.add("is-theme-transitioning", "use-view-transition");
+        var t = document.startViewTransition(function () {
+          doApply();
+        });
+        t.finished
+          .then(function () {
+            html.classList.remove("is-theme-transitioning", "use-view-transition");
+          })
+          .catch(function () {
+            html.classList.remove("is-theme-transitioning", "use-view-transition");
+          });
+      } else {
+        if (wasDark !== isDark) html.classList.add("is-theme-transitioning");
+        doApply();
+        if (wasDark !== isDark) {
+          requestAnimationFrame(function () {
+            html.classList.remove("is-theme-transitioning");
+          });
+        }
+      }
+      // Note: theme-change event is NOT dispatched here.
+      // Only manual toggle (window.__theme.toggle) dispatches it, matching Mizuki's architecture.
+    }
+
+    function setTheme(theme) {
+      try {
+        localStorage.setItem("theme", theme);
+      } catch (e) {}
+      applyToDocument(theme, true);
+    }
+
+    // ---- Public API ----
+    window.__theme = {
+      get: getStored,
+      set: setTheme,
+      // Manual toggle: applies theme + dispatches theme-change for wave/toast/sakura
+      toggle: function () {
+        var next = getStored() === DARK ? LIGHT : DARK;
+        setTheme(next);
+        window.dispatchEvent(new CustomEvent("theme-change", { detail: { dark: next === DARK } }));
+      },
+      apply: applyToDocument,
+      DARK: DARK,
+      LIGHT: LIGHT,
+    };
+
+    // Init on first load — no animation, must complete before first paint
     applyToDocument(getStored(), false);
-  });
-})();
+
+    // Re-sync after every ClientRouter navigation.
+    // ClientRouter persists <head> but swaps <body>, so this listener survives.
+    document.addEventListener("astro:after-swap", function () {
+      applyToDocument(getStored(), false);
+    });
+  })();
 </script>

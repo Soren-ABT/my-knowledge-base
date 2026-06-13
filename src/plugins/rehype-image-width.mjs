@@ -22,7 +22,10 @@ export function rehypeImageWidth() {
           figureChildren.push({
             type: "element",
             tagName: "figcaption",
-            properties: { style: "text-align: center; margin-top: 0.5em; font-size: 0.9em; color: var(--text-muted);" },
+            properties: {
+              style:
+                "text-align: center; margin-top: 0.5em; font-size: 0.9em; color: var(--text-muted);",
+            },
             children: [{ type: "text", value: node.properties.title }],
           });
         }

@@ -4,7 +4,7 @@
  * lazy initialization, and memory-efficient patterns.
  */
 (function () {
-  'use strict';
+  "use strict";
 
   // Guard: only initialize once. ClientRouter swaps body, which may re-execute
   // external scripts. All per-navigation re-init is handled via astro:after-swap.
@@ -31,7 +31,7 @@
       { mult: 2.3, amp: 0.25 },
       { mult: 4.7, amp: 0.1 },
     ],
-    READING_POSITION_KEY: 'blog_reading_pos',
+    READING_POSITION_KEY: "blog_reading_pos",
   } as const;
 
   /* Module interface — every module registers cleanup here */
@@ -60,11 +60,11 @@
   }
 
   function toast(msg: string, type?: string) {
-    type = type || 'info';
-    const container = $('toast-container');
+    type = type || "info";
+    const container = $("toast-container");
     if (!container) return;
-    const el = document.createElement('div');
-    el.className = 'toast ' + type;
+    const el = document.createElement("div");
+    el.className = "toast " + type;
     el.textContent = msg;
     container.appendChild(el);
     setTimeout(() => {
@@ -73,11 +73,11 @@
   }
 
   function freezeTransitions(el: HTMLElement): () => void {
-    el.classList.add('no-transition');
+    el.classList.add("no-transition");
     return function unfreeze() {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          el.classList.remove('no-transition');
+          el.classList.remove("no-transition");
         });
       });
     };
@@ -88,22 +88,25 @@
       if (cb) cb();
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done).catch(() => {
-        fallbackCopy(text, done);
-      });
+      navigator.clipboard
+        .writeText(text)
+        .then(done)
+        .catch(() => {
+          fallbackCopy(text, done);
+        });
     } else {
       fallbackCopy(text, done);
     }
   }
 
   function fallbackCopy(text: string, cb?: () => void) {
-    const ta = document.createElement('textarea');
+    const ta = document.createElement("textarea");
     ta.value = text;
-    ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
+    ta.style.cssText = "position:fixed;left:-9999px;top:-9999px";
     document.body.appendChild(ta);
     ta.select();
     try {
-      document.execCommand('copy');
+      document.execCommand("copy");
     } catch (e) {
       /* ignore */
     }
@@ -112,20 +115,20 @@
   }
 
   function escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
   function randomId(): string {
     return Math.random().toString(36).substr(2, 8);
   }
   function escHTML(str: string): string {
-    const d = document.createElement('div');
+    const d = document.createElement("div");
     d.textContent = str;
     return d.innerHTML;
   }
 
   /* Schedule non-critical work for idle periods */
   function scheduleIdle(fn: () => void, timeout?: number): number {
-    if (typeof requestIdleCallback === 'function') {
+    if (typeof requestIdleCallback === "function") {
       return requestIdleCallback(fn, { timeout: timeout || 1000 });
     }
     return setTimeout(fn, timeout || 200) as unknown as number;
@@ -135,14 +138,14 @@
      Wave Animation (exposed for theme toggle)
      ================================================================= */
   window.__animateWave = function (fillColor: string, onComplete?: () => void) {
-    const canvas = document.getElementById('theme-wave-canvas') as HTMLCanvasElement | null;
+    const canvas = document.getElementById("theme-wave-canvas") as HTMLCanvasElement | null;
     if (!canvas) {
       if (onComplete) onComplete();
       return;
     }
     const ctx =
       (canvas as any).__waveCtx ||
-      ((canvas as any).__waveCtx = canvas.getContext('2d', { alpha: true }));
+      ((canvas as any).__waveCtx = canvas.getContext("2d", { alpha: true }));
     if (!ctx) {
       if (onComplete) onComplete();
       return;
@@ -153,7 +156,7 @@
     }
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    canvas.style.display = 'block';
+    canvas.style.display = "block";
     const w = canvas.width,
       h = canvas.height;
     const freq = CFG.WAVE_FREQ,
@@ -193,10 +196,10 @@
       const gT = waveY - amp - 10,
         gB = waveY + amp + 80;
       const grd = ctx.createLinearGradient(0, gT, 0, gB);
-      grd.addColorStop(0, 'rgba(0,0,0,0)');
-      grd.addColorStop(0.3, 'rgba(0,0,0,0)');
-      grd.addColorStop(0.6, 'rgba(0,0,0,0.10)');
-      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      grd.addColorStop(0, "rgba(0,0,0,0)");
+      grd.addColorStop(0.3, "rgba(0,0,0,0)");
+      grd.addColorStop(0.6, "rgba(0,0,0,0.10)");
+      grd.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = grd;
       ctx.fillRect(0, gT, w, gB - gT);
       ctx.restore();
@@ -211,7 +214,7 @@
         if (k === 0) ctx.moveTo(x2, waveY + y2);
         else ctx.lineTo(x2, waveY + y2);
       }
-      ctx.strokeStyle = 'rgba(255,255,255,0.20)';
+      ctx.strokeStyle = "rgba(255,255,255,0.20)";
       ctx.lineWidth = 1.4;
       ctx.stroke();
       ctx.beginPath();
@@ -225,7 +228,7 @@
         if (k2 === 0) ctx.moveTo(x3, waveY + y3 - 1.0);
         else ctx.lineTo(x3, waveY + y3 - 1.0);
       }
-      ctx.strokeStyle = 'rgba(255,255,255,0.38)';
+      ctx.strokeStyle = "rgba(255,255,255,0.38)";
       ctx.lineWidth = 0.5;
       ctx.stroke();
 
@@ -233,7 +236,7 @@
         window.__waveAnimId = requestAnimationFrame(frame);
       } else {
         ctx.clearRect(0, 0, w, h);
-        canvas.style.display = 'none';
+        canvas.style.display = "none";
         window.__waveAnimId = null;
         if (onComplete) onComplete();
       }
@@ -246,28 +249,28 @@
      Scroll-Driven: Progress Bar + Back to Top + Position Save
      ================================================================= */
   function updateProgressBar() {
-    const bar = $('page-progress-bar');
+    const bar = $("page-progress-bar");
     if (!bar) return;
     const dh = document.documentElement.scrollHeight - window.innerHeight;
     bar.style.width =
-      dh <= 0 ? '0%' : Math.min(100, Math.max(0, (window.scrollY / dh) * 100)) + '%';
+      dh <= 0 ? "0%" : Math.min(100, Math.max(0, (window.scrollY / dh) * 100)) + "%";
   }
 
   function updateBackToTop() {
-    const btn = $('back-to-top');
+    const btn = $("back-to-top");
     if (!btn) return;
     const v = window.scrollY > CFG.BACK_TO_TOP_THRESHOLD;
-    btn.classList.toggle('visible', v);
+    btn.classList.toggle("visible", v);
     if (v) {
       const dh = document.documentElement.scrollHeight - window.innerHeight;
       btn.style.setProperty(
-        '--scroll-pct',
-        dh > 0 ? Math.min(100, Math.round((window.scrollY / dh) * 100)) + '%' : '0%',
+        "--scroll-pct",
+        dh > 0 ? Math.min(100, Math.round((window.scrollY / dh) * 100)) + "%" : "0%",
       );
     }
   }
 
-  let saveTimer: number | null = null;
+  let saveTimer: ReturnType<typeof setTimeout> | null = null;
   function saveReadingPosition() {
     if (saveTimer !== null) clearTimeout(saveTimer);
     saveTimer = setTimeout(() => {
@@ -291,9 +294,9 @@
       const r = localStorage.getItem(CFG.READING_POSITION_KEY);
       if (!r) return;
       const d = JSON.parse(r);
-      if (d.pageKey === window.location.pathname && typeof d.scrollY === 'number') {
+      if (d.pageKey === window.location.pathname && typeof d.scrollY === "number") {
         setTimeout(() => {
-          window.scrollTo({ top: d.scrollY, behavior: 'instant' });
+          window.scrollTo({ top: d.scrollY, behavior: "instant" });
         }, 150);
       }
     } catch (e) {
@@ -316,18 +319,18 @@
      Navbar Scroll Detection
      ================================================================= */
   function NavbarModule(): Module {
-    const navbar = document.getElementById('navbar');
+    const navbar = document.getElementById("navbar");
     if (!navbar) return { init() {}, dispose() {} };
-    const mode = navbar.getAttribute('data-transparent-mode');
-    if (mode !== 'semifull') {
-      navbar.setAttribute('data-dynamic-transparent', mode === 'full' ? 'full' : 'semi');
+    const mode = navbar.getAttribute("data-transparent-mode");
+    if (mode !== "semifull") {
+      navbar.setAttribute("data-dynamic-transparent", mode === "full" ? "full" : "semi");
     }
     let ticking = false;
     function update() {
-      if (mode === 'semifull') {
+      if (mode === "semifull") {
         const scrolled = window.scrollY > 50;
-        navbar!.classList.toggle('scrolled', scrolled);
-        navbar!.setAttribute('data-dynamic-transparent', scrolled ? 'semi' : 'semifull');
+        navbar!.classList.toggle("scrolled", scrolled);
+        navbar!.setAttribute("data-dynamic-transparent", scrolled ? "semi" : "semifull");
       }
       ticking = false;
     }
@@ -337,12 +340,12 @@
         ticking = true;
       }
     };
-    window.addEventListener('scroll', boundScroll, { passive: true });
+    window.addEventListener("scroll", boundScroll, { passive: true });
     update();
     return {
       init() {},
       dispose() {
-        window.removeEventListener('scroll', boundScroll);
+        window.removeEventListener("scroll", boundScroll);
       },
     };
   }
@@ -357,62 +360,102 @@
       if (done) return;
       done = true;
       populateCodeHeaders();
-      document.querySelectorAll('.prose pre').forEach(wrapPre);
-      document.querySelectorAll('.code-block-wrapper pre').forEach(addLineNums);
+      document.querySelectorAll(".prose pre").forEach(wrapPre);
+      document.querySelectorAll(".code-block-wrapper pre").forEach(addLineNums);
       addCollapsible();
     }
 
     const LANG_NAMES: Record<string, string> = {
-      apache: 'Apache', bash: 'Bash', c: 'C', 'c++': 'C++', cpp: 'C++', csharp: 'C#',
-      css: 'CSS', dart: 'Dart', diff: 'Diff', dockerfile: 'Dockerfile', elixir: 'Elixir',
-      go: 'Go', graphql: 'GraphQL', haskell: 'Haskell', html: 'HTML', ini: 'INI',
-      java: 'Java', javascript: 'JavaScript', js: 'JavaScript', json: 'JSON', jsx: 'JSX',
-      kotlin: 'Kotlin', lua: 'Lua', makefile: 'Makefile', markdown: 'Markdown', md: 'Markdown',
-      mdx: 'MDX', mysql: 'MySQL', nginx: 'Nginx', perl: 'Perl', php: 'PHP',
-      powershell: 'PowerShell', python: 'Python', r: 'R', ruby: 'Ruby', rust: 'Rust',
-      scala: 'Scala', scss: 'SCSS', sh: 'Shell', shell: 'Shell', sql: 'SQL',
-      svg: 'SVG', swift: 'Swift', toml: 'TOML', ts: 'TypeScript', tsx: 'TSX',
-      typescript: 'TypeScript', xml: 'XML', yaml: 'YAML', yml: 'YAML',
+      apache: "Apache",
+      bash: "Bash",
+      c: "C",
+      "c++": "C++",
+      cpp: "C++",
+      csharp: "C#",
+      css: "CSS",
+      dart: "Dart",
+      diff: "Diff",
+      dockerfile: "Dockerfile",
+      elixir: "Elixir",
+      go: "Go",
+      graphql: "GraphQL",
+      haskell: "Haskell",
+      html: "HTML",
+      ini: "INI",
+      java: "Java",
+      javascript: "JavaScript",
+      js: "JavaScript",
+      json: "JSON",
+      jsx: "JSX",
+      kotlin: "Kotlin",
+      lua: "Lua",
+      makefile: "Makefile",
+      markdown: "Markdown",
+      md: "Markdown",
+      mdx: "MDX",
+      mysql: "MySQL",
+      nginx: "Nginx",
+      perl: "Perl",
+      php: "PHP",
+      powershell: "PowerShell",
+      python: "Python",
+      r: "R",
+      ruby: "Ruby",
+      rust: "Rust",
+      scala: "Scala",
+      scss: "SCSS",
+      sh: "Shell",
+      shell: "Shell",
+      sql: "SQL",
+      svg: "SVG",
+      swift: "Swift",
+      toml: "TOML",
+      ts: "TypeScript",
+      tsx: "TSX",
+      typescript: "TypeScript",
+      xml: "XML",
+      yaml: "YAML",
+      yml: "YAML",
     };
 
     function populateCodeHeaders() {
-      document.querySelectorAll('.frame pre[data-language]').forEach((pre) => {
-        const frame = pre.closest('.frame');
+      document.querySelectorAll(".frame pre[data-language]").forEach((pre) => {
+        const frame = pre.closest(".frame");
         if (!frame) return;
-        const header = frame.querySelector('.header');
+        const header = frame.querySelector(".header");
         if (!header || header.textContent!.trim()) return;
-        const lang = pre.getAttribute('data-language') || '';
+        const lang = pre.getAttribute("data-language") || "";
         const name = LANG_NAMES[lang.toLowerCase()] || lang;
         header.textContent = name;
       });
     }
 
     function wrapPre(pre: Element) {
-      if (pre.parentNode && (pre.parentNode as Element).classList?.contains('code-block-wrapper'))
+      if (pre.parentNode && (pre.parentNode as Element).classList?.contains("code-block-wrapper"))
         return;
-      if (pre.closest('.expressive-code')) return;
-      const code = pre.querySelector('code');
-      let lang = '';
+      if (pre.closest(".expressive-code")) return;
+      const code = pre.querySelector("code");
+      let lang = "";
       if (code && code.className) {
         const m = code.className.match(/lang(?:uage)?-(\w+)/);
         if (m) lang = m[1];
       }
-      const w = document.createElement('div');
-      w.className = 'code-block-wrapper';
-      const tb = document.createElement('div');
-      tb.className = 'code-toolbar';
-      tb.innerHTML = '<span class="code-lang">' + (lang || 'code') + '</span>';
-      const btn = document.createElement('button');
-      btn.className = 'code-copy-btn';
+      const w = document.createElement("div");
+      w.className = "code-block-wrapper";
+      const tb = document.createElement("div");
+      tb.className = "code-toolbar";
+      tb.innerHTML = '<span class="code-lang">' + (lang || "code") + "</span>";
+      const btn = document.createElement("button");
+      btn.className = "code-copy-btn";
       btn.innerHTML =
         '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
-      btn.addEventListener('click', () => {
-        copyToClipboard(pre.textContent || '', () => {
-          btn.classList.add('copied');
-          btn.innerHTML = '&#10003; Copied';
-          toast('代码已复制', 'success');
+      btn.addEventListener("click", () => {
+        copyToClipboard(pre.textContent || "", () => {
+          btn.classList.add("copied");
+          btn.innerHTML = "&#10003; Copied";
+          toast("代码已复制", "success");
           setTimeout(() => {
-            btn.classList.remove('copied');
+            btn.classList.remove("copied");
             btn.innerHTML =
               '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
           }, CFG.CODE_COPIED_DURATION);
@@ -425,33 +468,33 @@
     }
 
     function addLineNums(pre: Element) {
-      if (pre.querySelector('.code-line-numbers')) return;
-      const code = pre.querySelector('code');
+      if (pre.querySelector(".code-line-numbers")) return;
+      const code = pre.querySelector("code");
       if (!code) return;
-      const lines = (code.textContent || '').split('\n');
-      if (lines.length > 1 && lines[lines.length - 1].trim() === '') lines.pop();
-      let h = '';
-      for (let i = 0; i < lines.length; i++) h += '<span>' + (i + 1) + '</span>';
-      const ln = document.createElement('div');
-      ln.className = 'code-line-numbers';
+      const lines = (code.textContent || "").split("\n");
+      if (lines.length > 1 && lines[lines.length - 1].trim() === "") lines.pop();
+      let h = "";
+      for (let i = 0; i < lines.length; i++) h += "<span>" + (i + 1) + "</span>";
+      const ln = document.createElement("div");
+      ln.className = "code-line-numbers";
       ln.innerHTML = h;
       pre.insertBefore(ln, pre.firstChild);
     }
 
     function addCollapsible() {
       const THRESHOLD = 280;
-      document.querySelectorAll('.code-block-wrapper').forEach((wrapper) => {
-        if (wrapper.querySelector('.code-expand-btn')) return;
-        const pre = wrapper.querySelector('pre');
+      document.querySelectorAll(".code-block-wrapper").forEach((wrapper) => {
+        if (wrapper.querySelector(".code-expand-btn")) return;
+        const pre = wrapper.querySelector("pre");
         if (!pre || pre.scrollHeight <= THRESHOLD) return;
-        wrapper.classList.add('collapsed');
-        const btn = document.createElement('button');
-        btn.className = 'code-expand-btn';
+        wrapper.classList.add("collapsed");
+        const btn = document.createElement("button");
+        btn.className = "code-expand-btn";
         btn.innerHTML =
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> 展开代码';
-        btn.addEventListener('click', () => {
-          const collapsed = wrapper.classList.toggle('collapsed');
-          btn.classList.toggle('expanded', !collapsed);
+        btn.addEventListener("click", () => {
+          const collapsed = wrapper.classList.toggle("collapsed");
+          btn.classList.toggle("expanded", !collapsed);
           btn.innerHTML = collapsed
             ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> 展开代码'
             : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg> 收起代码';
@@ -475,30 +518,32 @@
      ================================================================= */
   function HeadingAnchorModule(): Module {
     function add() {
-      const c = document.querySelector('.prose') || document.querySelector('.markdown-section');
+      const c = document.querySelector(".prose") || document.querySelector(".markdown-section");
       if (!c) return;
-      c.querySelectorAll('h1,h2,h3,h4').forEach((h) => {
-        if (h.querySelector('.heading-anchor')) return;
-        if (!h.id) h.id = 'h-' + randomId();
-        const a = document.createElement('a');
-        a.className = 'heading-anchor';
-        a.innerHTML = '#';
-        a.title = '复制链接';
-        a.href = 'javascript:void(0)';
-        a.addEventListener('click', (e) => {
+      c.querySelectorAll("h1,h2,h3,h4").forEach((h) => {
+        if (h.querySelector(".heading-anchor")) return;
+        if (!h.id) h.id = "h-" + randomId();
+        const a = document.createElement("a");
+        a.className = "heading-anchor";
+        a.innerHTML = "#";
+        a.title = "复制链接";
+        a.href = "javascript:void(0)";
+        a.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
-          copyToClipboard(
-            window.location.origin + window.location.pathname + '#' + h.id,
-            () => {
-              toast('链接已复制', 'success');
-            },
-          );
+          copyToClipboard(window.location.origin + window.location.pathname + "#" + h.id, () => {
+            toast("链接已复制", "success");
+          });
         });
         h.appendChild(a);
       });
     }
-    return { init() { scheduleIdle(add, 500); }, dispose() {} };
+    return {
+      init() {
+        scheduleIdle(add, 500);
+      },
+      dispose() {},
+    };
   }
 
   /* =================================================================
@@ -509,23 +554,23 @@
     let links: HTMLAnchorElement[] = [];
 
     function generate() {
-      const container = document.getElementById('toc-container');
+      const container = document.getElementById("toc-container");
       if (!container) return;
-      const c = document.querySelector('.prose') || document.querySelector('.markdown-section');
+      const c = document.querySelector(".prose") || document.querySelector(".markdown-section");
       if (!c) {
-        container.innerHTML = '';
+        container.innerHTML = "";
         return;
       }
-      const hs = c.querySelectorAll('h1,h2,h3');
+      const hs = c.querySelectorAll("h1,h2,h3");
       if (hs.length < CFG.TOC_MIN_HEADINGS) {
-        container.innerHTML = '';
+        container.innerHTML = "";
         return;
       }
       let html =
         '<div class="font-semibold text-xs uppercase tracking-wider text-[var(--text-muted)] mb-2 px-2">目录</div>';
       hs.forEach((h, i) => {
-        if (!h.id) h.id = 'toc-' + i;
-        const levelClass = 'toc-' + h.tagName.toLowerCase();
+        if (!h.id) h.id = "toc-" + i;
+        const levelClass = "toc-" + h.tagName.toLowerCase();
         html +=
           '<a href="#' +
           h.id +
@@ -535,15 +580,15 @@
           h.id +
           '">' +
           h.textContent!.trim() +
-          '</a>';
+          "</a>";
       });
       container.innerHTML = html;
       links = [];
-      container.querySelectorAll('a').forEach((a) => {
-        a.addEventListener('click', (e) => {
+      container.querySelectorAll("a").forEach((a) => {
+        a.addEventListener("click", (e) => {
           e.preventDefault();
-          const t = document.getElementById(a.getAttribute('data-target') || '');
-          if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const t = document.getElementById(a.getAttribute("data-target") || "");
+          if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
         });
         links.push(a);
       });
@@ -555,7 +600,7 @@
       if (!links.length) return;
       const headingMap: Record<string, HTMLAnchorElement> = {};
       links.forEach((a) => {
-        const id = a.getAttribute('data-target');
+        const id = a.getAttribute("data-target");
         if (id) headingMap[id] = a;
       });
       const visible: Record<string, boolean> = {};
@@ -566,17 +611,17 @@
           });
           let activeId: string | null = null;
           for (let i = 0; i < links.length; i++) {
-            const id = links[i].getAttribute('data-target');
+            const id = links[i].getAttribute("data-target");
             if (id && visible[id]) {
               activeId = id;
               break;
             }
           }
           links.forEach((a) => {
-            a.classList.toggle('active', a.getAttribute('data-target') === activeId);
+            a.classList.toggle("active", a.getAttribute("data-target") === activeId);
           });
         },
-        { rootMargin: '-80px 0px -60% 0px' },
+        { rootMargin: "-80px 0px -60% 0px" },
       );
 
       Object.keys(headingMap).forEach((id) => {
@@ -602,48 +647,48 @@
      Image Lightbox
      ================================================================= */
   function LightboxModule(): Module {
-    const lb = $('img-lightbox');
+    const lb = $("img-lightbox");
     if (!lb) return { init() {}, dispose() {} };
-    const lbImg = lb.querySelector('img')!;
-    const lbClose = lb.querySelector('.lb-close') as HTMLElement | null;
+    const lbImg = lb.querySelector("img")!;
+    const lbClose = lb.querySelector(".lb-close") as HTMLElement | null;
     let escHandler: ((e: KeyboardEvent) => void) | undefined;
     let clickHandler: ((e: MouseEvent) => void) | undefined;
 
     function open(src: string, alt: string) {
       lbImg.src = src;
-      lbImg.alt = alt || '';
-      lb.classList.add('active');
-      document.body.style.overflow = 'hidden';
+      lbImg.alt = alt || "";
+      lb!.classList.add("active");
+      document.body.style.overflow = "hidden";
     }
     function close() {
-      lb.classList.remove('active');
-      document.body.style.overflow = '';
+      lb!.classList.remove("active");
+      document.body.style.overflow = "";
     }
 
     return {
       init() {
         escHandler = (e) => {
-          if (e.key === 'Escape' && lb.classList.contains('active')) close();
+          if (e.key === "Escape" && lb.classList.contains("active")) close();
         };
         clickHandler = (e) => {
           if (e.target === lb || e.target === lbClose) close();
         };
-        lb.addEventListener('click', clickHandler);
-        if (lbClose) lbClose.addEventListener('click', close);
-        document.addEventListener('keydown', escHandler);
-        document.querySelectorAll('.prose img').forEach((img) => {
-          if (img.hasAttribute('data-lb')) return;
-          img.setAttribute('data-lb', '1');
-          img.addEventListener('click', (e) => {
+        lb.addEventListener("click", clickHandler);
+        if (lbClose) lbClose.addEventListener("click", close);
+        document.addEventListener("keydown", escHandler);
+        document.querySelectorAll(".prose img").forEach((img) => {
+          if (img.hasAttribute("data-lb")) return;
+          img.setAttribute("data-lb", "1");
+          img.addEventListener("click", (e) => {
             e.preventDefault();
-            open((img as HTMLImageElement).src, (img as HTMLImageElement).alt || '');
+            open((img as HTMLImageElement).src, (img as HTMLImageElement).alt || "");
           });
         });
       },
       dispose() {
-        if (clickHandler) lb.removeEventListener('click', clickHandler);
-        if (lbClose) lbClose.removeEventListener('click', close);
-        if (escHandler) document.removeEventListener('keydown', escHandler);
+        if (clickHandler) lb.removeEventListener("click", clickHandler);
+        if (lbClose) lbClose.removeEventListener("click", close);
+        if (escHandler) document.removeEventListener("keydown", escHandler);
       },
     };
   }
@@ -654,8 +699,8 @@
   function LinkPreviewModule(): Module {
     const cache = new Map<string, { title: string; excerpt: string; words: number }>();
     let activeHref: string | null = null;
-    let hoverTimer: number | null = null;
-    let hideTimer: number | null = null;
+    let hoverTimer: ReturnType<typeof setTimeout> | null = null;
+    let hideTimer: ReturnType<typeof setTimeout> | null = null;
     let boundOver: ((e: MouseEvent) => void) | undefined;
     let boundOut: ((e: MouseEvent) => void) | undefined;
 
@@ -667,8 +712,8 @@
     }
 
     function hide() {
-      const card = $('linkPreviewCard');
-      if (card) card.style.display = 'none';
+      const card = $("linkPreviewCard");
+      if (card) card.style.display = "none";
       activeHref = null;
     }
 
@@ -677,7 +722,7 @@
     }
 
     function show(anchor: HTMLAnchorElement, href: string) {
-      const card = $('linkPreviewCard');
+      const card = $("linkPreviewCard");
       if (!card) return;
       if (cache.has(href)) {
         render(anchor, cache.get(href)!);
@@ -686,12 +731,12 @@
       showLoader(anchor);
       fetch(resolveUrl(href))
         .then((r) => {
-          if (!r.ok) throw Error('404');
+          if (!r.ok) throw Error("404");
           return r.text();
         })
         .then((text) => {
-          let title = '',
-            excerpt = '';
+          let title = "",
+            excerpt = "";
           const t1 = text.match(/<title[^>]*>([^<]*)<\/title>/i);
           if (t1) title = t1[1].trim();
           const h1 = text.match(/<h1[^>]*>([^<]*)<\/h1>/i);
@@ -700,12 +745,12 @@
           if (p)
             excerpt = p[1]
               .trim()
-              .replace(/<[^>]+>/g, '')
+              .replace(/<[^>]+>/g, "")
               .substring(0, 200);
           const result = {
-            title: title || 'Untitled',
-            excerpt: excerpt || 'No preview',
-            words: (title + ' ' + excerpt).length,
+            title: title || "Untitled",
+            excerpt: excerpt || "No preview",
+            words: (title + " " + excerpt).length,
           };
           cache.set(href, result);
           if (cache.size > CFG.PREVIEW_CACHE_MAX) cache.delete(cache.keys().next().value!);
@@ -717,15 +762,15 @@
     }
 
     function showLoader(a: HTMLAnchorElement) {
-      const card = $('linkPreviewCard');
+      const card = $("linkPreviewCard");
       if (!card) return;
       card.innerHTML = '<div class="lp-loader">Loading preview...</div>';
       position(card, a);
-      card.style.display = 'block';
+      card.style.display = "block";
     }
 
     function render(a: HTMLAnchorElement, p: { title: string; excerpt: string; words: number }) {
-      const card = $('linkPreviewCard');
+      const card = $("linkPreviewCard");
       if (!card) return;
       card.innerHTML =
         '<div class="lp-title">' +
@@ -734,9 +779,9 @@
         escHTML(p.excerpt) +
         '</div><div class="lp-meta"><span>' +
         p.words +
-        ' chars</span></div>';
+        " chars</span></div>";
       position(card, a);
-      card.style.display = 'block';
+      card.style.display = "block";
     }
 
     function position(card: HTMLElement, a: HTMLElement) {
@@ -749,34 +794,34 @@
       if (left < 16) left = 16;
       let top = t;
       if (top + 120 > window.innerHeight - 16) top = Math.max(16, r.top - 128);
-      card.style.left = left + 'px';
-      card.style.top = top + 'px';
-      card.style.maxWidth = cw + 'px';
+      card.style.left = left + "px";
+      card.style.top = top + "px";
+      card.style.maxWidth = cw + "px";
     }
 
     function shouldPreview(href: string): boolean {
-      if (!href || href.startsWith('http') || href.startsWith('#') || href === 'javascript:void(0)')
+      if (!href || href.startsWith("http") || href.startsWith("#") || href === "javascript:void(0)")
         return false;
       if (
-        href.endsWith('.md') ||
-        href.endsWith('.markdown') ||
-        href.endsWith('.html') ||
-        href.endsWith('.htm')
+        href.endsWith(".md") ||
+        href.endsWith(".markdown") ||
+        href.endsWith(".html") ||
+        href.endsWith(".htm")
       )
         return true;
-      if (href.indexOf('.') === -1) return true;
+      if (href.indexOf(".") === -1) return true;
       return false;
     }
 
     return {
       init() {
         boundOver = (e) => {
-          const a = (e.target as Element).closest('a') as HTMLAnchorElement | null;
+          const a = (e.target as Element).closest("a") as HTMLAnchorElement | null;
           if (!a) {
             scheduleHide();
             return;
           }
-          const href = a.getAttribute('href') || '';
+          const href = a.getAttribute("href") || "";
           if (!shouldPreview(href)) {
             scheduleHide();
             return;
@@ -789,15 +834,15 @@
           }, CFG.PREVIEW_DEBOUNCE);
         };
         boundOut = (e) => {
-          const a = (e.target as Element).closest('a') as HTMLAnchorElement | null;
-          if (!a || (a.getAttribute('href') || '') === activeHref) scheduleHide();
+          const a = (e.target as Element).closest("a") as HTMLAnchorElement | null;
+          if (!a || (a.getAttribute("href") || "") === activeHref) scheduleHide();
         };
-        document.addEventListener('mouseover', boundOver, { passive: true });
-        document.addEventListener('mouseout', boundOut, { passive: true });
+        document.addEventListener("mouseover", boundOver, { passive: true });
+        document.addEventListener("mouseout", boundOut, { passive: true });
       },
       dispose() {
-        if (boundOver) document.removeEventListener('mouseover', boundOver);
-        if (boundOut) document.removeEventListener('mouseout', boundOut);
+        if (boundOver) document.removeEventListener("mouseover", boundOver);
+        if (boundOut) document.removeEventListener("mouseout", boundOut);
         cache.clear();
         activeHref = null;
       },
@@ -812,59 +857,59 @@
     return {
       init() {
         handler = (e) => {
-          const tag = ((e.target as HTMLElement)?.tagName || '').toLowerCase();
+          const tag = ((e.target as HTMLElement)?.tagName || "").toLowerCase();
           const isInput =
-            tag === 'input' || tag === 'textarea' || (e.target as HTMLElement)?.isContentEditable;
-          if (e.key === 'Escape') {
+            tag === "input" || tag === "textarea" || (e.target as HTMLElement)?.isContentEditable;
+          if (e.key === "Escape") {
             closeSearch();
-            const sp = $('shortcuts-panel');
-            if (sp) sp.classList.add('float-panel-closed');
+            const sp = $("shortcuts-panel");
+            if (sp) sp.classList.add("float-panel-closed");
           }
-          if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          if ((e.ctrlKey || e.metaKey) && e.key === "k") {
             e.preventDefault();
             openSearch();
             return;
           }
-          if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+          if ((e.ctrlKey || e.metaKey) && e.key === "d") {
             e.preventDefault();
-            if (window.__theme && typeof window.__theme.toggle === 'function')
+            if (window.__theme && typeof window.__theme.toggle === "function")
               window.__theme.toggle();
             return;
           }
-          if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowUp') {
+          if ((e.ctrlKey || e.metaKey) && e.key === "ArrowUp") {
             e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: "smooth" });
             return;
           }
-          if (e.key === '/' && !isInput) {
+          if (e.key === "/" && !isInput) {
             e.preventDefault();
             openSearch();
             return;
           }
-          if (e.key === '?' && !isInput) {
+          if (e.key === "?" && !isInput) {
             e.preventDefault();
-            const sp = $('shortcuts-panel');
-            if (sp) sp.classList.remove('float-panel-closed');
+            const sp = $("shortcuts-panel");
+            if (sp) sp.classList.remove("float-panel-closed");
             return;
           }
         };
-        document.addEventListener('keydown', handler);
+        document.addEventListener("keydown", handler);
       },
       dispose() {
-        if (handler) document.removeEventListener('keydown', handler);
+        if (handler) document.removeEventListener("keydown", handler);
       },
     };
   }
 
   /* Theme change — toast notification */
-  window.addEventListener('theme-change', ((e: CustomEvent) => {
-    toast(e.detail.dark ? '已切换到深色模式' : '已切换到浅色模式', 'info');
+  window.addEventListener("theme-change", ((e: CustomEvent) => {
+    toast(e.detail.dark ? "已切换到深色模式" : "已切换到浅色模式", "info");
     try {
       const bg =
-        getComputedStyle(document.body).getPropertyValue('--page-bg').trim() ||
-        getComputedStyle(document.body).getPropertyValue('--wl-bg').trim();
-      if (typeof window.__animateWave === 'function') {
-        window.__animateWave(bg || (e.detail.dark ? '#08080f' : '#f0ede8'));
+        getComputedStyle(document.body).getPropertyValue("--page-bg").trim() ||
+        getComputedStyle(document.body).getPropertyValue("--wl-bg").trim();
+      if (typeof window.__animateWave === "function") {
+        window.__animateWave(bg || (e.detail.dark ? "#08080f" : "#f0ede8"));
       }
     } catch (err) {
       /* ignore */
@@ -873,13 +918,13 @@
 
   /* Search */
   function openSearch() {
-    const overlay = $('searchModalOverlay'),
-      input = $('searchModalInput') as HTMLInputElement | null,
-      results = $('searchResults');
+    const overlay = $("searchModalOverlay"),
+      input = $("searchModalInput") as HTMLInputElement | null,
+      results = $("searchResults");
     if (!overlay) return;
-    overlay.classList.remove('float-panel-closed');
+    overlay.classList.remove("float-panel-closed");
     if (input) {
-      input.value = '';
+      input.value = "";
       setTimeout(() => input.focus(), 100);
     }
     if (results) results.innerHTML = '<div class="search-no-results">输入关键词开始搜索...</div>';
@@ -887,40 +932,40 @@
   }
 
   function closeSearch() {
-    const overlay = $('searchModalOverlay');
-    if (overlay) overlay.classList.add('float-panel-closed');
+    const overlay = $("searchModalOverlay");
+    if (overlay) overlay.classList.add("float-panel-closed");
     window.__searchSelectedIdx = -1;
   }
 
   function performSearch(kw: string) {
-    const results = $('searchResults');
+    const results = $("searchResults");
     if (!results) return;
-    results.innerHTML = '';
+    results.innerHTML = "";
     if (!kw || !kw.trim()) {
       results.innerHTML = '<div class="search-no-results">输入关键词开始搜索...</div>';
       return;
     }
-    const c = document.querySelector('.prose') || document.querySelector('main');
+    const c = document.querySelector(".prose") || document.querySelector("main");
     if (!c) {
       results.innerHTML = '<div class="search-no-results">暂无内容</div>';
       return;
     }
-    const blocks = c.querySelectorAll('p,li,td,th,h1,h2,h3,h4,h5,h6');
+    const blocks = c.querySelectorAll("p,li,td,th,h1,h2,h3,h4,h5,h6");
     const esc = escapeRegex(kw),
-      re = new RegExp(esc, 'gi');
+      re = new RegExp(esc, "gi");
     const seen = new Set<Element>();
     let count = 0;
     for (let i = 0; i < blocks.length; i++) {
       const b = blocks[i];
       if (
-        b.closest('pre') ||
-        b.closest('.code-block-wrapper') ||
-        b.closest('.search-modal') ||
-        b.closest('.code-line-numbers')
+        b.closest("pre") ||
+        b.closest(".code-block-wrapper") ||
+        b.closest(".search-modal") ||
+        b.closest(".code-line-numbers")
       )
         continue;
       if (seen.has(b)) continue;
-      const text = b.textContent || '';
+      const text = b.textContent || "";
       re.lastIndex = 0;
       if (!re.test(text)) continue;
       seen.add(b);
@@ -932,16 +977,19 @@
       const start = Math.max(0, idx - 40),
         end = Math.min(text.length, idx + len + 40);
       const excerpt =
-        (start > 0 ? '...' : '') + text.substring(start, end) + (end < text.length ? '...' : '');
-      const div = document.createElement('div');
-      div.className = 'search-result-item';
-      div.innerHTML = excerpt.replace(new RegExp(esc, 'gi'), '<mark>$&</mark>');
-      div.addEventListener('click', ((block: Element) => {
-        return () => {
-          closeSearch();
-          block.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        };
-      })(b));
+        (start > 0 ? "..." : "") + text.substring(start, end) + (end < text.length ? "..." : "");
+      const div = document.createElement("div");
+      div.className = "search-result-item";
+      div.innerHTML = excerpt.replace(new RegExp(esc, "gi"), "<mark>$&</mark>");
+      div.addEventListener(
+        "click",
+        ((block: Element) => {
+          return () => {
+            closeSearch();
+            block.scrollIntoView({ behavior: "smooth", block: "center" });
+          };
+        })(b),
+      );
       results.appendChild(div);
     }
     if (count === 0) results.innerHTML = '<div class="search-no-results">未找到匹配内容</div>';
@@ -949,20 +997,20 @@
   }
 
   function handleSearchKb(e: KeyboardEvent) {
-    const items = document.querySelectorAll('#searchResults .search-result-item');
+    const items = document.querySelectorAll("#searchResults .search-result-item");
     if (!items.length) return;
-    if (e.key === 'ArrowDown') {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
       window.__searchSelectedIdx = Math.min(
         (window.__searchSelectedIdx || 0) + 1,
         items.length - 1,
       );
       selectSearchItem(items);
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
       window.__searchSelectedIdx = Math.max((window.__searchSelectedIdx || 0) - 1, 0);
       selectSearchItem(items);
-    } else if (e.key === 'Enter') {
+    } else if (e.key === "Enter") {
       e.preventDefault();
       if (window.__searchSelectedIdx! >= 0 && items[window.__searchSelectedIdx!])
         (items[window.__searchSelectedIdx!] as HTMLElement).click();
@@ -971,9 +1019,9 @@
 
   function selectSearchItem(items: NodeListOf<Element>) {
     for (let i = 0; i < items.length; i++) {
-      items[i].classList.toggle('selected', i === window.__searchSelectedIdx);
+      items[i].classList.toggle("selected", i === window.__searchSelectedIdx);
       if (i === window.__searchSelectedIdx)
-        (items[i] as HTMLElement).scrollIntoView({ block: 'nearest' });
+        (items[i] as HTMLElement).scrollIntoView({ block: "nearest" });
     }
   }
 
@@ -989,35 +1037,35 @@
     navbar.init();
     onDispose(() => navbar.dispose());
 
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
 
-    const btt = $('back-to-top');
+    const btt = $("back-to-top");
     if (btt) {
-      btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-      onDispose(() => btt.removeEventListener('click', () => {}));
+      btt.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+      onDispose(() => btt.removeEventListener("click", () => {}));
     }
 
     // Search UI bindings
-    const searchBtn = document.getElementById('search-trigger-btn');
-    if (searchBtn) searchBtn.addEventListener('click', openSearch);
-    const searchClose = $('searchModalClose');
-    if (searchClose) searchClose.addEventListener('click', closeSearch);
-    const searchOverlay = $('searchModalOverlay');
+    const searchBtn = document.getElementById("search-trigger-btn");
+    if (searchBtn) searchBtn.addEventListener("click", openSearch);
+    const searchClose = $("searchModalClose");
+    if (searchClose) searchClose.addEventListener("click", closeSearch);
+    const searchOverlay = $("searchModalOverlay");
     if (searchOverlay)
-      searchOverlay.addEventListener('click', (e) => {
+      searchOverlay.addEventListener("click", (e) => {
         if (e.target === searchOverlay) closeSearch();
       });
-    const searchInput = $('searchModalInput') as HTMLInputElement | null;
+    const searchInput = $("searchModalInput") as HTMLInputElement | null;
     if (searchInput) {
-      searchInput.addEventListener('input', function () {
+      searchInput.addEventListener("input", function () {
         performSearch(this.value);
       });
-      searchInput.addEventListener('keydown', (e) => handleSearchKb(e));
+      searchInput.addEventListener("keydown", (e) => handleSearchKb(e));
     }
-    const sp = $('shortcuts-panel');
+    const sp = $("shortcuts-panel");
     if (sp)
-      sp.addEventListener('click', (e) => {
-        if (e.target === sp) sp.classList.add('float-panel-closed');
+      sp.addEventListener("click", (e) => {
+        if (e.target === sp) sp.classList.add("float-panel-closed");
       });
 
     // Keyboard shortcuts (always active)
@@ -1055,9 +1103,9 @@
     onDispose(() => linkPreview.dispose());
 
     // Resize handler
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       if (window.__waveAnimId) {
-        const cvs = document.getElementById('theme-wave-canvas') as HTMLCanvasElement | null;
+        const cvs = document.getElementById("theme-wave-canvas") as HTMLCanvasElement | null;
         if (cvs) {
           cvs.width = window.innerWidth;
           cvs.height = window.innerHeight;
@@ -1071,14 +1119,14 @@
      ================================================================= */
   window.__disposeApp = disposeAll;
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAll);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAll);
   } else {
     initAll();
   }
 
   /* Re-initialize content-dependent modules on client-side navigation */
-  document.addEventListener('astro:after-swap', () => {
+  document.addEventListener("astro:after-swap", () => {
     if (modules.codeBlocks) {
       modules.codeBlocks.dispose();
     }
@@ -1104,36 +1152,36 @@
     onDispose(() => modules.lightbox.dispose());
 
     // Re-bind UI elements that are swapped by ClientRouter
-    const searchBtn = document.getElementById('search-trigger-btn');
+    const searchBtn = document.getElementById("search-trigger-btn");
     if (searchBtn && !(searchBtn as any)._searchBound) {
       (searchBtn as any)._searchBound = true;
-      searchBtn.addEventListener('click', openSearch);
+      searchBtn.addEventListener("click", openSearch);
     }
-    const searchClose = document.getElementById('searchModalClose');
+    const searchClose = document.getElementById("searchModalClose");
     if (searchClose && !(searchClose as any)._searchBound) {
       (searchClose as any)._searchBound = true;
-      searchClose.addEventListener('click', closeSearch);
+      searchClose.addEventListener("click", closeSearch);
     }
-    const searchOverlay = document.getElementById('searchModalOverlay');
+    const searchOverlay = document.getElementById("searchModalOverlay");
     if (searchOverlay && !(searchOverlay as any)._overlayBound) {
       (searchOverlay as any)._overlayBound = true;
-      searchOverlay.addEventListener('click', (e) => {
+      searchOverlay.addEventListener("click", (e) => {
         if (e.target === searchOverlay) closeSearch();
       });
     }
-    const searchInput = document.getElementById('searchModalInput') as HTMLInputElement | null;
+    const searchInput = document.getElementById("searchModalInput") as HTMLInputElement | null;
     if (searchInput && !(searchInput as any)._inputBound) {
       (searchInput as any)._inputBound = true;
-      searchInput.addEventListener('input', function () {
+      searchInput.addEventListener("input", function () {
         performSearch(this.value);
       });
-      searchInput.addEventListener('keydown', (e) => handleSearchKb(e));
+      searchInput.addEventListener("keydown", (e) => handleSearchKb(e));
     }
-    const sp = document.getElementById('shortcuts-panel');
+    const sp = document.getElementById("shortcuts-panel");
     if (sp && !(sp as any)._spBound) {
       (sp as any)._spBound = true;
-      sp.addEventListener('click', (e) => {
-        if (e.target === sp) sp.classList.add('float-panel-closed');
+      sp.addEventListener("click", (e) => {
+        if (e.target === sp) sp.classList.add("float-panel-closed");
       });
     }
 

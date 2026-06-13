@@ -34,7 +34,7 @@ async function fetchFonts() {
 
   try {
     const cssResp = await fetch(
-      "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap"
+      "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap",
     );
     if (!cssResp.ok) throw new Error("Google Fonts CSS fetch failed");
     const cssText = await cssResp.text();
@@ -75,7 +75,8 @@ export async function GET({ props }: APIContext<{ post: any }>) {
   const { regular: fontRegular, bold: fontBold } = await fetchFonts();
 
   const fonts: FontOptions[] = [];
-  if (fontRegular) fonts.push({ name: "Noto Sans SC", data: fontRegular, weight: 400, style: "normal" });
+  if (fontRegular)
+    fonts.push({ name: "Noto Sans SC", data: fontRegular, weight: 400, style: "normal" });
   if (fontBold) fonts.push({ name: "Noto Sans SC", data: fontBold, weight: 700, style: "normal" });
 
   // Fonts must be available for satori to work

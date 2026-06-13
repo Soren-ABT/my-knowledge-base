@@ -27,7 +27,10 @@
 
     try {
       const elements = document.querySelectorAll(".mermaid[data-mermaid-code]");
-      if (elements.length === 0) { isRendering = false; return; }
+      if (elements.length === 0) {
+        isRendering = false;
+        return;
+      }
 
       const theme = getTheme();
       currentTheme = theme;

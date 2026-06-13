@@ -14,23 +14,25 @@ const slug = normalizeSlug(post.id);
 const hasCover = data.image && data.image.length > 0;
 ---
 
-<article class="onload-animation card-base group relative flex flex-col overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
+<article
+  class="onload-animation card-base group relative flex flex-col overflow-hidden border border-[var(--color-border)] bg-[var(--color-bg-card)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+>
   <div class="flex flex-col sm:flex-row">
     <!-- Content area -->
     <div class="flex-1 p-5 sm:p-6">
       <!-- Tags row -->
-      {data.tags.length > 0 && (
-        <div class="mb-3 flex flex-wrap gap-1.5">
-          {data.tags.slice(0, 3).map((tag) => (
-            <a href={`/tags/${tag}/`} class="tag-chip">
-              {tag}
-            </a>
-          ))}
-          {data.tags.length > 3 && (
-            <span class="tag-chip">+{data.tags.length - 3}</span>
-          )}
-        </div>
-      )}
+      {
+        data.tags.length > 0 && (
+          <div class="mb-3 flex flex-wrap gap-1.5">
+            {data.tags.slice(0, 3).map((tag) => (
+              <a href={`/tags/${tag}/`} class="tag-chip">
+                {tag}
+              </a>
+            ))}
+            {data.tags.length > 3 && <span class="tag-chip">+{data.tags.length - 3}</span>}
+          </div>
+        )
+      }
 
       <!-- Title -->
       <h2 class="mb-2 text-lg font-bold leading-snug">
@@ -38,62 +40,92 @@ const hasCover = data.image && data.image.length > 0;
           href={`/posts/${slug}/`}
           class="text-[var(--color-text)] no-underline transition-colors hover:text-[var(--color-primary)]"
         >
-          {data.pinned && (
-            <span class="mr-1.5 inline-flex align-middle text-[var(--color-primary)]" title="置顶">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/></svg>
-            </span>
-          )}
+          {
+            data.pinned && (
+              <span
+                class="mr-1.5 inline-flex align-middle text-[var(--color-primary)]"
+                title="置顶"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
+                </svg>
+              </span>
+            )
+          }
           {data.title}
         </a>
       </h2>
 
       <!-- Description -->
-      {data.description && (
-        <p class="mb-3 text-sm leading-relaxed text-[var(--color-text-secondary)] line-clamp-2">
-          {data.description}
-        </p>
-      )}
+      {
+        data.description && (
+          <p class="mb-3 text-sm leading-relaxed text-[var(--color-text-secondary)] line-clamp-2">
+            {data.description}
+          </p>
+        )
+      }
 
       <!-- Meta -->
-      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-text-muted)]">
+      <div
+        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--color-text-muted)]"
+      >
         <time datetime={data.published.toISOString()}>
           {formatDate(data.published)}
         </time>
         {data.category && <span>· {data.category}</span>}
         {
-          post.body ? (() => {
-            const stats = getReadingStats(post.body);
-            const wc = stats.chars;
-            return <span class="hidden sm:inline">· {wc > 1000 ? Math.round(wc / 1000) + 'k' : wc} 字 · 约 {stats.minutes} 分钟</span>;
-          })() : null
+          post.body
+            ? (() => {
+                const stats = getReadingStats(post.body);
+                const wc = stats.chars;
+                return (
+                  <span class="hidden sm:inline">
+                    · {wc > 1000 ? Math.round(wc / 1000) + "k" : wc} 字 · 约 {stats.minutes} 分钟
+                  </span>
+                );
+              })()
+            : null
         }
       </div>
     </div>
 
     <!-- Cover image -->
-    {hasCover && (
-      <a
-        href={`/posts/${slug}/`}
-        class="relative mx-4 mb-4 block h-44 shrink-0 overflow-hidden rounded-lg sm:mx-0 sm:my-3 sm:mr-3 sm:mb-3 sm:h-auto sm:w-56"
-      >
-        <div class="absolute inset-0 z-10 rounded-lg transition-colors group-hover:bg-black/20" />
-        <img
-          src={data.image}
-          alt={data.title}
-          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
-      </a>
-    )}
+    {
+      hasCover && (
+        <a
+          href={`/posts/${slug}/`}
+          class="relative mx-4 mb-4 block h-44 shrink-0 overflow-hidden rounded-lg sm:mx-0 sm:my-3 sm:mr-3 sm:mb-3 sm:h-auto sm:w-56"
+        >
+          <div class="absolute inset-0 z-10 rounded-lg transition-colors group-hover:bg-black/20" />
+          <img
+            src={data.image}
+            alt={data.title}
+            class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        </a>
+      )
+    }
   </div>
 
   <!-- Enter arrow (only visible when no cover) -->
-  {!hasCover && (
-    <a
-      href={`/posts/${slug}/`}
-      class="post-card-enter absolute right-4 top-1/2 hidden -translate-y-1/2 rounded-lg p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] sm:flex"
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-    </a>
-  )}
+  {
+    !hasCover && (
+      <a
+        href={`/posts/${slug}/`}
+        class="post-card-enter absolute right-4 top-1/2 hidden -translate-y-1/2 rounded-lg p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] sm:flex"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M9 18l6-6-6-6" />
+        </svg>
+      </a>
+    )
+  }
 </article>
