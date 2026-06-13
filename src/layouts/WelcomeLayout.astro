@@ -2,6 +2,7 @@
 import { siteConfig } from "../config";
 import ThemeScript from "../components/ThemeScript.astro";
 import CoreManager from "../components/CoreManager.astro";
+import Analytics from "@vercel/analytics/astro";
 
 const pageTitle = siteConfig.subtitle
   ? `${siteConfig.title} - ${siteConfig.subtitle}`
@@ -236,5 +237,6 @@ const hue = siteConfig.themeColor.hue;
         });
       })();
     </script>
+    <Analytics />
   </body>
 </html>

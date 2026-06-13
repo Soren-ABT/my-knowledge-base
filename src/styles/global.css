@@ -2,6 +2,9 @@
 
 @plugin "@tailwindcss/typography";
 
+@import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource-variable/jetbrains-mono/wght-italic.css";
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================================

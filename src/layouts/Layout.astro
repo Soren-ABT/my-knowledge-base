@@ -8,9 +8,12 @@ import FullscreenWallpaper from "../components/FullscreenWallpaper.astro";
 import FloatingTOC from "../components/FloatingTOC.astro";
 import SettingsPanel from "../components/SettingsPanel.astro";
 import MusicPlayer from "../components/MusicPlayer.astro";
+import CanvasLayer from "../components/CanvasLayer.astro";
+import OverlayLayer from "../components/OverlayLayer.astro";
 import ConfigCarrier from "../components/ConfigCarrier.astro";
 import ThemeScript from "../components/ThemeScript.astro";
 import CoreManager from "../components/CoreManager.astro";
+import Analytics from "@vercel/analytics/astro";
 import { fullscreenWallpaperConfig } from "../config";
 import { ClientRouter } from "astro:transitions";
 
@@ -168,11 +171,8 @@ const shouldShowTopHighlight =
       <FullscreenWallpaper config={fullscreenWallpaperConfig} />
     )}
 
-    <!-- Wave canvas for theme transitions -->
-    <canvas id="theme-wave-canvas"></canvas>
-
-    <!-- Sakura canvas -->
-    <canvas id="sakura-canvas"></canvas>
+    <!-- Canvas layer: theme wave + sakura particles -->
+    <CanvasLayer />
 
     <!-- Music Player -->
     <MusicPlayer />
@@ -194,59 +194,13 @@ const shouldShowTopHighlight =
 
     <Footer />
 
-    <!-- Toast container -->
-    <div id="toast-container"></div>
-
-    <!-- Back to top -->
-    <button id="back-to-top" aria-label="回到顶部">
-      <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-    </button>
-
-    <!-- Floating TOC -->
+    <!-- Overlay layer: modals, lightbox, search, toc, settings -->
+    <OverlayLayer />
     <FloatingTOC />
-
-    <!-- Settings Panel -->
     <SettingsPanel />
 
-    <!-- Search modal -->
-    <div class="search-modal-overlay float-panel-closed" id="searchModalOverlay">
-      <div class="search-modal" role="search">
-        <div class="search-modal-header">
-          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" class="search-modal-input" id="searchModalInput" placeholder="搜索… (Ctrl+K 或 /)" aria-label="搜索" />
-          <button class="search-modal-close" id="searchModalClose" aria-label="关闭搜索"><svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-        </div>
-        <div class="search-hint" aria-live="polite">↑↓ 导航 · Enter 跳转 · Esc 关闭</div>
-        <div class="search-results" id="searchResults" role="listbox"></div>
-      </div>
-    </div>
-
-    <!-- Image lightbox -->
-    <div id="img-lightbox" role="dialog" aria-label="图片预览">
-      <button class="lb-close" aria-label="关闭">&times;</button>
-      <img src="" alt="preview" />
-    </div>
-
-    <!-- Link preview card -->
-    <div class="link-preview-card" id="linkPreviewCard">
-      <div class="lp-loader">Loading preview...</div>
-    </div>
-
-    <!-- Shortcuts panel -->
-    <div id="shortcuts-panel" class="float-panel-closed">
-      <div class="shortcuts-modal" role="dialog" aria-label="快捷键帮助">
-        <h3>键盘快捷键</h3>
-        <div class="kbd-row"><span>全局搜索</span><span><kbd>Ctrl</kbd>+<kbd>K</kbd></span></div>
-        <div class="kbd-row"><span>快速搜索</span><span><kbd>/</kbd></span></div>
-        <div class="kbd-row"><span>暗色模式</span><span><kbd>Ctrl</kbd>+<kbd>D</kbd></span></div>
-        <div class="kbd-row"><span>回到顶部</span><span><kbd>Ctrl</kbd>+<kbd>↑</kbd></span></div>
-        <div class="kbd-row"><span>关闭面板</span><span><kbd>Esc</kbd></span></div>
-        <div class="kbd-row"><span>帮助</span><span><kbd>?</kbd></span></div>
-      </div>
-    </div>
-
-    <!-- Client app logic: external for better caching -->
-    <script defer src="/js/app.js"></script>
+    <!-- Client app logic: processed by Vite for bundling + hashing -->
+    <script src="../scripts/client/app.ts"></script>
 
     <!-- MathJax re-typeset on client-side navigation -->
     <script is:inline>
@@ -280,5 +234,8 @@ const shouldShowTopHighlight =
 
     <!-- Config carrier: passes server config to client-side scripts -->
     <ConfigCarrier />
+
+    <!-- Vercel Analytics: Web Vitals + traffic insights -->
+    <Analytics />
   </body>
 </html>
