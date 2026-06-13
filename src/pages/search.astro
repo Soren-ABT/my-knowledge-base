@@ -2,13 +2,16 @@
 import Layout from "../layouts/Layout.astro";
 import PagefindSearch from "../components/PagefindSearch.astro";
 import { siteConfig } from "../config";
+import { getStrings } from "../i18n";
+
+const ui = await getStrings(siteConfig.lang);
 ---
 
-<Layout title="搜索" description={`搜索 ${siteConfig.title} 的全部内容`}>
+<Layout title={ui["search.title"]} description={ui["search.desc"]}>
   <div class="mx-auto">
     <header class="mb-6">
-      <h1 class="text-2xl font-bold">搜索</h1>
-      <p class="mt-1 text-sm text-[var(--color-text-secondary)]">搜索全站文章与文档内容</p>
+      <h1 class="text-2xl font-bold">{ui["search.title"]}</h1>
+      <p class="mt-1 text-sm text-[var(--color-text-secondary)]">{ui["search.desc"]}</p>
       <div class="page-header-divider"></div>
     </header>
     <PagefindSearch />

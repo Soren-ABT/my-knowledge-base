@@ -1,0 +1,22 @@
+{
+  "name": "Soren's Blog",
+  "short_name": "Soren's Blog",
+  "description": "记录思考 · 沉淀技术 · 无限突破",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f1a",
+  "theme_color": "#6366f1",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

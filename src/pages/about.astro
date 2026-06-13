@@ -3,7 +3,10 @@ import Layout from "../layouts/Layout.astro";
 import JsonLd from "../components/JsonLd.astro";
 import { getCollection } from "astro:content";
 import { profileConfig, siteConfig } from "../config";
+import { getStrings } from "../i18n";
 import { getReadingStats } from "../utils/reading-time";
+
+const ui = await getStrings(siteConfig.lang);
 
 const allPosts = await getCollection("posts", ({ data }) => {
   return import.meta.env.PROD ? !data.draft : true;
@@ -19,7 +22,7 @@ let totalChars = 0;
 allPosts.forEach((p) => { if (p.body) totalChars += getReadingStats(p.body).chars; });
 ---
 
-<Layout title="关于">
+<Layout title={ui["about.title"]}>
   <JsonLd
     data={{
       "@context": "https://schema.org",
@@ -32,8 +35,8 @@ allPosts.forEach((p) => { if (p.body) totalChars += getReadingStats(p.body).char
   <div class="mx-auto max-w-4xl">
     <!-- Page header -->
     <header class="mb-10">
-      <h1 class="text-2xl font-bold">关于</h1>
-      <p class="mt-1 text-sm text-[var(--color-text-secondary)]">了解更多关于我和这个站点</p>
+      <h1 class="text-2xl font-bold">{ui["about.title"]}</h1>
+      <p class="mt-1 text-sm text-[var(--color-text-secondary)]">{ui["about.desc"]}</p>
       <div class="page-header-divider"></div>
     </header>
 
@@ -79,21 +82,21 @@ allPosts.forEach((p) => { if (p.body) totalChars += getReadingStats(p.body).char
     <div class="stats-grid mb-10">
       <div class="stat-card">
         <span class="stat-number">{postCount}</span>
-        <span class="stat-label">文章总数</span>
+        <span class="stat-label">{ui["about.postCount"]}</span>
       </div>
       <div class="stat-card">
         <span class="stat-number">{tagCount}</span>
-        <span class="stat-label">标签分类</span>
+        <span class="stat-label">{ui["about.tagCount"]}</span>
       </div>
       <div class="stat-card">
         <span class="stat-number">{totalChars > 10000 ? Math.round(totalChars / 1000) + 'k' : totalChars.toLocaleString()}</span>
-        <span class="stat-label">总字数</span>
+        <span class="stat-label">{ui["about.totalChars"]}</span>
       </div>
     </div>
 
     <!-- Tech Stack -->
     <div class="mb-10">
-      <h2 class="mb-4 text-lg font-bold">技术栈</h2>
+      <h2 class="mb-4 text-lg font-bold">{ui["about.techStack"]}</h2>
       <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div class="stat-card">
           <div class="text-sm font-semibold text-[var(--color-text)]">Astro 6</div>

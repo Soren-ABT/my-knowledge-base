@@ -15,7 +15,10 @@ import ThemeScript from "../components/ThemeScript.astro";
 import CoreManager from "../components/CoreManager.astro";
 import Analytics from "@vercel/analytics/astro";
 import { fullscreenWallpaperConfig } from "../config";
+import { getStrings } from "../i18n";
 import { ClientRouter } from "astro:transitions";
+
+const ui = await getStrings(siteConfig.lang);
 
 interface Props {
   title?: string;
@@ -61,6 +64,10 @@ const shouldShowTopHighlight =
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#6366f1" />
 
     <!-- Canonical URL -->
     <link rel="canonical" href={canonicalUrl} />
@@ -126,26 +133,10 @@ const shouldShowTopHighlight =
       };
     </script>
     <!-- MathJax async loader with CDN fallback -->
-    <script is:inline>
-      (function() {
-        var CDNS = [
-          'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
-          'https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js'
-        ];
-        function tryNext(i) {
-          if (i >= CDNS.length) return;
-          var s = document.createElement('script');
-          s.src = CDNS[i];
-          s.onload = function() { window._mathjaxReady = true; };
-          s.onerror = function() { tryNext(i + 1); };
-          document.head.appendChild(s);
-        }
-        tryNext(0);
-      })();
-    </script>
+    <script defer src="/js/mathjax-loader.js"></script>
   </head>
   <body class="min-h-screen font-sans antialiased">
-    <a href="#content-wrapper" class="skip-link">跳到主要内容</a>
+    <a href="#content-wrapper" class="skip-link">{ui["common.skipToContent"]}</a>
     <!-- Critical: set wallpaper mode before paint to prevent FOUC -->
     <script is:inline>
       (function() {
@@ -203,24 +194,7 @@ const shouldShowTopHighlight =
     <script src="../scripts/client/app.ts"></script>
 
     <!-- MathJax re-typeset on client-side navigation -->
-    <script is:inline>
-      (function() {
-        var pending = false;
-        function retypeset() {
-          if (window.MathJax && window.MathJax.typesetPromise) {
-            pending = false;
-            MathJax.typesetPromise().catch(function(){});
-          } else {
-            pending = true;
-          }
-        }
-        document.addEventListener('astro:after-swap', retypeset);
-        var tid = setInterval(function() {
-          if (window._mathjaxReady && pending) { retypeset(); }
-          if (window._mathjaxReady && !pending) { clearInterval(tid); }
-        }, 300);
-      })();
-    </script>
+    <script defer src="/js/mathjax-retypeset.js"></script>
 
     <!-- Sakura particle effect: external for better caching -->
     <script defer src="/js/sakura.js"></script>

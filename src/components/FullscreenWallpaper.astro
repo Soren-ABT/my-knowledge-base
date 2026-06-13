@@ -11,6 +11,19 @@ const { config, className } = Astro.props;
 const toArray = (src: string | string[] | undefined): string[] =>
   Array.isArray(src) ? src : typeof src === "string" ? [src] : [];
 
+// Build srcset string with responsive variants (from _responsive/ dir)
+const RESPONSIVE_DIR = "/assets/wallpaper/_responsive";
+const DESKTOP_SIZES = [400, 800, 1200, 1920];
+const MOBILE_SIZES = [400, 800];
+
+function buildSrcset(src: string, isMobile: boolean): string {
+  const dotIdx = src.lastIndexOf(".");
+  const base = dotIdx > -1 ? src.substring(0, dotIdx) : src;
+  const baseName = base.split("/").pop()!;
+  const sizes = isMobile ? MOBILE_SIZES : DESKTOP_SIZES;
+  return sizes.map((w) => `${RESPONSIVE_DIR}/${baseName}-${w}w.webp ${w}w`).join(", ");
+}
+
 const getImageSources = () => {
   const srcConfig = config.src;
   if (
@@ -85,6 +98,8 @@ const positionClass = (() => {
           {imageSources.desktop.map((src, index) => (
             <img
               src={src}
+              srcset={buildSrcset(src, false)}
+              sizes="100vw"
               alt={`desktop wallpaper ${index + 1}`}
               class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${positionClass}`}
               data-carousel-item={index}
@@ -101,6 +116,8 @@ const positionClass = (() => {
           {imageSources.mobile.map((src, index) => (
             <img
               src={src}
+              srcset={buildSrcset(src, true)}
+              sizes="100vw"
               alt={`mobile wallpaper ${index + 1}`}
               class={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${positionClass}`}
               data-carousel-item-mobile={index}

@@ -8,7 +8,13 @@
     "build": "node scripts/scan-music.mjs && astro build && npx pagefind --site dist",
     "preview": "astro preview",
     "scan-music": "node scripts/scan-music.mjs",
-    "scan-music:watch": "node scripts/scan-music.mjs --watch"
+    "scan-music:watch": "node scripts/scan-music.mjs --watch",
+    "lint": "eslint \"src/**/*.{ts,js,mjs,cjs,astro}\"",
+    "format": "prettier --write \"src/**/*.{astro,ts,js,mjs,cjs,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{astro,ts,js,mjs,cjs,json,css,md}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "gen-wallpapers": "node scripts/generate-responsive-wallpapers.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.6",
@@ -38,9 +44,17 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@typescript-eslint/eslint-plugin": "^8.61.0",
+    "@typescript-eslint/parser": "^8.61.0",
+    "@vite-pwa/astro": "^1.2.0",
+    "eslint": "^10.5.0",
+    "eslint-plugin-astro": "^1.7.0",
     "pagefind": "^1.5.2",
+    "prettier": "^3.8.4",
+    "prettier-plugin-astro": "^0.14.1",
     "ttf2woff2": "^8.0.1",
     "typescript": "^6.0.3",
+    "vitest": "^4.1.8",
     "wawoff2": "^2.0.1"
   }
 }

@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import AstroPWA from '@vite-pwa/astro';
 import tailwindcss from '@tailwindcss/vite';
 import expressiveCode from 'astro-expressive-code';
 import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections';
@@ -78,6 +79,47 @@ export default defineConfig({
       },
     }),
     mdx(),
+    AstroPWA({
+      registerType: 'autoUpdate',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,woff2,png,svg,ico,xml}'],
+        globIgnores: [
+          '**/wallpaper/*.{webp,jpg,png}',
+          '**/LXGWWenKai*.woff2',
+        ],
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'cdn-jsdelivr',
+              expiration: { maxEntries: 50, maxAgeSeconds: 30 * 24 * 60 * 60 },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/unpkg\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'cdn-unpkg',
+              expiration: { maxEntries: 50, maxAgeSeconds: 30 * 24 * 60 * 60 },
+            },
+          },
+        ],
+      },
+      manifest: {
+        name: "Soren's Blog",
+        short_name: "Soren's Blog",
+        description: '记录思考 · 沉淀技术 · 无限突破',
+        theme_color: '#6366f1',
+        background_color: '#0f0f1a',
+        display: 'standalone',
+        icons: [
+          { src: '/assets/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/assets/icon-512.png', sizes: '512x512', type: 'image/png' },
+        ],
+      },
+    }),
   ],
 
   markdown: {

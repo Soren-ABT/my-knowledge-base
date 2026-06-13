@@ -1,6 +1,8 @@
 ---
-// Settings Panel — wallpaper mode, hue slider, sakura toggle
-// Mizuki pattern: float-panel-closed tracks state; JS manages animated open/close
+import { siteConfig } from "../config";
+import { getStrings } from "../i18n";
+
+const ui = await getStrings(siteConfig.lang);
 ---
 
 <button class="settings-fab" id="settings-fab" title="设置" aria-label="设置">
@@ -12,42 +14,42 @@
 
 <div class="settings-panel float-panel float-panel-closed" id="settings-panel">
   <div class="settings-header">
-    <span>显示设置</span>
+    <span>{ui["settings.title"]}</span>
     <button class="settings-close" id="settings-close" aria-label="关闭">&times;</button>
   </div>
   <div class="settings-body">
     <!-- Theme hue slider -->
     <div>
-      <div class="settings-section-title">主题色相</div>
+      <div class="settings-section-title">{ui["settings.themeHue"]}</div>
       <input type="range" class="settings-hue-slider" id="hue-slider" min="0" max="360" value="250" />
     </div>
 
     <!-- Wallpaper mode -->
     <div>
-      <div class="settings-section-title">壁纸模式</div>
+      <div class="settings-section-title">{ui["settings.wallpaperMode"]}</div>
       <div class="settings-row" style="gap:6px">
-        <button class="settings-mode-btn active" data-mode="banner">标准</button>
-        <button class="settings-mode-btn" data-mode="fullscreen">全屏</button>
-        <button class="settings-mode-btn" data-mode="overlay">叠加</button>
-        <button class="settings-mode-btn" data-mode="none">关闭</button>
+        <button class="settings-mode-btn active" data-mode="banner">{ui["settings.modeBanner"]}</button>
+        <button class="settings-mode-btn" data-mode="fullscreen">{ui["settings.modeFullscreen"]}</button>
+        <button class="settings-mode-btn" data-mode="overlay">{ui["settings.modeOverlay"]}</button>
+        <button class="settings-mode-btn" data-mode="none">{ui["settings.modeNone"]}</button>
       </div>
     </div>
 
     <!-- Wallpaper overlay sliders (shown only in overlay mode) -->
     <div id="overlay-settings" style="display:none">
-      <div class="settings-section-title">叠加效果</div>
+      <div class="settings-section-title">{ui["settings.overlayEffects"]}</div>
       <div class="settings-range-row">
-        <span class="settings-label" style="font-size:0.75rem;min-width:36px">不透明度</span>
+        <span class="settings-label" style="font-size:0.75rem;min-width:36px">{ui["settings.opacity"]}</span>
         <input type="range" id="overlay-opacity" min="20" max="100" value="80" />
         <span class="settings-range-value" id="overlay-opacity-val">80%</span>
       </div>
       <div class="settings-range-row">
-        <span class="settings-label" style="font-size:0.75rem;min-width:36px">模糊</span>
+        <span class="settings-label" style="font-size:0.75rem;min-width:36px">{ui["settings.blur"]}</span>
         <input type="range" id="overlay-blur" min="0" max="12" value="1.5" step="0.5" />
         <span class="settings-range-value" id="overlay-blur-val">1.5px</span>
       </div>
       <div class="settings-range-row">
-        <span class="settings-label" style="font-size:0.75rem;min-width:36px">卡片不透明度</span>
+        <span class="settings-label" style="font-size:0.75rem;min-width:36px">{ui["settings.cardOpacity"]}</span>
         <input type="range" id="overlay-card-opacity" min="20" max="100" value="80" />
         <span class="settings-range-value" id="overlay-card-opacity-val">80%</span>
       </div>
@@ -56,7 +58,7 @@
     <!-- Sakura toggle -->
     <div>
       <div class="settings-row">
-        <span class="settings-label">樱花粒子</span>
+        <span class="settings-label">{ui["settings.sakura"]}</span>
         <button class="settings-toggle" id="sakura-toggle" aria-label="切换樱花效果"></button>
       </div>
     </div>

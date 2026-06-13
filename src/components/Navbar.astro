@@ -1,5 +1,8 @@
 ---
 import { profileConfig, siteConfig, navBarConfig } from "../config";
+import { getStrings } from "../i18n";
+
+const ui = await getStrings(siteConfig.lang);
 
 interface Props {
   transparentMode?: "semi" | "full" | "semifull";
@@ -29,12 +32,12 @@ const { transparentMode = "semifull" } = Astro.props;
     </a>
 
     <div class="flex items-center gap-0.5 sm:gap-1">
-      <a href="/posts/" class="nav-link">文章</a>
-      <a href="/archive/" class="nav-link">归档</a>
-      <a href="/tags/" class="nav-link">标签</a>
-      <a href="/gallery/" class="nav-link">映像</a>
-      <a href="/docs/" class="nav-link">知识库</a>
-      <a href="/about/" class="nav-link">关于</a>
+      <a href="/posts/" class="nav-link">{ui["nav.posts"]}</a>
+      <a href="/archive/" class="nav-link">{ui["nav.archive"]}</a>
+      <a href="/tags/" class="nav-link">{ui["nav.tags"]}</a>
+      <a href="/gallery/" class="nav-link">{ui["nav.gallery"]}</a>
+      <a href="/docs/" class="nav-link">{ui["nav.docs"]}</a>
+      <a href="/about/" class="nav-link">{ui["nav.about"]}</a>
 
       <div class="mx-1.5 h-5 w-px bg-[var(--line-divider)]" aria-hidden="true"></div>
 
