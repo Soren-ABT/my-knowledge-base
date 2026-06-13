@@ -14,6 +14,8 @@
     "format:check": "prettier --check \"src/**/*.{astro,ts,js,mjs,cjs,json,css,md}\"",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
     "gen-wallpapers": "node scripts/generate-responsive-wallpapers.mjs"
   },
   "dependencies": {
@@ -47,8 +49,10 @@
     "@typescript-eslint/eslint-plugin": "^8.61.0",
     "@typescript-eslint/parser": "^8.61.0",
     "@vite-pwa/astro": "^1.2.0",
+    "@vitest/coverage-v8": "^4.1.8",
     "eslint": "^10.5.0",
     "eslint-plugin-astro": "^1.7.0",
+    "jsdom": "^29.1.1",
     "pagefind": "^1.5.2",
     "prettier": "^3.8.4",
     "prettier-plugin-astro": "^0.14.1",

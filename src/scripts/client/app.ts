@@ -3,6 +3,12 @@
  * Enterprise-grade architecture with module lifecycle, IntersectionObserver,
  * lazy initialization, and memory-efficient patterns.
  */
+import { escapeRegex } from "../../utils/escape-regex";
+import { randomId } from "../../utils/random-id";
+import { escHTML } from "../../utils/esc-html";
+import { shouldPreview, resolveUrl } from "../../utils/link-preview";
+import { LANG_NAMES } from "../../config/code-languages";
+
 (function () {
   "use strict";
 
@@ -112,18 +118,6 @@
     }
     document.body.removeChild(ta);
     if (cb) cb();
-  }
-
-  function escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  }
-  function randomId(): string {
-    return Math.random().toString(36).substr(2, 8);
-  }
-  function escHTML(str: string): string {
-    const d = document.createElement("div");
-    d.textContent = str;
-    return d.innerHTML;
   }
 
   /* Schedule non-critical work for idle periods */
@@ -364,59 +358,6 @@
       document.querySelectorAll(".code-block-wrapper pre").forEach(addLineNums);
       addCollapsible();
     }
-
-    const LANG_NAMES: Record<string, string> = {
-      apache: "Apache",
-      bash: "Bash",
-      c: "C",
-      "c++": "C++",
-      cpp: "C++",
-      csharp: "C#",
-      css: "CSS",
-      dart: "Dart",
-      diff: "Diff",
-      dockerfile: "Dockerfile",
-      elixir: "Elixir",
-      go: "Go",
-      graphql: "GraphQL",
-      haskell: "Haskell",
-      html: "HTML",
-      ini: "INI",
-      java: "Java",
-      javascript: "JavaScript",
-      js: "JavaScript",
-      json: "JSON",
-      jsx: "JSX",
-      kotlin: "Kotlin",
-      lua: "Lua",
-      makefile: "Makefile",
-      markdown: "Markdown",
-      md: "Markdown",
-      mdx: "MDX",
-      mysql: "MySQL",
-      nginx: "Nginx",
-      perl: "Perl",
-      php: "PHP",
-      powershell: "PowerShell",
-      python: "Python",
-      r: "R",
-      ruby: "Ruby",
-      rust: "Rust",
-      scala: "Scala",
-      scss: "SCSS",
-      sh: "Shell",
-      shell: "Shell",
-      sql: "SQL",
-      svg: "SVG",
-      swift: "Swift",
-      toml: "TOML",
-      ts: "TypeScript",
-      tsx: "TSX",
-      typescript: "TypeScript",
-      xml: "XML",
-      yaml: "YAML",
-      yml: "YAML",
-    };
 
     function populateCodeHeaders() {
       document.querySelectorAll(".frame pre[data-language]").forEach((pre) => {
@@ -717,10 +658,6 @@
       activeHref = null;
     }
 
-    function resolveUrl(h: string): string {
-      return new URL(h, window.location.href).href;
-    }
-
     function show(anchor: HTMLAnchorElement, href: string) {
       const card = $("linkPreviewCard");
       if (!card) return;
@@ -797,20 +734,6 @@
       card.style.left = left + "px";
       card.style.top = top + "px";
       card.style.maxWidth = cw + "px";
-    }
-
-    function shouldPreview(href: string): boolean {
-      if (!href || href.startsWith("http") || href.startsWith("#") || href === "javascript:void(0)")
-        return false;
-      if (
-        href.endsWith(".md") ||
-        href.endsWith(".markdown") ||
-        href.endsWith(".html") ||
-        href.endsWith(".htm")
-      )
-        return true;
-      if (href.indexOf(".") === -1) return true;
-      return false;
     }
 
     return {
