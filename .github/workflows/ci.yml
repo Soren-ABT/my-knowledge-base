@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Astro check (type checking)
-        run: npx astro check
+        run: npm run scan-music && npx astro check
 
       - name: Astro build
         run: npm run build
