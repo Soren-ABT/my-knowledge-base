@@ -6,8 +6,8 @@ A blazing-fast personal knowledge base and blog powered by [Astro 6](https://ast
 
 [![Node.js >= 18](https://img.shields.io/badge/node.js-%3E%3D18-brightgreen?logo=nodedotjs)](https://nodejs.org/)
 [![Astro 6](https://img.shields.io/badge/Astro-6.4.3-%23FF5D01?logo=astro)](https://astro.build)
-[![Tailwind CSS 4](https://img.shields.io/badge/Tailwind-4.1.6-%2306B6D4?logo=tailwindcss)](https://tailwindcss.com)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS 4](https://img.shields.io/badge/Tailwind-4.3.0-%2306B6D4?logo=tailwindcss)](https://tailwindcss.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](LICENSE)
 
 [**🖥️ Live Demo**](https://soren-abt.github.io) | [**📝 Usage Guide**](https://soren-abt.github.io/posts/website-user-guide/) | [**📚 Blog Posts**](https://soren-abt.github.io/posts/)
@@ -63,6 +63,7 @@ From blog posts and knowledge base articles to interactive music listening, this
 ### 🛠 Technical Features
 
 - [x] Zero-JS-by-default output (Islands Architecture)
+- [x] PWA support with offline access and installable app
 - [x] OG image generation via Satori (JSX → SVG → PNG)
 - [x] JSON-LD structured data for SEO
 - [x] Content collections with draft system
@@ -95,11 +96,20 @@ From blog posts and knowledge base articles to interactive music listening, this
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Soren-ABT/my-knowledge-base.git
-cd my-knowledge-base
+git clone https://github.com/Soren-ABT/Soren-s-blog-base.git
+cd Soren-s-blog-base
 
 # 2. Install dependencies
 npm install
+
+> [!IMPORTANT]
+> **`.npmrc` — why `legacy-peer-deps=true` is required**
+>
+> `@vite-pwa/astro@1.2.0` (latest) only supports Astro `^1.0 – ^5.0` as a peer dependency, but this project uses **Astro 6.4+**. Until upstream releases a compatible version, the project ships a `.npmrc` file that enables `legacy-peer-deps` to suppress the peer conflict.
+>
+> This has no impact on PWA functionality — the plugin works correctly with Astro 6 despite the unresolved peer range. If you remove `.npmrc`, `npm ci` will fail on CI and fresh installs.
+>
+> This notice should be removed once `@vite-pwa/astro` officially supports Astro 6.
 
 # 3. (Optional) Add your music files
 # Place audio files in public/assets/music/url/
@@ -216,7 +226,11 @@ my-knowledge-base/
 │   ├── api/
 │   │   └── music-playlist.json          # Playlist API (auto-generated)
 │   └── js/                              # Client-side scripts
-│       ├── app.js                       # Main app logic
+│       ├── app.js                       # Main app logic (search, settings, panels)
+│       ├── clock.js                     # Live clock widget
+│       ├── gallery-lightbox.js          # Gallery image lightbox
+│       ├── mathjax-loader.js            # MathJax 3 lazy loader
+│       ├── mathjax-retypeset.js         # MathJax re-typeset hook for SPA nav
 │       ├── music-player.js              # Audio engine (Web Audio API)
 │       ├── music-player-library.js      # Library browser UI
 │       ├── music-player-eq-presets.js   # Equalizer presets
@@ -231,7 +245,7 @@ my-knowledge-base/
 │   ├── audio-decoder.mjs                # Audio format knowledge base
 │   └── tag-reader.mjs                   # Tag reader & normalizer
 ├── src/
-│   ├── components/                      # Astro components (18 files)
+│   ├── components/                      # Astro components (20 files)
 │   │   └── MusicPlayer.astro            # Full music player UI
 │   ├── config/                          # Site configuration (9 files)
 │   │   └── musicPlaylist.generated.ts   # Playlist TS (auto-generated)
@@ -242,13 +256,18 @@ my-knowledge-base/
 │   ├── layouts/
 │   │   ├── Layout.astro                 # Main layout (all content pages)
 │   │   └── WelcomeLayout.astro          # Welcome page layout
-│   ├── pages/                           # Route pages (17 files)
+│   ├── pages/                           # Route pages (13 files)
 │   ├── plugins/                         # Remark/Rehype plugins (12 files)
-│   ├── styles/                          # CSS design system (components, panels, pages, music-player)
+│   ├── styles/                          # CSS design system
+│   │   ├── components/                  # Reusable component styles
+│   │   ├── music-player/                # Music player (core, panel, detail, lightbox)
+│   │   ├── panels/                      # Panel styles (lightbox, search, settings, toc)
+│   │   └── pages/                       # Page-specific styles (gallery, home)
 │   └── types/                           # TypeScript type definitions
 ├── astro.config.ts                      # Astro configuration
 ├── pagefind.yml                         # Search engine config
 ├── vercel.json                          # Vercel deployment + security headers
+├── .npmrc                               # Peer dependency workaround (see above)
 └── package.json
 ```
 
