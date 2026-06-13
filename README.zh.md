@@ -86,10 +86,10 @@
 
 ### 环境要求
 
-| 依赖 | 版本 |
-|------|------|
+| 依赖    | 版本              |
+| ------- | ----------------- |
 | Node.js | >= 18（推荐 LTS） |
-| npm | >= 9 |
+| npm     | >= 9              |
 
 ### 安装
 
@@ -160,13 +160,13 @@ pinned: false                       # true = 置顶
 
 ## ⚡ 命令
 
-| 命令 | 说明 |
-|------|------|
-| `npm run dev` | 扫描音乐 + 启动开发服务器（`localhost:3000`） |
-| `npm run build` | 扫描音乐 + 生产构建 + Pagefind 搜索索引 |
-| `npm run preview` | 本地预览生产版本 |
-| `npm run scan-music` | 仅扫描音乐文件，生成播放列表 |
-| `npm run scan-music:watch` | 持续监听音乐目录变化，自动更新 |
+| 命令                       | 说明                                          |
+| -------------------------- | --------------------------------------------- |
+| `npm run dev`              | 扫描音乐 + 启动开发服务器（`localhost:3000`） |
+| `npm run build`            | 扫描音乐 + 生产构建 + Pagefind 搜索索引       |
+| `npm run preview`          | 本地预览生产版本                              |
+| `npm run scan-music`       | 仅扫描音乐文件，生成播放列表                  |
+| `npm run scan-music:watch` | 持续监听音乐目录变化，自动更新                |
 
 ---
 
@@ -181,15 +181,15 @@ MediaElement → Gain(ReplayGain) → Gain(Headroom -3dB) → DynamicsCompressor
 
 ### 品质分级
 
-| 级别 | 标准 | 徽章 |
-|------|------|------|
-| Studio Master | > 96kHz / 24bit | SM |
-| Hi-Res 无损 | > 48kHz / 24bit | HR |
-| CD 质量 | 44.1kHz / 16bit | CD |
-| 标准无损 | 44.1kHz / 16bit（其他格式） | — |
-| 高码率有损 | > 256kbps | — |
-| 标准有损 | > 128kbps | — |
-| 低码率有损 | < 128kbps | — |
+| 级别          | 标准                        | 徽章 |
+| ------------- | --------------------------- | ---- |
+| Studio Master | > 96kHz / 24bit             | SM   |
+| Hi-Res 无损   | > 48kHz / 24bit             | HR   |
+| CD 质量       | 44.1kHz / 16bit             | CD   |
+| 标准无损      | 44.1kHz / 16bit（其他格式） | —    |
+| 高码率有损    | > 256kbps                   | —    |
+| 标准有损      | > 128kbps                   | —    |
+| 低码率有损    | < 128kbps                   | —    |
 
 ### 添加音乐
 
@@ -231,8 +231,12 @@ my-knowledge-base/
 │   ├── audio-decoder.mjs                # 音频格式知识库
 │   └── tag-reader.mjs                   # 标签读取与规范化
 ├── src/
-│   ├── components/                      # Astro 组件（18 个文件）
-│   │   └── MusicPlayer.astro            # 完整音乐播放器 UI
+│   ├── components/                      # Astro 组件（30+ 个文件）
+│   │   ├── archive/                     # 归档页面（5 个组件）
+│   │   ├── music/                       # 音乐播放器（4 个组件）
+│   │   ├── CoreManager.astro            # 集中式事件委托
+│   │   ├── MusicPlayer.astro            # 音乐播放器外壳
+│   │   └── ...                          # PostCard、Pagination、Search 等
 │   ├── config/                          # 站点配置（9 个文件）
 │   │   └── musicPlaylist.generated.ts   # 播放列表 TS（自动生成）
 │   ├── content/
@@ -242,9 +246,22 @@ my-knowledge-base/
 │   ├── layouts/
 │   │   ├── Layout.astro                 # 主布局（所有内容页）
 │   │   └── WelcomeLayout.astro          # 欢迎页布局
-│   ├── pages/                           # 路由页面（17 个文件）
+│   ├── pages/                           # 路由页面（13 个文件）
 │   ├── plugins/                         # Remark/Rehype 插件（12 个文件）
-│   ├── styles/                          # CSS 设计系统（组件、面板、页面、音乐播放器）
+│   ├── scripts/                         # TypeScript 模块（18 个文件）
+│   │   ├── archive/                     # 归档逻辑（river-math、drag、tabs、filter、observer）
+│   │   ├── music-player/                # 音乐播放器 UI、进度条、频谱
+│   │   ├── music/                       # 共享音乐 UI（volume-slider）
+│   │   ├── client/                      # 客户端应用逻辑
+│   │   ├── core-manager.ts              # 设置、壁纸、目录、链接预加载
+│   │   ├── welcome-wave.ts              # 主题切换波浪动画
+│   │   └── typewriter.ts                # 打字机文字效果
+│   ├── styles/                          # CSS 设计系统
+│   │   ├── archive/                     # 归档页样式（tabs、timeline、river）
+│   │   ├── components/                  # 可复用组件样式
+│   │   ├── music-player/                # 音乐播放器样式（core、panel、detail、lightbox）
+│   │   ├── panels/                      # 面板样式（lightbox、search、settings、toc）
+│   │   └── pages/                       # 页面样式（gallery、home）
 │   └── types/                           # TypeScript 类型定义
 ├── astro.config.ts                      # Astro 配置
 ├── pagefind.yml                         # 搜索引擎配置
@@ -263,6 +280,7 @@ my-knowledge-base/
 ### 站点配置
 
 编辑 `src/config/` 下的文件：
+
 - 站点元数据（标题、描述、作者）
 - 导航链接
 - 社交链接
@@ -308,14 +326,14 @@ Vercel 提供全球 CDN 加速和自动 HTTPS。免费额度 100GB 带宽/月，
 
 除标准 GitHub Flavored Markdown 外，本项目还支持：
 
-| 扩展 | 语法 | 说明 |
-|------|------|------|
-| 提示框 | `:::note` / `:::warning` 等 | 5 种样式的提示框 |
-| 数学公式 | `$E=mc^2$` / `$$\int$$` | LaTeX 公式（KaTeX + MathJax） |
-| 图表 | ` ```mermaid ` | 流程图、时序图、甘特图 |
-| GitHub 卡片 | `:github[用户/仓库]` | 仓库信息卡片 |
-| 图片宽度 | `![描述 w-400 center](url)` | 自定义宽度与居中 |
-| 代码块 | ` ```语言 ` | 行号、复制、可折叠 |
+| 扩展        | 语法                        | 说明                          |
+| ----------- | --------------------------- | ----------------------------- |
+| 提示框      | `:::note` / `:::warning` 等 | 5 种样式的提示框              |
+| 数学公式    | `$E=mc^2$` / `$$\int$$`     | LaTeX 公式（KaTeX + MathJax） |
+| 图表        | ` ```mermaid `              | 流程图、时序图、甘特图        |
+| GitHub 卡片 | `:github[用户/仓库]`        | 仓库信息卡片                  |
+| 图片宽度    | `![描述 w-400 center](url)` | 自定义宽度与居中              |
+| 代码块      | ` ```语言 `                 | 行号、复制、可折叠            |
 
 完整参考见 [Markdown 写作指南](https://soren-abt.github.io/posts/markdown-guide/)。
 
@@ -335,12 +353,16 @@ Vercel 提供全球 CDN 加速和自动 HTTPS。免费额度 100GB 带宽/月，
     → music-playlist.json（客户端 API）
     → 封面图提取
 
-运行时：
-  app.js: 导航栏滚动、搜索弹窗、图片灯箱、设置面板、
-          回到顶部、进度条、链接预览、键盘快捷键
+运行时（TypeScript 模块在 src/scripts/ + 客户端脚本在 public/js/）：
+  core-manager.ts: 设置面板、壁纸轮播、浮动目录、链接预加载、主题切换守卫、事件委托
 
-  music-player.js: Web Audio API DSP 链路、HTML5 Audio 元素、
-                   状态管理、发布-订阅广播
+  app.js: 搜索弹窗、图片灯箱、回到顶部、进度条、链接预览、键盘快捷键、导航栏滚动
+
+  music-player.js: Web Audio API DSP 链路、HTML5 Audio 元素、状态管理、发布-订阅广播
+
+  music-player/ui-core.ts: FAB 按钮、紧凑面板、音乐库覆盖层、沉浸播放、音量滑块、进度条、频谱
+
+  welcome-wave.ts: 主题切换时的 Canvas 波浪动画
 
   welcome-3d.js: Three.js 场景、鼠标视差、缩放、日夜模式
 ```
@@ -349,22 +371,22 @@ Vercel 提供全球 CDN 加速和自动 HTTPS。免费额度 100GB 带宽/月，
 
 ## 🌟 键盘快捷键
 
-| 快捷键 | 功能 |
-|--------|------|
-| `Ctrl+K` / `/` | 打开搜索 |
-| `Ctrl+D` | 切换明暗主题 |
-| `Ctrl+↑` | 回到顶部 |
-| `?` | 显示所有快捷键 |
-| `Esc` | 关闭弹窗 / 面板 |
+| 快捷键         | 功能            |
+| -------------- | --------------- |
+| `Ctrl+K` / `/` | 打开搜索        |
+| `Ctrl+D`       | 切换明暗主题    |
+| `Ctrl+↑`       | 回到顶部        |
+| `?`            | 显示所有快捷键  |
+| `Esc`          | 关闭弹窗 / 面板 |
 
 **音乐播放器（音乐库打开时）：**
 
-| 快捷键 | 功能 |
-|--------|------|
-| `Space` | 播放 / 暂停 |
-| `Alt+←` / `Cmd+←` | 上一曲 |
-| `Alt+→` / `Cmd+→` | 下一曲 |
-| `Esc` | 关闭音乐库 |
+| 快捷键            | 功能        |
+| ----------------- | ----------- |
+| `Space`           | 播放 / 暂停 |
+| `Alt+←` / `Cmd+←` | 上一曲      |
+| `Alt+→` / `Cmd+→` | 下一曲      |
+| `Esc`             | 关闭音乐库  |
 
 完整列表见 [网站使用指南](https://soren-abt.github.io/posts/website-user-guide/)。
 

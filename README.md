@@ -87,10 +87,10 @@ From blog posts and knowledge base articles to interactive music listening, this
 
 ### Prerequisites
 
-| Dependency | Version |
-|------------|---------|
-| Node.js | >= 18 (LTS recommended) |
-| npm | >= 9 |
+| Dependency | Version                 |
+| ---------- | ----------------------- |
+| Node.js    | >= 18 (LTS recommended) |
+| npm        | >= 9                    |
 
 ### Installation
 
@@ -170,13 +170,13 @@ Draft posts are visible during development (`npm run dev`) but automatically hid
 
 ## ⚡ Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Scan music + start dev server at `localhost:3000` |
-| `npm run build` | Scan music + production build + Pagefind search index |
-| `npm run preview` | Preview production build locally |
-| `npm run scan-music` | Scan music files and generate playlist |
-| `npm run scan-music:watch` | Watch music directory for changes, auto-regenerate |
+| Command                    | Description                                           |
+| -------------------------- | ----------------------------------------------------- |
+| `npm run dev`              | Scan music + start dev server at `localhost:3000`     |
+| `npm run build`            | Scan music + production build + Pagefind search index |
+| `npm run preview`          | Preview production build locally                      |
+| `npm run scan-music`       | Scan music files and generate playlist                |
+| `npm run scan-music:watch` | Watch music directory for changes, auto-regenerate    |
 
 ---
 
@@ -191,15 +191,15 @@ MediaElement → Gain(ReplayGain) → Gain(Headroom -3dB) → DynamicsCompressor
 
 ### Quality Tiers
 
-| Tier | Criteria | Badge |
-|------|----------|-------|
-| Studio Master | > 96kHz / 24bit | SM |
-| Hi-Res Lossless | > 48kHz / 24bit | HR |
-| CD Quality | 44.1kHz / 16bit | CD |
-| Standard Lossless | 44.1kHz / 16bit (other formats) | — |
-| High-bitrate Lossy | > 256kbps | — |
-| Standard Lossy | > 128kbps | — |
-| Low-bitrate Lossy | < 128kbps | — |
+| Tier               | Criteria                        | Badge |
+| ------------------ | ------------------------------- | ----- |
+| Studio Master      | > 96kHz / 24bit                 | SM    |
+| Hi-Res Lossless    | > 48kHz / 24bit                 | HR    |
+| CD Quality         | 44.1kHz / 16bit                 | CD    |
+| Standard Lossless  | 44.1kHz / 16bit (other formats) | —     |
+| High-bitrate Lossy | > 256kbps                       | —     |
+| Standard Lossy     | > 128kbps                       | —     |
+| Low-bitrate Lossy  | < 128kbps                       | —     |
 
 ### Adding Music
 
@@ -245,8 +245,12 @@ my-knowledge-base/
 │   ├── audio-decoder.mjs                # Audio format knowledge base
 │   └── tag-reader.mjs                   # Tag reader & normalizer
 ├── src/
-│   ├── components/                      # Astro components (20 files)
-│   │   └── MusicPlayer.astro            # Full music player UI
+│   ├── components/                      # Astro components (30+ files)
+│   │   ├── archive/                     # Archive page (5 components)
+│   │   ├── music/                       # Music player (4 components)
+│   │   ├── CoreManager.astro            # Centralized event delegation
+│   │   ├── MusicPlayer.astro            # Music player shell
+│   │   └── ...                          # PostCard, Pagination, Search, etc.
 │   ├── config/                          # Site configuration (9 files)
 │   │   └── musicPlaylist.generated.ts   # Playlist TS (auto-generated)
 │   ├── content/
@@ -258,7 +262,16 @@ my-knowledge-base/
 │   │   └── WelcomeLayout.astro          # Welcome page layout
 │   ├── pages/                           # Route pages (13 files)
 │   ├── plugins/                         # Remark/Rehype plugins (12 files)
+│   ├── scripts/                         # TypeScript modules (18 files)
+│   │   ├── archive/                     # Archive logic (river-math, drag, tabs, filter, observer)
+│   │   ├── music-player/                # Music player UI, progress bar, spectrum
+│   │   ├── music/                       # Shared music UI (volume-slider)
+│   │   ├── client/                      # Client app logic
+│   │   ├── core-manager.ts              # Settings, wallpaper, TOC, link preloading
+│   │   ├── welcome-wave.ts              # Theme transition wave animation
+│   │   └── typewriter.ts                # Typewriter text effect
 │   ├── styles/                          # CSS design system
+│   │   ├── archive/                     # Archive page styles (tabs, timeline, river)
 │   │   ├── components/                  # Reusable component styles
 │   │   ├── music-player/                # Music player (core, panel, detail, lightbox)
 │   │   ├── panels/                      # Panel styles (lightbox, search, settings, toc)
@@ -282,6 +295,7 @@ Edit `astro.config.ts` to customize site URL, integrations, markdown plugins, an
 ### Site Configuration
 
 Edit files in `src/config/`:
+
 - Site metadata (title, description, author)
 - Navigation links
 - Social links
@@ -327,14 +341,14 @@ No environment variables required. The project works out of the box with zero co
 
 Beyond standard GitHub Flavored Markdown, this project supports:
 
-| Extension | Syntax | Description |
-|-----------|--------|-------------|
-| Admonitions | `:::note` / `:::warning` etc. | 5 types of callout boxes |
-| Math | `$E=mc^2$` / `$$\int$$` | LaTeX via KaTeX + MathJax |
-| Diagrams | ` ```mermaid ` | Flowcharts, sequence, Gantt |
-| GitHub Cards | `:github[user/repo]` | Repository info cards |
-| Image Width | `![desc w-400 center](url)` | Custom width + centering |
-| Code Blocks | ` ```lang ` | Line numbers, copy, collapse |
+| Extension    | Syntax                        | Description                  |
+| ------------ | ----------------------------- | ---------------------------- |
+| Admonitions  | `:::note` / `:::warning` etc. | 5 types of callout boxes     |
+| Math         | `$E=mc^2$` / `$$\int$$`       | LaTeX via KaTeX + MathJax    |
+| Diagrams     | ` ```mermaid `                | Flowcharts, sequence, Gantt  |
+| GitHub Cards | `:github[user/repo]`          | Repository info cards        |
+| Image Width  | `![desc w-400 center](url)`   | Custom width + centering     |
+| Code Blocks  | ` ```lang `                   | Line numbers, copy, collapse |
 
 See [Markdown Guide](https://soren-abt.github.io/posts/markdown-guide/) for the complete reference.
 
@@ -354,12 +368,20 @@ Build Time:
     → music-playlist.json (client API)
     → cover images extracted
 
-Runtime:
-  app.js: Navbar scroll, search modal, lightbox, settings panel,
-          back-to-top, progress bar, link previews, keyboard shortcuts
+Runtime (TypeScript modules in src/scripts/ + client bundles in public/js/):
+  core-manager.ts: Settings panel, wallpaper carousel, floating TOC,
+                   link preloading, theme transition guard, event delegation
+
+  app.js: Search modal, lightbox, back-to-top, progress bar, link previews,
+          keyboard shortcuts, navbar scroll
 
   music-player.js: Web Audio API DSP chain, HTML5 Audio element,
                    state management, broadcast pub/sub
+
+  music-player/ui-core.ts: FAB, compact panel, library overlay, immersive
+                           playback, volume slider, progress bar, spectrum
+
+  welcome-wave.ts: Canvas wave animation for theme transitions
 
   welcome-3d.js: Three.js scene, mouse parallax, zoom, day/night
 ```
@@ -368,22 +390,22 @@ Runtime:
 
 ## 🌟 Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+K` / `/` | Open search |
-| `Ctrl+D` | Toggle dark/light theme |
-| `Ctrl+↑` | Scroll to top |
-| `?` | Show all shortcuts |
-| `Esc` | Close modal / panel |
+| Shortcut       | Action                  |
+| -------------- | ----------------------- |
+| `Ctrl+K` / `/` | Open search             |
+| `Ctrl+D`       | Toggle dark/light theme |
+| `Ctrl+↑`       | Scroll to top           |
+| `?`            | Show all shortcuts      |
+| `Esc`          | Close modal / panel     |
 
 **Music Player (when library is open):**
 
-| Shortcut | Action |
-|----------|--------|
-| `Space` | Play / Pause |
+| Shortcut          | Action         |
+| ----------------- | -------------- |
+| `Space`           | Play / Pause   |
 | `Alt+←` / `Cmd+←` | Previous track |
-| `Alt+→` / `Cmd+→` | Next track |
-| `Esc` | Close library |
+| `Alt+→` / `Cmd+→` | Next track     |
+| `Esc`             | Close library  |
 
 See the [Website User Guide](https://soren-abt.github.io/posts/website-user-guide/) for the complete list.
 

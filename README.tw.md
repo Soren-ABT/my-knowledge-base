@@ -86,10 +86,10 @@
 
 ### 環境要求
 
-| 依賴 | 版本 |
-|------|------|
+| 依賴    | 版本              |
+| ------- | ----------------- |
 | Node.js | >= 18（推薦 LTS） |
-| npm | >= 9 |
+| npm     | >= 9              |
 
 ### 安裝
 
@@ -160,13 +160,13 @@ pinned: false                       # true = 置頂
 
 ## ⚡ 命令
 
-| 命令 | 說明 |
-|------|------|
-| `npm run dev` | 掃描音樂 + 啟動開發伺服器（`localhost:3000`） |
-| `npm run build` | 掃描音樂 + 生產構建 + Pagefind 搜尋索引 |
-| `npm run preview` | 本機預覽生產版本 |
-| `npm run scan-music` | 僅掃描音樂檔案，生成播放清單 |
-| `npm run scan-music:watch` | 持續監聽音樂目錄變化，自動更新 |
+| 命令                       | 說明                                          |
+| -------------------------- | --------------------------------------------- |
+| `npm run dev`              | 掃描音樂 + 啟動開發伺服器（`localhost:3000`） |
+| `npm run build`            | 掃描音樂 + 生產構建 + Pagefind 搜尋索引       |
+| `npm run preview`          | 本機預覽生產版本                              |
+| `npm run scan-music`       | 僅掃描音樂檔案，生成播放清單                  |
+| `npm run scan-music:watch` | 持續監聽音樂目錄變化，自動更新                |
 
 ---
 
@@ -181,15 +181,15 @@ MediaElement → Gain(ReplayGain) → Gain(Headroom -3dB) → DynamicsCompressor
 
 ### 品質分級
 
-| 級別 | 標準 | 徽章 |
-|------|------|------|
-| Studio Master | > 96kHz / 24bit | SM |
-| Hi-Res 無損 | > 48kHz / 24bit | HR |
-| CD 品質 | 44.1kHz / 16bit | CD |
-| 標準無損 | 44.1kHz / 16bit（其他格式） | — |
-| 高碼率有損 | > 256kbps | — |
-| 標準有損 | > 128kbps | — |
-| 低碼率有損 | < 128kbps | — |
+| 級別          | 標準                        | 徽章 |
+| ------------- | --------------------------- | ---- |
+| Studio Master | > 96kHz / 24bit             | SM   |
+| Hi-Res 無損   | > 48kHz / 24bit             | HR   |
+| CD 品質       | 44.1kHz / 16bit             | CD   |
+| 標準無損      | 44.1kHz / 16bit（其他格式） | —    |
+| 高碼率有損    | > 256kbps                   | —    |
+| 標準有損      | > 128kbps                   | —    |
+| 低碼率有損    | < 128kbps                   | —    |
 
 ### 新增音樂
 
@@ -231,8 +231,12 @@ my-knowledge-base/
 │   ├── audio-decoder.mjs                # 音訊格式知識庫
 │   └── tag-reader.mjs                   # 標籤讀取與規範化
 ├── src/
-│   ├── components/                      # Astro 元件（18 個檔案）
-│   │   └── MusicPlayer.astro            # 完整音樂播放器 UI
+│   ├── components/                      # Astro 元件（30+ 個檔案）
+│   │   ├── archive/                     # 歸檔頁面（5 個元件）
+│   │   ├── music/                       # 音樂播放器（4 個元件）
+│   │   ├── CoreManager.astro            # 集中式事件委派
+│   │   ├── MusicPlayer.astro            # 音樂播放器外殼
+│   │   └── ...                          # PostCard、Pagination、Search 等
 │   ├── config/                          # 網站設定（9 個檔案）
 │   │   └── musicPlaylist.generated.ts   # 播放清單 TS（自動生成）
 │   ├── content/
@@ -242,9 +246,22 @@ my-knowledge-base/
 │   ├── layouts/
 │   │   ├── Layout.astro                 # 主佈局（所有內容頁）
 │   │   └── WelcomeLayout.astro          # 歡迎頁佈局
-│   ├── pages/                           # 路由頁面（17 個檔案）
+│   ├── pages/                           # 路由頁面（13 個檔案）
 │   ├── plugins/                         # Remark/Rehype 外掛（12 個檔案）
-│   ├── styles/                          # CSS 設計系統（元件、面板、頁面、音樂播放器）
+│   ├── scripts/                         # TypeScript 模組（18 個檔案）
+│   │   ├── archive/                     # 歸檔邏輯（river-math、drag、tabs、filter、observer）
+│   │   ├── music-player/                # 音樂播放器 UI、進度條、頻譜
+│   │   ├── music/                       # 共享音樂 UI（volume-slider）
+│   │   ├── client/                      # 客戶端應用邏輯
+│   │   ├── core-manager.ts              # 設定、桌布、目錄、連結預載
+│   │   ├── welcome-wave.ts              # 主題切換波浪動畫
+│   │   └── typewriter.ts                # 打字機文字效果
+│   ├── styles/                          # CSS 設計系統
+│   │   ├── archive/                     # 歸檔頁樣式（tabs、timeline、river）
+│   │   ├── components/                  # 可重複使用元件樣式
+│   │   ├── music-player/                # 音樂播放器樣式（core、panel、detail、lightbox）
+│   │   ├── panels/                      # 面板樣式（lightbox、search、settings、toc）
+│   │   └── pages/                       # 頁面樣式（gallery、home）
 │   └── types/                           # TypeScript 型別定義
 ├── astro.config.ts                      # Astro 設定
 ├── pagefind.yml                         # 搜尋引擎設定
@@ -263,6 +280,7 @@ my-knowledge-base/
 ### 網站設定
 
 編輯 `src/config/` 下的檔案：
+
 - 網站元資料（標題、描述、作者）
 - 導航連結
 - 社交連結
@@ -308,14 +326,14 @@ Vercel 提供全球 CDN 加速和自動 HTTPS。免費額度 100GB 頻寬/月，
 
 除標準 GitHub Flavored Markdown 外，本專案還支援：
 
-| 擴展 | 語法 | 說明 |
-|------|------|------|
-| 提示框 | `:::note` / `:::warning` 等 | 5 種樣式的提示框 |
-| 數學公式 | `$E=mc^2$` / `$$\int$$` | LaTeX 公式（KaTeX + MathJax） |
-| 圖表 | ` ```mermaid ` | 流程圖、時序圖、甘特圖 |
-| GitHub 卡片 | `:github[使用者/倉庫]` | 倉庫資訊卡片 |
-| 圖片寬度 | `![描述 w-400 center](url)` | 自訂寬度與置中 |
-| 程式碼區塊 | ` ```語言 ` | 行號、複製、可折疊 |
+| 擴展        | 語法                        | 說明                          |
+| ----------- | --------------------------- | ----------------------------- |
+| 提示框      | `:::note` / `:::warning` 等 | 5 種樣式的提示框              |
+| 數學公式    | `$E=mc^2$` / `$$\int$$`     | LaTeX 公式（KaTeX + MathJax） |
+| 圖表        | ` ```mermaid `              | 流程圖、時序圖、甘特圖        |
+| GitHub 卡片 | `:github[使用者/倉庫]`      | 倉庫資訊卡片                  |
+| 圖片寬度    | `![描述 w-400 center](url)` | 自訂寬度與置中                |
+| 程式碼區塊  | ` ```語言 `                 | 行號、複製、可折疊            |
 
 完整參考見 [Markdown 寫作指南](https://soren-abt.github.io/posts/markdown-guide/)。
 
@@ -335,12 +353,16 @@ Vercel 提供全球 CDN 加速和自動 HTTPS。免費額度 100GB 頻寬/月，
     → music-playlist.json（客戶端 API）
     → 封面圖提取
 
-執行時：
-  app.js: 導航欄捲動、搜尋彈窗、圖片燈箱、設定面板、
-          回到頂部、進度條、連結預覽、鍵盤快捷鍵
+執行時（TypeScript 模組在 src/scripts/ + 客戶端指令碼在 public/js/）：
+  core-manager.ts: 設定面板、桌布輪播、浮動目錄、連結預載、主題切換守衛、事件委派
 
-  music-player.js: Web Audio API DSP 鏈路、HTML5 Audio 元素、
-                   狀態管理、發佈-訂閱廣播
+  app.js: 搜尋彈窗、圖片燈箱、回到頂部、進度條、連結預覽、鍵盤快捷鍵、導航欄捲動
+
+  music-player.js: Web Audio API DSP 鏈路、HTML5 Audio 元素、狀態管理、發佈-訂閱廣播
+
+  music-player/ui-core.ts: FAB 按鈕、緊湊面板、音樂庫覆蓋層、沉浸播放、音量滑桿、進度條、頻譜
+
+  welcome-wave.ts: 主題切換時的 Canvas 波浪動畫
 
   welcome-3d.js: Three.js 場景、滑鼠視差、縮放、日夜模式
 ```
@@ -349,22 +371,22 @@ Vercel 提供全球 CDN 加速和自動 HTTPS。免費額度 100GB 頻寬/月，
 
 ## 🌟 鍵盤快捷鍵
 
-| 快捷鍵 | 功能 |
-|--------|------|
-| `Ctrl+K` / `/` | 開啟搜尋 |
-| `Ctrl+D` | 切換明暗主題 |
-| `Ctrl+↑` | 回到頂部 |
-| `?` | 顯示所有快捷鍵 |
-| `Esc` | 關閉彈窗 / 面板 |
+| 快捷鍵         | 功能            |
+| -------------- | --------------- |
+| `Ctrl+K` / `/` | 開啟搜尋        |
+| `Ctrl+D`       | 切換明暗主題    |
+| `Ctrl+↑`       | 回到頂部        |
+| `?`            | 顯示所有快捷鍵  |
+| `Esc`          | 關閉彈窗 / 面板 |
 
 **音樂播放器（音樂庫開啟時）：**
 
-| 快捷鍵 | 功能 |
-|--------|------|
-| `Space` | 播放 / 暫停 |
-| `Alt+←` / `Cmd+←` | 上一曲 |
-| `Alt+→` / `Cmd+→` | 下一曲 |
-| `Esc` | 關閉音樂庫 |
+| 快捷鍵            | 功能        |
+| ----------------- | ----------- |
+| `Space`           | 播放 / 暫停 |
+| `Alt+←` / `Cmd+←` | 上一曲      |
+| `Alt+→` / `Cmd+→` | 下一曲      |
+| `Esc`             | 關閉音樂庫  |
 
 完整列表見 [網站使用指南](https://soren-abt.github.io/posts/website-user-guide/)。
 
