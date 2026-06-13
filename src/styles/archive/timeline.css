@@ -1,0 +1,207 @@
+/* ============================================================
+   View A — Timeline (Kirameku-polished)
+   ============================================================ */
+
+/* Glass-morphism card container */
+.archive-timeline-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-large);
+  border: 1px solid var(--border-color);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+body.wallpaper-transparent .archive-timeline-card {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+body.wallpaper-transparent:is(.dark) .archive-timeline-card {
+  background-color: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Year row */
+.archive-year-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 3.75rem;
+}
+.archive-year-label {
+  width: 15%;
+  text-align: right;
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding-right: 0.5rem;
+}
+.archive-year-dot-col {
+  width: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.archive-year-ring {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+  background: transparent;
+  outline: 3px solid var(--primary);
+  outline-offset: -2px;
+  z-index: 50;
+  transition:
+    outline-color 0.3s ease,
+    transform 0.3s ease;
+}
+.archive-year-section.in-view .archive-year-ring {
+  outline-color: var(--primary);
+  transform: scale(1.3);
+}
+.archive-year-count {
+  width: 70%;
+  text-align: left;
+  font-size: 0.85rem;
+  padding-left: 0.5rem;
+}
+
+/* Post item */
+.archive-post-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    background-color 0.15s ease,
+    transform 0.2s ease;
+}
+.archive-post-item:hover {
+  background-color: var(--btn-plain-bg-hover);
+  transform: translateX(0.25rem);
+}
+.archive-post-item:active {
+  background-color: var(--btn-plain-bg-active);
+}
+
+.archive-post-date {
+  width: 15%;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 0.8rem;
+  font-family: "JetBrains Mono Variable", "JetBrainsMonoNerdFont", monospace;
+  padding-right: 0.5rem;
+  tabular-nums: true;
+}
+.archive-post-dot-col {
+  width: 15%;
+  flex-shrink: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.archive-post-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: oklch(0.5 0.05 var(--hue));
+  outline: 4px solid var(--card-bg);
+  z-index: 50;
+  transition: all 0.2s ease;
+}
+.archive-post-item:hover .archive-post-dot {
+  height: 20px;
+  background: var(--primary);
+  outline-color: var(--btn-plain-bg-hover);
+}
+.archive-post-item:active .archive-post-dot {
+  outline-color: var(--btn-plain-bg-active);
+}
+.archive-post-title {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 2rem;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+.archive-post-item:hover .archive-post-title {
+  transform: translateX(0.25rem);
+  color: var(--primary);
+}
+.archive-post-tags {
+  width: 15%;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Month labels */
+.archive-month-group {
+  margin-top: 0.25rem;
+}
+.archive-month-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin: 0.5rem 0 0.25rem 0;
+  padding-left: calc(30% + 0.5rem);
+}
+
+/* ── Timeline responsive ─────────────────────────────── */
+@media (min-width: 768px) {
+  .archive-year-label {
+    width: 10%;
+  }
+  .archive-year-dot-col {
+    width: 10%;
+  }
+  .archive-year-count {
+    width: 80%;
+  }
+  .archive-post-date {
+    width: 10%;
+  }
+  .archive-post-dot-col {
+    width: 10%;
+  }
+  .archive-post-title {
+    max-width: 65%;
+  }
+  .archive-post-tags {
+    width: 15%;
+  }
+  .archive-month-label {
+    padding-left: calc(20% + 0.5rem);
+  }
+}
+
+@media (max-width: 767px) {
+  .archive-post-tags {
+    display: none;
+  }
+  .archive-post-title {
+    width: 70%;
+    font-size: 0.82rem;
+    padding-right: 0.5rem;
+  }
+  .archive-post-date {
+    font-size: 0.72rem;
+  }
+  .archive-month-label {
+    padding-left: calc(30% + 0.5rem);
+  }
+}

@@ -120,126 +120,6 @@ const hue = siteConfig.themeColor.hue;
           }
         };
 
-        // ========== 波浪切换动画 (ThemeWave) ==========
-        var waveCanvas = document.getElementById("theme-wave-canvas");
-        var waveCtx = null;
-        var waveAnimId = null;
-        var WAVE_DURATION = 1000;
-        var WAVE_FREQ = 2.2;
-        var WAVE_MAX_AMP = 65;
-        var WAVE_HARMONICS = [
-          { mult: 1.0, amp: 1.0 },
-          { mult: 2.3, amp: 0.25 },
-          { mult: 4.7, amp: 0.1 },
-        ];
-
-        function ensureWaveCtx() {
-          if (!waveCtx && waveCanvas) waveCtx = waveCanvas.getContext("2d");
-          return waveCtx;
-        }
-
-        window.__animateWave = function (fillColor) {
-          var canvas = waveCanvas,
-            ctx = ensureWaveCtx();
-          if (!canvas || !ctx) return;
-          if (waveAnimId) {
-            cancelAnimationFrame(waveAnimId);
-            waveAnimId = null;
-          }
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-          canvas.style.display = "block";
-          var w = canvas.width,
-            h = canvas.height;
-          var freq = WAVE_FREQ,
-            maxAmp = WAVE_MAX_AMP,
-            harmonics = WAVE_HARMONICS;
-          var dur = WAVE_DURATION,
-            st = performance.now();
-
-          function frame(now) {
-            var raw = Math.min((now - st) / dur, 1);
-            var eased = 1 - Math.pow(1 - raw, 4);
-            var waveY = -maxAmp + eased * (h + maxAmp * 2);
-            var ampEnvelope = Math.sin(eased * Math.PI);
-            var amp = maxAmp * ampEnvelope;
-            var steps = Math.max(2, Math.floor(w / 1.5));
-            var ps = eased * Math.PI * 1.8;
-
-            ctx.clearRect(0, 0, w, h);
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            for (var i = 0; i <= steps; i++) {
-              var x = (i / steps) * w;
-              var phase = (i / steps) * Math.PI * 2 * freq + ps;
-              var yOff = 0;
-              for (var j = 0; j < harmonics.length; j++) {
-                yOff += Math.sin(phase * harmonics[j].mult) * amp * harmonics[j].amp;
-              }
-              ctx.lineTo(x, waveY + yOff);
-            }
-            ctx.lineTo(w, h);
-            ctx.lineTo(0, h);
-            ctx.closePath();
-            ctx.fillStyle = fillColor;
-            ctx.fill();
-
-            // Gradient shadow overlay
-            ctx.save();
-            ctx.clip();
-            var gT = waveY - amp - 10,
-              gB = waveY + amp + 80;
-            var grd = ctx.createLinearGradient(0, gT, 0, gB);
-            grd.addColorStop(0, "rgba(0,0,0,0)");
-            grd.addColorStop(0.3, "rgba(0,0,0,0)");
-            grd.addColorStop(0.6, "rgba(0,0,0,0.10)");
-            grd.addColorStop(1, "rgba(0,0,0,0)");
-            ctx.fillStyle = grd;
-            ctx.fillRect(0, gT, w, gB - gT);
-            ctx.restore();
-
-            // Highlight stroke
-            ctx.beginPath();
-            for (var i = 0; i <= steps; i++) {
-              var x = (i / steps) * w;
-              var phase = (i / steps) * Math.PI * 2 * freq + ps;
-              var yOff = 0;
-              for (var j = 0; j < harmonics.length; j++) {
-                yOff += Math.sin(phase * harmonics[j].mult) * amp * harmonics[j].amp;
-              }
-              if (i === 0) ctx.moveTo(x, waveY + yOff);
-              else ctx.lineTo(x, waveY + yOff);
-            }
-            ctx.strokeStyle = "rgba(255,255,255,0.20)";
-            ctx.lineWidth = 1.4;
-            ctx.stroke();
-
-            ctx.beginPath();
-            for (var i = 0; i <= steps; i++) {
-              var x = (i / steps) * w;
-              var phase = (i / steps) * Math.PI * 2 * freq + ps;
-              var yOff = 0;
-              for (var j = 0; j < harmonics.length; j++) {
-                yOff += Math.sin(phase * harmonics[j].mult) * amp * harmonics[j].amp;
-              }
-              if (i === 0) ctx.moveTo(x, waveY + yOff - 1.0);
-              else ctx.lineTo(x, waveY + yOff - 1.0);
-            }
-            ctx.strokeStyle = "rgba(255,255,255,0.38)";
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-
-            if (raw < 1) {
-              waveAnimId = requestAnimationFrame(frame);
-            } else {
-              ctx.clearRect(0, 0, w, h);
-              canvas.style.display = "none";
-              waveAnimId = null;
-            }
-          }
-          waveAnimId = requestAnimationFrame(frame);
-        };
-
         // ========== 无过渡类 (no-transition) ==========
         window.__freezeTransitions = function (el) {
           el.classList.add("no-transition");
@@ -262,6 +142,9 @@ const hue = siteConfig.themeColor.hue;
           } catch (err) {}
         });
       })();
+    </script>
+    <script>
+      import "../scripts/welcome-wave";
     </script>
     <Analytics />
   </body>

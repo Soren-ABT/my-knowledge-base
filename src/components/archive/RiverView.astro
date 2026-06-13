@@ -1,0 +1,357 @@
+---
+import { getCatColor, getCatBg } from "../../scripts/archive/river-math";
+import type { CardPos, RiverData } from "../../scripts/archive/river-math";
+
+interface FloatingParticle {
+  x: number;
+  y: number;
+  delay: number;
+  dur: number;
+}
+
+interface SparklePoint {
+  x: number;
+  y: number;
+}
+
+interface Props {
+  chronologicalPosts: any[];
+  cardsD: CardPos[];
+  riverD: RiverData;
+  twD: number;
+  twT: number;
+  twM: number;
+  pathLenD: number;
+  sparklesD: SparklePoint[];
+  floatingD: FloatingParticle[];
+}
+
+const { chronologicalPosts, cardsD, riverD, twD, twT, twM, pathLenD, sparklesD, floatingD } =
+  Astro.props;
+---
+
+<!-- ================================================================
+     View B: Time River — SVG wavy river (Kirameku-style)
+     ================================================================ -->
+<div id="archive-view-river" class="archive-view">
+  <div class="river-viewport" id="river-viewport">
+    <div class="river-drag-container" id="river-drag-container">
+      <svg
+        id="river-svg"
+        class="river-svg"
+        data-plen-desktop={String(pathLenD)}
+        data-tw-desktop={String(twD)}
+        data-tw-tablet={String(twT)}
+        data-tw-mobile={String(twM)}
+        width={String(twD)}
+        height={String(riverD.svgH)}
+        viewBox={`0 -100 ${twD} ${riverD.svgH}`}
+        preserveAspectRatio="xMidYMid meet"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="river-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--primary-light)" stop-opacity="0"></stop>
+            <stop offset="5%" stop-color="var(--primary-light)" stop-opacity="0.5"></stop>
+            <stop offset="50%" stop-color="var(--primary)" stop-opacity="0.6"></stop>
+            <stop offset="95%" stop-color="var(--primary-light)" stop-opacity="0.5"></stop>
+            <stop offset="100%" stop-color="var(--primary-light)" stop-opacity="0"></stop>
+          </linearGradient>
+          <linearGradient id="river-grad-dim" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--primary-light)" stop-opacity="0"></stop>
+            <stop offset="5%" stop-color="var(--primary-light)" stop-opacity="0.3"></stop>
+            <stop offset="50%" stop-color="var(--primary)" stop-opacity="0.4"></stop>
+            <stop offset="95%" stop-color="var(--primary-light)" stop-opacity="0.3"></stop>
+            <stop offset="100%" stop-color="var(--primary-light)" stop-opacity="0"></stop>
+          </linearGradient>
+          <filter id="river-glow" x="-5%" y="-20%" width="110%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="6"></feGaussianBlur>
+          </filter>
+          <filter id="dot-glow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3"></feGaussianBlur>
+          </filter>
+        </defs>
+
+        <!-- River main path -->
+        <path
+          id="river-main-path"
+          d={riverD.mainP}
+          fill="none"
+          stroke="url(#river-grad)"
+          stroke-width="3"
+          stroke-linecap="round"
+          class="river-path-animate"
+          style={`--river-path-len: ${pathLenD}`}></path>
+
+        <!-- River glow layer (desktop) -->
+        <path
+          id="river-glow-path"
+          d={riverD.mainP}
+          fill="none"
+          stroke="url(#river-grad)"
+          stroke-width="20"
+          stroke-linecap="round"
+          filter="url(#river-glow)"
+          opacity="0.3"
+          class="river-glow-layer river-path-animate"
+          style={`--river-path-len: ${pathLenD}`}></path>
+
+        <!-- River bottom highlight -->
+        <path
+          id="river-bot-path"
+          d={riverD.botP}
+          fill="none"
+          stroke="url(#river-grad-dim)"
+          stroke-width="1"
+          class="river-path-animate"
+          style={`--river-path-len: ${pathLenD}`}></path>
+
+        <!-- River flow shimmer -->
+        <path
+          id="river-shimmer-path"
+          d={riverD.mainP}
+          fill="none"
+          stroke="var(--primary-light)"
+          stroke-width="2"
+          stroke-linecap="round"
+          opacity="0.12"
+          class="river-flow-shimmer"></path>
+
+        {/* Flowing particles (desktop) */}
+        <g class="river-particles">
+          {
+            [
+              { r: 3, dur: 10, delay: 0, fill: "var(--primary)", opacity: 0.8 },
+              { r: 2, dur: 7, delay: 1.5, fill: "var(--primary-light)", opacity: 0.6 },
+              { r: 4, dur: 12, delay: 3, fill: "#ffffff", opacity: 0.7 },
+              { r: 2, dur: 6, delay: 5, fill: "var(--primary)", opacity: 0.55 },
+              { r: 3, dur: 9, delay: 2, fill: "#ffffff", opacity: 0.65 },
+              { r: 2, dur: 8, delay: 6, fill: "var(--primary-light)", opacity: 0.5 },
+            ].map((p, i) => (
+              <circle
+                r={String(p.r)}
+                fill={p.fill}
+                opacity={String(p.opacity)}
+                filter="url(#dot-glow)"
+              >
+                <animateMotion dur={`${p.dur}s`} repeatCount="indefinite" begin={`${p.delay}s`}>
+                  <mpath href="#river-flow-path" />
+                </animateMotion>
+              </circle>
+            ))
+          }
+          {/* 2 trailing particles (follow behind main particles) */}
+          <circle r="1.5" fill="#ffffff" opacity="0.4" filter="url(#dot-glow)">
+            <animateMotion dur="10s" repeatCount="indefinite" begin="0.6s">
+              <mpath href="#river-flow-path"></mpath>
+            </animateMotion>
+          </circle>
+          <circle r="1.5" fill="var(--primary-light)" opacity="0.35" filter="url(#dot-glow)">
+            <animateMotion dur="7s" repeatCount="indefinite" begin="2.1s">
+              <mpath href="#river-flow-path"></mpath>
+            </animateMotion>
+          </circle>
+          <path id="river-flow-path" d={riverD.mainP} fill="none" stroke="none"></path>
+        </g>
+
+        {/* Floating ambient particles (rise from river) */}
+        <g class="river-particles">
+          {
+            floatingD.map((fp) => (
+              <circle
+                cx={String(fp.x)}
+                cy={String(fp.y)}
+                r="1.5"
+                fill="var(--primary-light)"
+                opacity="0"
+              >
+                <animate
+                  attributeName="cy"
+                  values={`${fp.y};${fp.y - 40};${fp.y}`}
+                  dur={`${fp.dur}s`}
+                  begin={`${fp.delay}s`}
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="opacity"
+                  values="0;0.6;0"
+                  dur={`${fp.dur}s`}
+                  begin={`${fp.delay}s`}
+                  repeatCount="indefinite"
+                />
+              </circle>
+            ))
+          }
+        </g>
+
+        {/* River nodes with ripple effect */}
+        {
+          chronologicalPosts.map((_post, i) => {
+            const stagger = (i % 3) * 0.8;
+            return (
+              <g class="river-node-group">
+                {/* Ripple ring 1 */}
+                <circle
+                  cx={cardsD[i].cx}
+                  cy={cardsD[i].waveY}
+                  r="6"
+                  fill="none"
+                  stroke="#ffffff"
+                  opacity="0"
+                >
+                  <animate
+                    attributeName="r"
+                    values="6;28"
+                    dur="3s"
+                    begin={`${stagger}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values="0.45;0"
+                    dur="3s"
+                    begin={`${stagger}s`}
+                    repeatCount="indefinite"
+                  />
+                </circle>
+                {/* Ripple ring 2 (offset) */}
+                <circle
+                  cx={cardsD[i].cx}
+                  cy={cardsD[i].waveY}
+                  r="6"
+                  fill="none"
+                  stroke="#ffffff"
+                  opacity="0"
+                >
+                  <animate
+                    attributeName="r"
+                    values="6;28"
+                    dur="3s"
+                    begin={`${stagger + 1.5}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animate
+                    attributeName="opacity"
+                    values="0.45;0"
+                    dur="3s"
+                    begin={`${stagger + 1.5}s`}
+                    repeatCount="indefinite"
+                  />
+                </circle>
+                {/* Solid dot */}
+                <circle cx={cardsD[i].cx} cy={cardsD[i].waveY} r="6" fill="#ffffff" />
+                <circle
+                  cx={cardsD[i].cx}
+                  cy={cardsD[i].waveY}
+                  r="10"
+                  fill="#ffffff"
+                  opacity="0.25"
+                />
+              </g>
+            );
+          })
+        }
+        {/* Sparkle dots along the river */}
+        <g class="river-sparkles">
+          {
+            sparklesD.map((sp, i) => (
+              <circle
+                cx={String(sp.x)}
+                cy={String(sp.y)}
+                r="1.5"
+                fill="#ffffff"
+                class="river-sparkle"
+                style={`animation-delay: ${(i * 0.25).toFixed(2)}s`}
+              />
+            ))
+          }
+        </g>
+      </svg>
+
+      <!-- Card overlay -->
+      <div class="river-cards-layer" id="river-cards-layer">
+        {
+          chronologicalPosts.map((post, i) => {
+            const cp = cardsD[i];
+            const slug = post.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+            const cat = post.data.category || "";
+            const catColor = cat ? getCatColor(cat) : "var(--border-color)";
+            return (
+              <a
+                href={`/posts/${slug}/`}
+                class={`river-card-v2 ${cp.isAbove ? "above" : "below"}`}
+                data-category={cat}
+                data-tags={post.data.tags.join(",")}
+                data-river-index={String(i)}
+                style={`--card-x: ${cp.x}px; --card-y: ${cp.y}px; --card-idx: ${i}`}
+              >
+                <svg
+                  class="river-card-connector"
+                  aria-hidden="true"
+                  style={`position:absolute; top:${cp.isAbove ? "100%" : "-2rem"}; left:50%; width:2px; height:2rem; transform:translateX(-50%); overflow:visible; pointer-events:none;`}
+                >
+                  <line
+                    x1="1"
+                    y1="0"
+                    x2="1"
+                    y2="100%"
+                    stroke={catColor}
+                    stroke-width="1.5"
+                    opacity="0.4"
+                    stroke-dasharray="4 3"
+                  />
+                </svg>
+                <div class="river-card-glass">
+                  {post.data.image ? (
+                    <div class="river-card-cover">
+                      <img src={post.data.image} alt="" loading="lazy" />
+                      <div class="river-card-cover-date">
+                        {String(post.data.published.getMonth() + 1).padStart(2, "0")}-
+                        {String(post.data.published.getDate()).padStart(2, "0")}
+                      </div>
+                    </div>
+                  ) : (
+                    <div class="river-card-no-cover">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        opacity="0.3"
+                      >
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                      </svg>
+                      <span class="river-card-cover-date" style="color:var(--text-muted)">
+                        {String(post.data.published.getMonth() + 1).padStart(2, "0")}-
+                        {String(post.data.published.getDate()).padStart(2, "0")}
+                      </span>
+                    </div>
+                  )}
+                  <div class="river-card-content">
+                    <h3 class="river-card-title">{post.data.title}</h3>
+                    {post.data.description && (
+                      <p class="river-card-desc">{post.data.description}</p>
+                    )}
+                    <div class="river-card-footer">
+                      {cat && (
+                        <span
+                          class="river-card-cat"
+                          style={`background:${getCatBg(cat)}; color:${catColor}`}
+                        >
+                          {cat}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </a>
+            );
+          })
+        }
+      </div>
+    </div>
+  </div>
+</div>

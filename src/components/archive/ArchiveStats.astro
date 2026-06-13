@@ -1,0 +1,30 @@
+---
+interface Props {
+  postCount: number;
+  yearCount: number;
+  latestYear: number;
+  thisYearPostCount: number;
+}
+
+const { postCount, yearCount, latestYear, thisYearPostCount } = Astro.props;
+---
+
+<!-- Stats -->
+<div class="stats-grid mb-10">
+  <div class="stat-card">
+    <span class="stat-number">{postCount}</span>
+    <span class="stat-label">文章总数</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">{yearCount}</span>
+    <span class="stat-label">年份跨度</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">{postCount > 0 ? latestYear : "—"}</span>
+    <span class="stat-label">最近年份</span>
+  </div>
+  <div class="stat-card">
+    <span class="stat-number">{thisYearPostCount}</span>
+    <span class="stat-label">今年文章</span>
+  </div>
+</div>

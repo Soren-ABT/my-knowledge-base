@@ -1,0 +1,203 @@
+---
+interface PlaylistItem {
+  title: string;
+  artist: string;
+}
+
+interface Props {
+  playlist: PlaylistItem[];
+}
+
+const { playlist } = Astro.props;
+---
+
+<!-- Expanded panel -->
+<div
+  id="music-panel"
+  class="music-panel float-panel-closed"
+  aria-label="音乐播放器"
+  style="display:none"
+>
+  <div class="music-panel-cover">
+    <img id="music-cover" src="" alt="专辑封面" class="music-cover-img" crossorigin="anonymous" />
+  </div>
+  <div class="music-panel-info">
+    <div class="music-panel-title" id="music-title">--</div>
+    <div class="music-panel-artist" id="music-artist">--</div>
+    <div class="music-panel-decoder">
+      <span class="music-decoder-badge" id="music-decoder-badge" hidden></span>
+      <span class="music-decoder-codec" id="music-decoder-codec"></span>
+    </div>
+    <div class="music-panel-dsp" id="music-panel-dsp" hidden>
+      <span class="music-dsp-dot" id="music-dsp-dot"></span>
+      <span class="music-dsp-path" id="music-dsp-path"></span>
+    </div>
+  </div>
+  <div class="music-panel-progress">
+    <canvas class="music-spectrum-canvas" id="music-spectrum-canvas"></canvas>
+    <div
+      class="music-progress-bar"
+      id="music-progress-bar"
+      role="slider"
+      aria-label="播放进度"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+    >
+      <div class="music-progress-fill" id="music-progress-fill"></div>
+      <div class="music-progress-thumb" id="music-progress-thumb"></div>
+    </div>
+    <div class="music-progress-tooltip" id="music-progress-tooltip" hidden>0:00</div>
+    <div class="music-time-row">
+      <span id="music-current-time">0:00</span>
+      <span id="music-duration">0:00</span>
+    </div>
+  </div>
+  <div class="music-panel-controls">
+    <button class="music-btn" id="music-btn-library" title="音乐库" aria-label="音乐库">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        width="15"
+        height="15"
+      >
+        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+      </svg>
+    </button>
+    <button class="music-btn" id="music-btn-shuffle" title="随机播放" aria-label="随机播放">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        width="16"
+        height="16"
+      >
+        <path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path>
+      </svg>
+    </button>
+    <button class="music-btn" id="music-btn-prev" title="上一首" aria-label="上一首">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+        <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"></path>
+      </svg>
+    </button>
+    <button
+      class="music-btn music-btn-play"
+      id="music-btn-play"
+      title="播放/暂停"
+      aria-label="播放/暂停"
+    >
+      <svg id="music-icon-play" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+        <path d="M8 5v14l11-7z"></path>
+      </svg>
+      <svg
+        id="music-icon-pause"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        width="22"
+        height="22"
+        style="display:none"
+      >
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+      </svg>
+    </button>
+    <button class="music-btn" id="music-btn-next" title="下一首" aria-label="下一首">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+        <path d="M16 18h2V6h-2zm-11-7 8.5 6V6z"></path>
+      </svg>
+    </button>
+    <button class="music-btn" id="music-btn-repeat" title="循环模式" aria-label="循环模式">
+      <svg
+        id="music-icon-repeat"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        width="16"
+        height="16"
+      >
+        <path d="M17 2l4 4-4 4"></path>
+        <path d="M3 11v-1a4 4 0 0 1 4-4h14"></path>
+        <path d="M7 22l-4-4 4-4"></path>
+        <path d="M21 13v1a4 4 0 0 1-4 4H3"></path>
+      </svg>
+      <span id="music-repeat-one" hidden>1</span>
+    </button>
+    <button class="music-btn" id="music-btn-list" title="播放列表" aria-label="播放列表">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        width="16"
+        height="16"
+      >
+        <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path>
+      </svg>
+    </button>
+  </div>
+  <div class="music-volume-row">
+    <button class="music-btn" id="music-btn-volume" title="静音" aria-label="静音">
+      <svg
+        id="music-icon-volume"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        width="14"
+        height="14"
+      >
+        <path d="M11 5 6 9H2v6h4l5 4V5z"></path>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      </svg>
+      <svg
+        id="music-icon-mute"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        width="14"
+        height="14"
+        style="display:none"
+      >
+        <path d="M11 5 6 9H2v6h4l5 4V5z"></path>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      </svg>
+    </button>
+    <div
+      class="music-volume-slider"
+      id="music-volume-slider"
+      role="slider"
+      aria-label="音量"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="70"
+    >
+      <div class="music-volume-fill" id="music-volume-fill"></div>
+    </div>
+  </div>
+
+  <!-- Playlist panel -->
+  <div class="music-playlist" id="music-playlist" hidden>
+    {
+      playlist.map((song, idx) => (
+        <div class="music-playlist-item" data-index={idx}>
+          <span class="music-playlist-title">{song.title}</span>
+          <span class="music-playlist-artist">{song.artist}</span>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<!-- Error toast -->
+<div class="music-error" id="music-error" hidden>
+  <span id="music-error-msg"></span>
+  <button id="music-error-close" aria-label="关闭">&times;</button>
+</div>

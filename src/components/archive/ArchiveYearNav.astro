@@ -1,0 +1,21 @@
+---
+interface Props {
+  years: number[];
+}
+
+const { years } = Astro.props;
+---
+
+<!-- Year jump navigation -->
+<nav class="mb-10 flex flex-wrap gap-2" aria-label="年份快速跳转">
+  {
+    years.map((year) => (
+      <a
+        href={`#year-${year}`}
+        class="inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-card)] px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] no-underline transition-all hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+      >
+        {year}
+      </a>
+    ))
+  }
+</nav>

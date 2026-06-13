@@ -1,0 +1,82 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { normalizeSlug } from "../../utils/slug";
+
+interface MonthGroup {
+  month: number;
+  posts: CollectionEntry<"posts">[];
+}
+
+interface Props {
+  years: number[];
+  groupedByYear: Map<number, MonthGroup[]>;
+  monthNames: string[];
+}
+
+const { years, groupedByYear, monthNames } = Astro.props;
+---
+
+<!-- ================================================================
+     View A: Timeline (Fuwari-style vertical + Kirameku polish)
+     ================================================================ -->
+<div id="archive-view-timeline" class="archive-view active">
+  <div class="archive-timeline-card px-6 py-6 md:px-8">
+    {
+      years.map((year) => {
+        const months = groupedByYear.get(year)!;
+        const yearPosts = months
+          .flatMap((m) => m.posts)
+          .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
+        const yearPostCount = yearPosts.length;
+
+        return (
+          <section id={`year-${year}`} class="archive-year-section">
+            <div class="archive-year-row">
+              <div class="archive-year-label text-75">{year}</div>
+              <div class="archive-year-dot-col">
+                <div class="archive-year-ring" />
+              </div>
+              <div class="archive-year-count text-50">{yearPostCount} 篇文章</div>
+            </div>
+
+            {months.map(({ month, posts }) => (
+              <div class="archive-month-group">
+                <div class="archive-month-label">{monthNames[month]}</div>
+
+                {posts.map((post) => {
+                  const slug = normalizeSlug(post.id);
+                  return (
+                    <a
+                      href={`/posts/${slug}/`}
+                      class="archive-post-item group"
+                      data-tags={post.data.tags.join(",")}
+                      data-category={post.data.category || ""}
+                    >
+                      <time
+                        datetime={post.data.published.toISOString()}
+                        class="archive-post-date text-50"
+                      >
+                        {String(post.data.published.getMonth() + 1).padStart(2, "0")}-
+                        {String(post.data.published.getDate()).padStart(2, "0")}
+                      </time>
+                      <div class="archive-post-dot-col dash-line">
+                        <div class="archive-post-dot" />
+                      </div>
+                      <span class="archive-post-title text-75">{post.data.title}</span>
+                      <span class="archive-post-tags text-30">
+                        {post.data.tags
+                          .slice(0, 3)
+                          .map((t) => `#${t}`)
+                          .join(" ")}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            ))}
+          </section>
+        );
+      })
+    }
+  </div>
+</div>

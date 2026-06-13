@@ -11,76 +11,8 @@ const { texts = [], speed = 80, deleteSpeed = 40, pauseTime = 2000 } = Astro.pro
 const jsonTexts = JSON.stringify(texts);
 ---
 
-<script is:inline>
-  class TypewriterEffect {
-    constructor(el) {
-      this.el = el;
-      this.texts = JSON.parse(el.dataset.text || "[]");
-      this.speed = parseInt(el.dataset.speed) || 80;
-      this.deleteSpeed = parseInt(el.dataset.deleteSpeed) || 40;
-      this.pauseTime = parseInt(el.dataset.pauseTime) || 2000;
-      this.currentIndex = 0;
-      this.charIndex = 0;
-      this.isDeleting = false;
-      this.timer = null;
-      this.destroyed = false;
-      this.start();
-    }
-
-    type() {
-      if (this.destroyed) return;
-      const current = this.texts[this.currentIndex];
-      if (this.isDeleting) {
-        this.charIndex--;
-        this.el.textContent = current.substring(0, this.charIndex);
-        if (this.charIndex <= 0) {
-          this.isDeleting = false;
-          this.currentIndex = (this.currentIndex + 1) % this.texts.length;
-          this.timer = setTimeout(() => this.type(), this.speed * 2);
-          return;
-        }
-        this.timer = setTimeout(() => this.type(), this.deleteSpeed);
-        return;
-      }
-
-      this.charIndex++;
-      this.el.textContent = current.substring(0, this.charIndex);
-      if (this.charIndex >= current.length) {
-        if (this.texts.length > 1) {
-          this.timer = setTimeout(() => {
-            this.isDeleting = true;
-            this.type();
-          }, this.pauseTime);
-        }
-        return;
-      }
-      this.timer = setTimeout(() => this.type(), this.speed);
-    }
-
-    start() {
-      if (!this.texts.length) return;
-      this.currentIndex = 0;
-      this.charIndex = 0;
-      this.isDeleting = false;
-      this.type();
-    }
-
-    destroy() {
-      this.destroyed = true;
-      clearTimeout(this.timer);
-    }
-  }
-
-  function initTypewriters() {
-    document.querySelectorAll(".typewriter-text").forEach((el) => {
-      if (!el._typewriter) {
-        el._typewriter = new TypewriterEffect(el);
-      }
-    });
-  }
-
-  document.addEventListener("astro:page-load", initTypewriters);
-  initTypewriters();
+<script>
+  import "../scripts/typewriter";
 </script>
 
 <span
