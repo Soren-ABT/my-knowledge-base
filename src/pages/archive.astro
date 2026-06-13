@@ -958,6 +958,10 @@ function getCatBg(cat: string): string {
 </style>
 
 <script>
+  // --- Cleanup tracking (module scope, persists across SPA navigations) ---
+  let _ringObserver: IntersectionObserver | null = null;
+  let _dragCleanup: (() => void) | null = null;
+
   // ============================================================
   // Tab switching
   // ============================================================
@@ -973,29 +977,57 @@ function getCatBg(cat: string): string {
     try { localStorage.setItem("archive-view", viewName); } catch (e) { /* noop */ }
   }
 
-  document.querySelectorAll<HTMLElement>(".archive-tab").forEach((btn) => {
-    btn.addEventListener("click", () => switchArchiveView(btn.dataset.view!));
-  });
+  // ============================================================
+  // Cleanup stale observers / listeners from previous SPA visit
+  // ============================================================
+  function cleanupArchive(): void {
+    if (_ringObserver) {
+      _ringObserver.disconnect();
+      _ringObserver = null;
+    }
+    if (_dragCleanup) {
+      _dragCleanup();
+      _dragCleanup = null;
+    }
+  }
 
-  const savedView = (() => { try { return localStorage.getItem("archive-view"); } catch (e) { return null; } })();
-  if (savedView === "river") switchArchiveView("river");
+  // ============================================================
+  // Tab click binding
+  // ============================================================
+  function bindTabHandlers(): void {
+    document.querySelectorAll<HTMLElement>(".archive-tab").forEach((btn) => {
+      btn.addEventListener("click", () => switchArchiveView(btn.dataset.view!));
+    });
+  }
+
+  // ============================================================
+  // localStorage restoration
+  // ============================================================
+  function restoreSavedView(): void {
+    const savedView = (() => { try { return localStorage.getItem("archive-view"); } catch (e) { return null; } })();
+    if (savedView === "river") switchArchiveView("river");
+  }
 
   // ============================================================
   // View A — Year ring IntersectionObserver
   // ============================================================
-  const ringObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      (entry.target as HTMLElement).classList.toggle('in-view', entry.isIntersecting);
-    });
-  }, { rootMargin: '-80px 0px' });
+  function setupRingObserver(): void {
+    _ringObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        (entry.target as HTMLElement).classList.toggle('in-view', entry.isIntersecting);
+      });
+    }, { rootMargin: '-80px 0px' });
 
-  document.querySelectorAll<HTMLElement>('.archive-year-section').forEach((s) => ringObserver.observe(s));
+    document.querySelectorAll<HTMLElement>('.archive-year-section').forEach((s) => _ringObserver!.observe(s));
+  }
 
   // ============================================================
   // View B — SVG River: drag with momentum
   // ============================================================
-  const viewport = document.getElementById("river-viewport");
-  if (viewport) {
+  function setupRiverDrag(): void {
+    const viewport = document.getElementById("river-viewport");
+    if (!viewport) return;
+
     let isDragging = false;
     let didDrag = false;
     let startX = 0;
@@ -1065,19 +1097,39 @@ function getCatBg(cat: string): string {
       velocityX = 0;
     }
 
-    viewport.addEventListener("mousedown", (e) => startDrag(e.clientX));
-    window.addEventListener("mousemove", (e) => { if (isDragging) moveDrag(e.clientX); });
-    window.addEventListener("mouseup", () => { if (isDragging) endDrag(); });
+    // Named handler references for removeEventListener
+    const handleMouseDown = (e: MouseEvent) => startDrag(e.clientX);
+    const handleMouseMove = (e: MouseEvent) => { if (isDragging) moveDrag(e.clientX); };
+    const handleMouseUp   = () => { if (isDragging) endDrag(); };
+    const handleTouchStart = (e: TouchEvent) => { if (e.touches.length === 1) startDrag(e.touches[0].clientX); };
+    const handleTouchMove  = (e: TouchEvent) => {
+      if (isDragging && e.touches.length === 1) { e.preventDefault(); moveDrag(e.touches[0].clientX); }
+    };
+    const handleTouchEnd = () => { endDrag(); };
 
-    viewport.addEventListener("touchstart", (e) => { if (e.touches.length === 1) startDrag(e.touches[0].clientX); }, { passive: true });
-    viewport.addEventListener("touchmove", (e) => { if (isDragging && e.touches.length === 1) { e.preventDefault(); moveDrag(e.touches[0].clientX); } }, { passive: false });
-    viewport.addEventListener("touchend", () => { endDrag(); });
+    viewport.addEventListener("mousedown", handleMouseDown);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    viewport.addEventListener("touchstart", handleTouchStart, { passive: true });
+    viewport.addEventListener("touchmove", handleTouchMove, { passive: false });
+    viewport.addEventListener("touchend", handleTouchEnd);
 
     document.querySelectorAll<HTMLElement>(".river-card-v2").forEach((card) => {
       card.addEventListener("click", function(e) {
         if (didDrag) { e.preventDefault(); e.stopPropagation(); }
       });
     });
+
+    // Store cleanup so old listeners are removed on re-init
+    _dragCleanup = () => {
+      cancelMomentum();
+      viewport.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      viewport.removeEventListener("touchstart", handleTouchStart);
+      viewport.removeEventListener("touchmove", handleTouchMove);
+      viewport.removeEventListener("touchend", handleTouchEnd);
+    };
   }
 
   // ============================================================
@@ -1105,6 +1157,19 @@ function getCatBg(cat: string): string {
     });
   }
 
-  applyArchiveFilter();
-  document.addEventListener("astro:after-swap", applyArchiveFilter);
+  // ============================================================
+  // Orchestration
+  // ============================================================
+  function initArchive(): void {
+    cleanupArchive();
+    bindTabHandlers();
+    restoreSavedView();
+    setupRingObserver();
+    setupRiverDrag();
+    applyArchiveFilter();
+  }
+
+  // --- Boot: first load + every SPA return ---
+  initArchive();
+  document.addEventListener("astro:after-swap", initArchive);
 </script>
