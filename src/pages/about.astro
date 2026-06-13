@@ -1,7 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import JsonLd from "../components/JsonLd.astro";
 import { getCollection } from "astro:content";
-import { profileConfig } from "../config";
+import { profileConfig, siteConfig } from "../config";
 import { getReadingStats } from "../utils/reading-time";
 
 const allPosts = await getCollection("posts", ({ data }) => {
@@ -19,6 +20,15 @@ allPosts.forEach((p) => { if (p.body) totalChars += getReadingStats(p.body).char
 ---
 
 <Layout title="关于">
+  <JsonLd
+    data={{
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": profileConfig.name,
+      "url": siteConfig.siteURL,
+      "description": profileConfig.bio,
+    }}
+  />
   <div class="mx-auto max-w-4xl">
     <!-- Page header -->
     <header class="mb-10">

@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import PostCard from "../components/PostCard.astro";
+import JsonLd from "../components/JsonLd.astro";
 import { siteConfig, profileConfig, POSTS_PER_PAGE } from "../config";
 import { getReadingStats } from "../utils/reading-time";
 
@@ -40,6 +41,25 @@ const clockInitial = {
 ---
 
 <Layout>
+  <JsonLd
+    data={{
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "name": siteConfig.title,
+          "url": siteConfig.siteURL,
+          "description": siteConfig.subtitle,
+          "inLanguage": siteConfig.lang,
+        },
+        {
+          "@type": "Person",
+          "name": profileConfig.name,
+          "url": siteConfig.siteURL,
+        },
+      ],
+    }}
+  />
   <div class="home-layout">
     <!-- Hero section -->
     <section class="home-hero">

@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
+import { normalizeSlug } from "../utils/slug";
 
 const allPosts = await getCollection("posts", ({ data }) => {
   return import.meta.env.PROD ? !data.draft : true;
@@ -252,7 +253,7 @@ function getCatBg(cat: string): string {
                     <div class="archive-month-label">{MONTH_NAMES[month]}</div>
 
                     {posts.map((post) => {
-                      const slug = post.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+                      const slug = normalizeSlug(post.id);
                       return (
                         <a
                           href={`/posts/${slug}/`}

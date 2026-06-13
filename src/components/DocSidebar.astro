@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { normalizeSlug } from "../utils/slug";
 
 // Build sidebar from docs collection
 const docs = await getCollection("docs");
@@ -54,7 +55,7 @@ const currentPath = Astro.url?.pathname || "";
       <div>
         <div class="doc-sidebar-category">{cat.title}</div>
         {cat.items.map((item) => {
-          const docPath = `/docs/${item.slug.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "")}/`;
+          const docPath = `/docs/${normalizeSlug(item.slug)}/`;
           const isActive = currentPath === docPath;
           return (
             <a

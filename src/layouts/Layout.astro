@@ -44,6 +44,7 @@ const ogImageUrl = ogImage
     : new URL(ogImage, Astro.site).toString()
   : undefined;
 
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 const hue = siteConfig.themeColor.hue;
 const navbarTransparentMode = siteConfig.banner?.navbar?.transparentMode || "semi";
 const shouldShowTopHighlight =
@@ -58,17 +59,23 @@ const shouldShowTopHighlight =
     <title>{pageTitle}</title>
     <meta name="description" content={pageDescription} />
 
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalUrl} />
+
     <!-- Open Graph -->
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content={siteConfig.title} />
+    <meta property="og:locale" content={siteConfig.lang.replace("-", "_")} />
     {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:creator" content="@soren_abt" />
     {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
 
     <!-- Theme hue CSS variable -->
@@ -80,10 +87,8 @@ const shouldShowTopHighlight =
     <!-- CoreManager: centralized event delegation for all interactive UI -->
     <CoreManager />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <!-- Font preload for self-hosted fonts -->
+    <link rel="preload" href="/assets/font/JetBrainsMonoNerdFont-Light.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- CDN hints for faster third-party loading -->
     <link rel="dns-prefetch" href="//cdn.jsdelivr.net" />
@@ -137,6 +142,7 @@ const shouldShowTopHighlight =
     </script>
   </head>
   <body class="min-h-screen font-sans antialiased">
+    <a href="#content-wrapper" class="skip-link">跳到主要内容</a>
     <!-- Critical: set wallpaper mode before paint to prevent FOUC -->
     <script is:inline>
       (function() {

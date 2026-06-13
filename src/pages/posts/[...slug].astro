@@ -5,13 +5,14 @@ import JsonLd from "../../components/JsonLd.astro";
 import { formatDateFull, formatDate } from "../../utils/date";
 import { getReadingStats } from "../../utils/reading-time";
 import { licenseConfig, profileConfig, siteConfig } from "../../config";
+import { normalizeSlug } from "../../utils/slug";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts", ({ data }) => {
     return import.meta.env.PROD ? !data.draft : true;
   });
   return posts.map((post) => {
-    const slug = post.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+    const slug = normalizeSlug(post.id);
     return { params: { slug } };
   });
 }
@@ -27,7 +28,7 @@ const sorted = allPosts.sort(
 );
 
 const currentIndex = sorted.findIndex((p) => {
-  const s = p.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+  const s = normalizeSlug(p.id);
   return s === slug;
 });
 
@@ -41,10 +42,10 @@ const nextPost = currentIndex > 0 ? sorted[currentIndex - 1] : null;
 
 const { data } = post;
 const { Content, headings } = await render(post);
-const postSlug = post.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+const postSlug = normalizeSlug(post.id);
 
 function prevSlug(p: CollectionEntry<"posts">) {
-  return p.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+  return normalizeSlug(p.id);
 }
 
 // Calculate reading time

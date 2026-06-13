@@ -6,6 +6,7 @@ import CoreManager from "../components/CoreManager.astro";
 const pageTitle = siteConfig.subtitle
   ? `${siteConfig.title} - ${siteConfig.subtitle}`
   : siteConfig.title;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site).toString();
 const hue = siteConfig.themeColor.hue;
 ---
 
@@ -17,18 +18,19 @@ const hue = siteConfig.themeColor.hue;
     <title>{pageTitle}</title>
     <meta name="description" content={siteConfig.subtitle} />
 
+    <link rel="canonical" href={canonicalUrl} />
+
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={siteConfig.subtitle} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:site_name" content={siteConfig.title} />
+    <meta property="og:locale" content={siteConfig.lang.replace("-", "_")} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={siteConfig.subtitle} />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <meta name="twitter:creator" content="@soren_abt" />
 
     <style define:vars={{ hue }}></style>
 

@@ -21,6 +21,27 @@
 }
 
 /* ============================================================
+   Skip to main content — accessibility
+   ============================================================ */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 10000;
+  padding: 0.5rem 1rem;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 0 0 0.5rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* ============================================================
    Base HTML / Body
    ============================================================ */
 html {

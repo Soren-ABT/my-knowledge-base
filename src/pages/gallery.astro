@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
+import { normalizeSlug } from "../utils/slug";
 
 const allPosts = await getCollection("posts", ({ data }) => {
   return import.meta.env.PROD ? !data.draft : true;
@@ -9,9 +10,6 @@ const allPosts = await getCollection("posts", ({ data }) => {
 const postsWithImages = allPosts
   .filter((p) => p.data.image && p.data.image.length > 0)
   .sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf());
-
-const slugFromId = (id: string) =>
-  id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
 
 function hashString(str: string): number {
   let hash = 0;
@@ -41,7 +39,7 @@ function hashString(str: string): number {
       postsWithImages.length > 0 ? (
         <div class="gallery-grid">
           {postsWithImages.map((post, i) => {
-            const slug = slugFromId(post.id);
+            const slug = normalizeSlug(post.id);
             const tilt = hashString(slug);
             return (
               <a

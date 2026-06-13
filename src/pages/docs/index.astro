@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import { normalizeSlug } from "../../utils/slug";
 
 const docs = await getCollection("docs");
 
@@ -77,7 +78,7 @@ for (const doc of docs) {
             </h2>
             <div class="ml-12 space-y-2 border-l-2 border-[var(--border-color)] pl-6">
               {cat.items.map((item) => {
-                const slug = item.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+                const slug = normalizeSlug(item.id);
                 return (
                   <a
                     href={`/docs/${slug}/`}

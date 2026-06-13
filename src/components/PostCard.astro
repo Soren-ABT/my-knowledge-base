@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import { formatDate } from "../utils/date";
 import { getReadingStats } from "../utils/reading-time";
+import { normalizeSlug } from "../utils/slug";
 
 interface Props {
   post: CollectionEntry<"posts">;
@@ -9,7 +10,7 @@ interface Props {
 
 const { post } = Astro.props;
 const { data } = post;
-const slug = post.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+const slug = normalizeSlug(post.id);
 const hasCover = data.image && data.image.length > 0;
 ---
 

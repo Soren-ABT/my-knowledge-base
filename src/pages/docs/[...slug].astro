@@ -2,11 +2,12 @@
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import DocSidebar from "../../components/DocSidebar.astro";
+import { normalizeSlug } from "../../utils/slug";
 
 export async function getStaticPaths() {
   const docs = await getCollection("docs");
   return docs.map((doc) => {
-    const slug = doc.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+    const slug = normalizeSlug(doc.id);
     return { params: { slug } };
   });
 }
@@ -15,7 +16,7 @@ const { slug } = Astro.params;
 const allDocs = await getCollection("docs");
 
 const doc = allDocs.find((d) => {
-  const s = d.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+  const s = normalizeSlug(d.id);
   return s === slug;
 });
 

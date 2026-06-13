@@ -4,6 +4,7 @@ import satori from "satori";
 import sharp from "sharp";
 
 import { profileConfig, siteConfig } from "../../config";
+import { normalizeSlug } from "../../utils/slug";
 
 interface FontOptions {
   data: Buffer | ArrayBuffer;
@@ -21,7 +22,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const published = allPosts.filter((p) => !p.data.draft);
 
   return published.map((post) => {
-    const slug = post.id.replace(/\.[^.]+$/, "");
+    const slug = normalizeSlug(post.id);
     return { params: { slug }, props: { post } };
   });
 };

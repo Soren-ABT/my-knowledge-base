@@ -1,4 +1,5 @@
 import { getCollection } from "astro:content";
+import { normalizeSlug } from "../../utils/slug";
 
 export async function GET() {
   const posts = await getCollection("posts", ({ data }) => {
@@ -6,7 +7,7 @@ export async function GET() {
   });
 
   const data = posts.map((post) => {
-    const slug = post.id.replace(/\.(md|mdx)$/, "").replace(/\/index$/, "");
+    const slug = normalizeSlug(post.id);
     return {
       title: post.data.title,
       slug,
