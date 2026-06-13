@@ -9,10 +9,14 @@
 }
 
 @media (max-width: 1024px) {
-  .gallery-grid { column-count: 2; }
+  .gallery-grid {
+    column-count: 2;
+  }
 }
 @media (max-width: 640px) {
-  .gallery-grid { column-count: 1; }
+  .gallery-grid {
+    column-count: 1;
+  }
 }
 
 /* ── Photo card (outer wrapper) ───────────────────────── */
@@ -213,7 +217,9 @@ body.wallpaper-transparent:is(.dark) .gallery-photo-frame {
   justify-content: center;
   transition: background 0.2s;
 }
-.gallery-lb-close:hover { background: rgba(255, 255, 255, 0.2); }
+.gallery-lb-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
 
 /* Navigation arrows */
 .gallery-lb-prev,
@@ -233,10 +239,16 @@ body.wallpaper-transparent:is(.dark) .gallery-photo-frame {
   justify-content: center;
   transition: background 0.2s;
 }
-.gallery-lb-prev { left: 1rem; }
-.gallery-lb-next { right: 1rem; }
+.gallery-lb-prev {
+  left: 1rem;
+}
+.gallery-lb-next {
+  right: 1rem;
+}
 .gallery-lb-prev:hover,
-.gallery-lb-next:hover { background: rgba(255, 255, 255, 0.2); }
+.gallery-lb-next:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
 
 /* Image wrapper — spring-like scale animation */
 .gallery-lb-image-wrapper {
@@ -288,9 +300,17 @@ body.wallpaper-transparent:is(.dark) .gallery-photo-frame {
 /* Mobile: hide nav arrows (swipe instead) */
 @media (max-width: 640px) {
   .gallery-lb-prev,
-  .gallery-lb-next { display: none; }
-  .gallery-lb-close { top: 0.5rem; right: 0.5rem; }
-  .gallery-lb-caption { bottom: -2rem; font-size: 0.8rem; }
+  .gallery-lb-next {
+    display: none;
+  }
+  .gallery-lb-close {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+  .gallery-lb-caption {
+    bottom: -2rem;
+    font-size: 0.8rem;
+  }
 }
 
 /* ============================================================
@@ -309,7 +329,9 @@ body.wallpaper-transparent:is(.dark) .gallery-photo-frame {
   .gallery-photo-card:hover .gallery-photo-inner img {
     transform: none !important;
   }
-  .gallery-lb-overlay { transition: none !important; }
+  .gallery-lb-overlay {
+    transition: none !important;
+  }
   .gallery-lb-image-wrapper {
     transition: none !important;
     transform: scale(1) !important;

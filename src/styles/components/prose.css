@@ -28,13 +28,37 @@
   cursor: zoom-in;
   transition: transform 0.15s;
 }
-.prose img:hover { transform: scale(1.02); }
+.prose img:hover {
+  transform: scale(1.02);
+}
 
-.prose h1, .prose h2, .prose h3 { color: var(--primary); }
-.prose h1 { font-size: 2rem; font-weight: 700; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 2rem; }
-.prose h2 { font-size: 1.5rem; font-weight: 600; margin-top: 1.8rem; }
-.prose h3 { font-size: 1.2rem; font-weight: 600; margin-top: 1.5rem; }
-.prose h4 { font-size: 1.05rem; font-weight: 500; margin-top: 1.2rem; }
+.prose h1,
+.prose h2,
+.prose h3 {
+  color: var(--primary);
+}
+.prose h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  margin-top: 2rem;
+}
+.prose h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 1.8rem;
+}
+.prose h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+}
+.prose h4 {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-top: 1.2rem;
+}
 
 .prose code:not(pre code) {
   background: var(--inline-code-bg);
@@ -53,10 +77,24 @@
   color: var(--text-secondary);
 }
 
-.prose table { border-collapse: collapse; width: 100%; margin: 1.5rem 0; }
-.prose th, .prose td { border: 1px solid var(--table-border); padding: 10px 14px; text-align: left; }
-.prose th { background: var(--card-bg-alt); font-weight: 600; }
-.prose tr:nth-child(even) { background: var(--table-stripe); }
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5rem 0;
+}
+.prose th,
+.prose td {
+  border: 1px solid var(--table-border);
+  padding: 10px 14px;
+  text-align: left;
+}
+.prose th {
+  background: var(--card-bg-alt);
+  font-weight: 600;
+}
+.prose tr:nth-child(even) {
+  background: var(--table-stripe);
+}
 
 .prose a {
   color: var(--primary);
@@ -64,7 +102,9 @@
   border-bottom: 1px solid transparent;
   transition: border-color 0.15s;
 }
-.prose a:hover { border-bottom-color: var(--primary); }
+.prose a:hover {
+  border-bottom-color: var(--primary);
+}
 
 .dark .prose {
   --tw-prose-body: var(--text-color);
@@ -95,8 +135,12 @@
 }
 
 /* Display math scrollbar */
-.katex-display::-webkit-scrollbar { height: 5px; }
-.katex-display::-webkit-scrollbar-track { background: transparent; }
+.katex-display::-webkit-scrollbar {
+  height: 5px;
+}
+.katex-display::-webkit-scrollbar-track {
+  background: transparent;
+}
 .katex-display::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
   border-radius: 3px;
@@ -152,7 +196,9 @@
   color: var(--text-muted);
   cursor: pointer;
   font-size: 0.9rem;
-  transition: opacity 0.2s, transform 0.2s;
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
   vertical-align: middle;
   -webkit-user-select: none;
   user-select: none;
@@ -161,8 +207,13 @@
 .markdown-section h1:hover .heading-anchor,
 .markdown-section h2:hover .heading-anchor,
 .markdown-section h3:hover .heading-anchor,
-.markdown-section h4:hover .heading-anchor { opacity: 1; }
-.heading-anchor:hover { transform: scale(1.15); color: var(--text-color); }
+.markdown-section h4:hover .heading-anchor {
+  opacity: 1;
+}
+.heading-anchor:hover {
+  transform: scale(1.15);
+  color: var(--text-color);
+}
 
 /* ============================================================
    Toast
@@ -188,16 +239,33 @@
   font-weight: 500;
   box-shadow: var(--shadow-lg);
   pointer-events: auto;
-  animation: toastIn 0.35s cubic-bezier(0.22,0.61,0.36,1), toastOut 0.3s 2s cubic-bezier(0.55,0.06,0.68,0.19) forwards;
+  animation:
+    toastIn 0.35s cubic-bezier(0.22, 0.61, 0.36, 1),
+    toastOut 0.3s 2s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
 }
-.toast.success { border-left: 3px solid #27ae60; }
-.toast.info { border-left: 3px solid var(--primary); }
+.toast.success {
+  border-left: 3px solid #27ae60;
+}
+.toast.info {
+  border-left: 3px solid var(--primary);
+}
 @keyframes toastIn {
-  0% { opacity: 0; transform: translateY(16px) scale(0.9) }
-  100% { opacity: 1; transform: translateY(0) scale(1) }
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 @keyframes toastOut {
-  0% { opacity: 1; transform: translateY(0) scale(1) }
-  100% { opacity: 0; transform: translateY(-8px) scale(0.9) }
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.9);
+  }
 }
-

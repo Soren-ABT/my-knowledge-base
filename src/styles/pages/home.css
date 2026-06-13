@@ -20,7 +20,10 @@
   border: 1px solid var(--border-color);
   border-radius: 24px;
   overflow: hidden;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.5s ease;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.5s ease;
 }
 .hero-card:hover {
   border-color: color-mix(in srgb, var(--primary) 25%, var(--border-color));
@@ -112,10 +115,18 @@
 }
 
 /* Color-coded stats */
-.stat-posts  { color: #6366f1; }
-.stat-tags   { color: #a855f7; }
-.stat-words  { color: #10b981; }
-.stat-pinned { color: #f59e0b; }
+.stat-posts {
+  color: #6366f1;
+}
+.stat-tags {
+  color: #a855f7;
+}
+.stat-words {
+  color: #10b981;
+}
+.stat-pinned {
+  color: #f59e0b;
+}
 
 .hero-stat-label {
   display: block;
@@ -160,7 +171,10 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-large);
   padding: 1rem;
-  transition: border-color 0.2s ease, transform 0.5s ease, box-shadow 0.5s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.5s ease,
+    box-shadow 0.5s ease;
 }
 .sidebar-card:hover {
   border-color: color-mix(in srgb, var(--primary) 20%, var(--border-color));
@@ -446,7 +460,9 @@
   border-radius: 50%;
   background: var(--primary);
   color: #fff;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 .np-btn-play:hover {
   transform: scale(1.1);
@@ -455,10 +471,18 @@
 }
 
 /* Toggle play/pause icons */
-.np-btn-play[data-playing="1"] .np-icon-play { display: none; }
-.np-btn-play[data-playing="1"] .np-icon-pause { display: block; }
-.np-btn-play[data-playing="0"] .np-icon-play { display: block; }
-.np-btn-play[data-playing="0"] .np-icon-pause { display: none; }
+.np-btn-play[data-playing="1"] .np-icon-play {
+  display: none;
+}
+.np-btn-play[data-playing="1"] .np-icon-pause {
+  display: block;
+}
+.np-btn-play[data-playing="0"] .np-icon-play {
+  display: block;
+}
+.np-btn-play[data-playing="0"] .np-icon-pause {
+  display: none;
+}
 
 /* ============================================================
    Live Clock
@@ -541,17 +565,35 @@ body:has(.home-layout) #content-wrapper {
   animation-fill-mode: forwards;
 }
 
-.home-hero    { animation-delay: 0ms; }
-.home-sidebar { animation-delay: 80ms; }
-.home-content { animation-delay: 160ms; }
+.home-hero {
+  animation-delay: 0ms;
+}
+.home-sidebar {
+  animation-delay: 80ms;
+}
+.home-content {
+  animation-delay: 160ms;
+}
 
 /* Post cards stagger within the list */
-.home-post-list > *:nth-child(1) { animation-delay: 200ms; }
-.home-post-list > *:nth-child(2) { animation-delay: 240ms; }
-.home-post-list > *:nth-child(3) { animation-delay: 280ms; }
-.home-post-list > *:nth-child(4) { animation-delay: 320ms; }
-.home-post-list > *:nth-child(5) { animation-delay: 360ms; }
-.home-post-list > *:nth-child(6) { animation-delay: 400ms; }
+.home-post-list > *:nth-child(1) {
+  animation-delay: 200ms;
+}
+.home-post-list > *:nth-child(2) {
+  animation-delay: 240ms;
+}
+.home-post-list > *:nth-child(3) {
+  animation-delay: 280ms;
+}
+.home-post-list > *:nth-child(4) {
+  animation-delay: 320ms;
+}
+.home-post-list > *:nth-child(5) {
+  animation-delay: 360ms;
+}
+.home-post-list > *:nth-child(6) {
+  animation-delay: 400ms;
+}
 
 /* ============================================================
    Glassmorphism — frosted cards when wallpaper is transparent

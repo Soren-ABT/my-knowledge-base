@@ -8,7 +8,9 @@
 .expressive-code code,
 .expressive-code .ec-line,
 .expressive-code .title {
-  font-family: 'JetBrains Mono Variable', 'JetBrainsMonoNerdFont-Light', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-family:
+    "JetBrains Mono Variable", "JetBrainsMonoNerdFont-Light", ui-monospace, SFMono-Regular, Menlo,
+    Monaco, Consolas, monospace !important;
 }
 
 /* Match site border radius */
@@ -32,7 +34,9 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: 'JetBrains Mono Variable', 'JetBrainsMonoNerdFont-Light', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family:
+    "JetBrains Mono Variable", "JetBrainsMonoNerdFont-Light", ui-monospace, SFMono-Regular, Menlo,
+    Monaco, Consolas, monospace;
   font-size: 0.75rem;
   font-weight: 500;
   color: var(--text-secondary);
@@ -40,7 +44,7 @@
 }
 
 .expressive-code .frame .header:not(:empty)::before {
-  content: '';
+  content: "";
   display: inline-block;
   width: 7px;
   height: 7px;

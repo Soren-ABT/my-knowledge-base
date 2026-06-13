@@ -19,7 +19,9 @@
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-lg);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
   font-size: 1.1rem;
 }
 .floating-toc-btn:hover {
@@ -42,7 +44,10 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(8px);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s;
 }
 .floating-toc-panel.show {
   opacity: 1;
@@ -69,7 +74,9 @@
   border-radius: 4px;
   transition: color 0.15s;
 }
-.floating-toc-close:hover { color: var(--text-color); }
+.floating-toc-close:hover {
+  color: var(--text-color);
+}
 .floating-toc-content {
   overflow-y: auto;
   padding: 8px 0;
@@ -132,4 +139,3 @@
     max-height: 300px;
   }
 }
-

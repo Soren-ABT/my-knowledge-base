@@ -54,17 +54,19 @@
    Local Fonts — self-hosted, no Google Fonts CDN
    ============================================================ */
 @font-face {
-  font-family: 'JetBrainsMonoNerdFont';
-  src: url('/assets/font/JetBrainsMonoNerdFont-Light.woff2') format('woff2'),
-       url('/assets/font/JetBrainsMonoNerdFont-Light.ttf') format('truetype');
+  font-family: "JetBrainsMonoNerdFont";
+  src:
+    url("/assets/font/JetBrainsMonoNerdFont-Light.woff2") format("woff2"),
+    url("/assets/font/JetBrainsMonoNerdFont-Light.ttf") format("truetype");
   font-weight: 300;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'LXGWWenKai';
-  src: url('/assets/font/LXGWWenKai-Light.woff2') format('woff2'),
-       url('/assets/font/LXGWWenKai-Light.ttf') format('truetype');
+  font-family: "LXGWWenKai";
+  src:
+    url("/assets/font/LXGWWenKai-Light.woff2") format("woff2"),
+    url("/assets/font/LXGWWenKai-Light.ttf") format("truetype");
   font-weight: 300;
   font-display: swap;
 }
