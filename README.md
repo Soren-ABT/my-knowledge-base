@@ -222,7 +222,7 @@ my-knowledge-base/
 │   │   ├── music/
 │   │   │   ├── url/                     # Audio files (place your music here)
 │   │   │   └── cover/                   # Cover art (auto-extracted)
-│   │   └── wallpaper/                   # Desktop + mobile wallpapers
+│   │   └── wallpaper/                   # Desktop + mobile wallpapers (_responsive/ auto-generated)
 │   ├── api/
 │   │   └── music-playlist.json          # Playlist API (auto-generated)
 │   └── js/                              # Client-side scripts
@@ -242,9 +242,11 @@ my-knowledge-base/
 │       └── mermaid-render.js            # Mermaid diagram renderer
 ├── scripts/
 │   ├── scan-music.mjs                   # Music metadata scanner
+│   ├── generate-responsive-wallpapers.mjs # Responsive wallpaper generation (optional, handled by integration)
 │   ├── audio-decoder.mjs                # Audio format knowledge base
 │   └── tag-reader.mjs                   # Tag reader & normalizer
 ├── src/
+│   ├── integrations/                    # Astro integrations (auto wallpaper resizing)
 │   ├── components/                      # Astro components (30+ files)
 │   │   ├── archive/                     # Archive page (5 components)
 │   │   ├── music/                       # Music player (4 components)

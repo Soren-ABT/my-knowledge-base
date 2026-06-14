@@ -212,7 +212,7 @@ my-knowledge-base/
 │   │   ├── music/
 │   │   │   ├── url/                     # 音声ファイル（ここに音楽を配置）
 │   │   │   └── cover/                   # カバーアート（自動抽出）
-│   │   └── wallpaper/                   # デスクトップ + モバイル壁紙
+│   │   └── wallpaper/                   # デスクトップ + モバイル壁紙（_responsive/ は自動生成）
 │   ├── api/
 │   │   └── music-playlist.json          # プレイリスト API（自動生成）
 │   └── js/                              # クライアントスクリプト
@@ -228,9 +228,11 @@ my-knowledge-base/
 │       └── mermaid-render.js            # Mermaid 図表レンダラー
 ├── scripts/
 │   ├── scan-music.mjs                   # 音楽メタデータスキャナー
+│   ├── generate-responsive-wallpapers.mjs # 壁紙レスポンシブ生成（オプション、統合が自動処理）
 │   ├── audio-decoder.mjs                # 音声フォーマット知識ベース
 │   └── tag-reader.mjs                   # タグリーダー＆正規化
 ├── src/
+│   ├── integrations/                    # Astro 統合（壁紙自動リサイズ）
 │   ├── components/                      # Astro コンポーネント（30+ ファイル）
 │   │   ├── archive/                     # アーカイブページ（5 コンポーネント）
 │   │   ├── music/                       # 音楽プレーヤー（4 コンポーネント）

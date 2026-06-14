@@ -212,7 +212,7 @@ my-knowledge-base/
 │   │   ├── music/
 │   │   │   ├── url/                     # 音频文件（在此放入音乐）
 │   │   │   └── cover/                   # 封面图（自动提取）
-│   │   └── wallpaper/                   # 桌面 + 移动端壁纸
+│   │   └── wallpaper/                   # 桌面 + 移动端壁纸（_responsive/ 由 Astro 集成自动切割）
 │   ├── api/
 │   │   └── music-playlist.json          # 播放列表 API（自动生成）
 │   └── js/                              # 客户端脚本
@@ -228,9 +228,11 @@ my-knowledge-base/
 │       └── mermaid-render.js            # Mermaid 图表渲染
 ├── scripts/
 │   ├── scan-music.mjs                   # 音乐元数据扫描器
+│   ├── generate-responsive-wallpapers.mjs # 壁纸响应式切割（可选，集成已自动处理）
 │   ├── audio-decoder.mjs                # 音频格式知识库
 │   └── tag-reader.mjs                   # 标签读取与规范化
 ├── src/
+│   ├── integrations/                    # Astro 集成（壁纸自动切割）
 │   ├── components/                      # Astro 组件（30+ 个文件）
 │   │   ├── archive/                     # 归档页面（5 个组件）
 │   │   ├── music/                       # 音乐播放器（4 个组件）
