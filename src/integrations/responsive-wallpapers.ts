@@ -23,9 +23,7 @@ function getBaseName(filename: string): string {
 async function generateVariants(): Promise<number> {
   if (!fs.existsSync(WALLPAPER_DIR)) return 0;
 
-  const files = fs
-    .readdirSync(WALLPAPER_DIR)
-    .filter((f) => /\.(webp|jpg|jpeg|png)$/i.test(f));
+  const files = fs.readdirSync(WALLPAPER_DIR).filter((f) => /\.(webp|jpg|jpeg|png)$/i.test(f));
   if (files.length === 0) return 0;
 
   if (!fs.existsSync(OUTPUT_DIR)) {
