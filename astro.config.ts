@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import { responsiveWallpapers } from './src/integrations/responsive-wallpapers';
 import AstroPWA from '@vite-pwa/astro';
 import tailwindcss from '@tailwindcss/vite';
 import expressiveCode from 'astro-expressive-code';
@@ -37,6 +38,7 @@ export default defineConfig({
   },
 
   integrations: [
+    responsiveWallpapers(),
     sitemap(),
     expressiveCode({
       themes: ['github-light', 'github-dark'],
